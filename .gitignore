@@ -25,3 +25,5 @@ gmon.out
 
 # Python's byte code files.
 *.pyc
+/build32
+/build64
