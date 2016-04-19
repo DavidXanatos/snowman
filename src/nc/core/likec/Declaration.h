@@ -29,50 +29,55 @@
 
 #include "TreeNode.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Declaration of an identifier (variable, function, type, whatever).
- */
-class Declaration: public TreeNode {
-    NC_BASE_CLASS(Declaration, declarationKind)
+            /**
+             * Declaration of an identifier (variable, function, type, whatever).
+             */
+            class Declaration: public TreeNode
+            {
+                NC_BASE_CLASS(Declaration, declarationKind)
 
-    const QString identifier_;
+                const QString identifier_;
 
-public:
+            public:
 
-    /**
-     * Declaration kind.
-     */
-    enum {
-        FUNCTION_DECLARATION,           ///< Function declaration.
-        FUNCTION_DEFINITION,            ///< Function definition.
-        LABEL_DECLARATION,              ///< Label declaration.
-        MEMBER_DECLARATION,             ///< Declaration of a struct or union member.
-        STRUCT_TYPE_DECLARATION,        ///< Declaration of structural type.
-        VARIABLE_DECLARATION,           ///< Variable declaration.
-    };
+                /**
+                 * Declaration kind.
+                 */
+                enum
+                {
+                    FUNCTION_DECLARATION,           ///< Function declaration.
+                    FUNCTION_DEFINITION,            ///< Function definition.
+                    LABEL_DECLARATION,              ///< Label declaration.
+                    MEMBER_DECLARATION,             ///< Declaration of a struct or union member.
+                    STRUCT_TYPE_DECLARATION,        ///< Declaration of structural type.
+                    VARIABLE_DECLARATION,           ///< Variable declaration.
+                };
 
-    /**
-     * Class constructor.
-     *
-     * \param[in] declarationKind Declaration kind.
-     * \param[in] identifier Name of declared entity.
-     */
-    Declaration(int declarationKind, QString identifier):
-        TreeNode(DECLARATION), declarationKind_(declarationKind), identifier_(std::move(identifier))
-    {}
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] declarationKind Declaration kind.
+                 * \param[in] identifier Name of declared entity.
+                 */
+                Declaration(int declarationKind, QString identifier):
+                    TreeNode(DECLARATION), declarationKind_(declarationKind), identifier_(std::move(identifier))
+                {}
 
-    /**
-     * \return Name of declared entity.
-     */
-    const QString &identifier() const { return identifier_; }
-};
+                /**
+                 * \return Name of declared entity.
+                 */
+                const QString & identifier() const { return identifier_; }
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::TreeNode, nc::core::likec::Declaration, nc::core::likec::TreeNode::DECLARATION)

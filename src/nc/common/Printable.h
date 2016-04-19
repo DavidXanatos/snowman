@@ -27,75 +27,81 @@
 
 #include <QTextStream>
 
-namespace nc {
+namespace nc
+{
 
-/**
- * Base class for printable objects. The objects must have
- * void print(QTextStream &) const method which will be called
- * by the respective << operator.
- *
- * \tparam T Derived class.
- */
-template<class T>
-class PrintableBase {
+    /**
+     * Base class for printable objects. The objects must have
+     * void print(QTextStream &) const method which will be called
+     * by the respective << operator.
+     *
+     * \tparam T Derived class.
+     */
+    template<class T>
+    class PrintableBase
+    {
     public:
 
+        /**
+         * Prints the object into a stream.
+         *
+         * \param out Output stream.
+         */
+        void print(QTextStream & out) const
+        {
+            static_cast<const T*>(this)->print(out);
+        }
+
+        /**
+         * \return String representation of the object.
+         */
+        QString toString() const
+        {
+            QString result;
+            QTextStream stream(&result);
+
+            print(stream);
+
+            return result;
+        }
+    };
+
     /**
-     * Prints the object into a stream.
+     * Base class for polymorphic printable objects.
      *
-     * \param out Output stream.
+     * Consider inheriting from PrintableBase for non-polymorphic classes.
      */
-    void print(QTextStream &out) const {
-        static_cast<const T *>(this)->print(out);
-    }
-
-    /**
-     * \return String representation of the object.
-     */
-    QString toString() const {
-        QString result;
-        QTextStream stream(&result);
-
-        print(stream);
-
-        return result;
-    }
-};
-
-/**
- * Base class for polymorphic printable objects.
- *
- * Consider inheriting from PrintableBase for non-polymorphic classes.
- */
-class Printable: public PrintableBase<Printable> {
+    class Printable: public PrintableBase<Printable>
+    {
     public:
 
+        /**
+         * Prints the object into a stream.
+         *
+         * \param out Output stream.
+         */
+        virtual void print(QTextStream & out) const = 0;
+
+        /**
+         * Virtual destructor.
+         */
+        virtual ~Printable() {}
+    };
+
     /**
-     * Prints the object into a stream.
+     * Insertion operator for printable objects.
      *
      * \param out Output stream.
+     * \param[in] entity Object to be printed.
+     *
+     * \return The output stream.
      */
-    virtual void print(QTextStream &out) const = 0;
-
-    /**
-     * Virtual destructor.
-     */
-    virtual ~Printable() {}
-};
-
-/**
- * Insertion operator for printable objects.
- *
- * \param out Output stream.
- * \param[in] entity Object to be printed.
- *
- * \return The output stream.
- */
-template<class T>
-inline QTextStream &operator<<(QTextStream &out, const PrintableBase<T> &entity) {
-    entity.print(out);
-    return out;
-}
+    template<class T>
+    inline QTextStream & operator<<(QTextStream & out, const PrintableBase<T> & entity)
+    {
+        entity.print(out);
+        return out;
+    }
 
 } // namespace nc
 

@@ -28,63 +28,75 @@
 
 #include <QtGlobal> /* qInstallMsgHandler() */
 
-namespace nc { namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-namespace {
+        namespace
+        {
 
 #if QT_VERSION >= 0x050000
-void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg) {
-    LogManager::instance()->log(type, msg);
-}
+            void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
+            {
+                LogManager::instance()->log(type, msg);
+            }
 #else
-void myMessageHandler(QtMsgType type, const char *msg) {
-    LogManager::instance()->log(type, QLatin1String(msg));
-}
+            void myMessageHandler(QtMsgType type, const char* msg)
+            {
+                LogManager::instance()->log(type, QLatin1String(msg));
+            }
 #endif
 
-} // anonymous namespace
+        } // anonymous namespace
 
-LogManager *LogManager::instance() {
-    static std::unique_ptr<LogManager> manager;
+        LogManager* LogManager::instance()
+        {
+            static std::unique_ptr<LogManager> manager;
 
-    if (!manager) {
-        manager.reset(new LogManager);
+            if(!manager)
+            {
+                manager.reset(new LogManager);
 #if QT_VERSION >= 0x050000
-        qInstallMessageHandler(myMessageHandler);
+                qInstallMessageHandler(myMessageHandler);
 #else
-        qInstallMsgHandler(myMessageHandler);
+                qInstallMsgHandler(myMessageHandler);
 #endif
-    }
+            }
 
-    return manager.get();
-}
+            return manager.get();
+        }
 
-void LogManager::log(QtMsgType type, const QString &msg) {
-    switch (type) {
-    case QtDebugMsg:
-        log(tr("[Debug] %1").arg(msg));
-        break;
+        void LogManager::log(QtMsgType type, const QString & msg)
+        {
+            switch(type)
+            {
+            case QtDebugMsg:
+                log(tr("[Debug] %1").arg(msg));
+                break;
 #if QT_VERSION >= 0x050500
-    case QtInfoMsg:
-        log(tr("[Info] %1").arg(msg));
-        break;
+            case QtInfoMsg:
+                log(tr("[Info] %1").arg(msg));
+                break;
 #endif
-    case QtWarningMsg:
-        log(tr("[Warning] %1").arg(msg));
-        break;
-    case QtCriticalMsg:
-        log(tr("[Critical] %1").arg(msg));
-        break;
-    case QtFatalMsg:
-        log(tr("[Fatal] %1").arg(msg));
-        break;
+            case QtWarningMsg:
+                log(tr("[Warning] %1").arg(msg));
+                break;
+            case QtCriticalMsg:
+                log(tr("[Critical] %1").arg(msg));
+                break;
+            case QtFatalMsg:
+                log(tr("[Fatal] %1").arg(msg));
+                break;
+            }
+        }
+
+        void LogManager::log(const QString & text)
+        {
+            Q_EMIT message(text);
+        }
+
     }
-}
-
-void LogManager::log(const QString &text) {
-    Q_EMIT message(text);
-}
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

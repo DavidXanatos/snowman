@@ -30,71 +30,76 @@
 #include "Expression.h"
 #include "MemberDeclaration.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Access to a struct or union member.
- */
-class MemberAccessOperator: public Expression {
-public:
-    /**
-     * Operator id.
-     */
-    enum AccessKind {
-        ARROW,  ///< a->b
-        DOT,    ///< a.b
-    };
+            /**
+             * Access to a struct or union member.
+             */
+            class MemberAccessOperator: public Expression
+            {
+            public:
+                /**
+                 * Operator id.
+                 */
+                enum AccessKind
+                {
+                    ARROW,  ///< a->b
+                    DOT,    ///< a.b
+                };
 
-private:
-    AccessKind accessKind_; ///< Operator id.
-    std::unique_ptr<Expression> compound_; ///< Accessed struct or union.
-    const MemberDeclaration *member_; ///< Accessed member.
+            private:
+                AccessKind accessKind_; ///< Operator id.
+                std::unique_ptr<Expression> compound_; ///< Accessed struct or union.
+                const MemberDeclaration* member_; ///< Accessed member.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] accessKind Access kind.
-     * \param[in] compound Accessed struct or union.
-     * \param[in] member Accessed member.
-     */
-    MemberAccessOperator(AccessKind accessKind, std::unique_ptr<Expression> compound, const MemberDeclaration *member):
-        Expression(MEMBER_ACCESS_OPERATOR), accessKind_(accessKind), compound_(std::move(compound)), member_(member)
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] accessKind Access kind.
+                 * \param[in] compound Accessed struct or union.
+                 * \param[in] member Accessed member.
+                 */
+                MemberAccessOperator(AccessKind accessKind, std::unique_ptr<Expression> compound, const MemberDeclaration* member):
+                    Expression(MEMBER_ACCESS_OPERATOR), accessKind_(accessKind), compound_(std::move(compound)), member_(member)
+                {}
 
-    /**
-     * \return Operator id.
-     */
-    AccessKind accessKind() const { return accessKind_; }
+                /**
+                 * \return Operator id.
+                 */
+                AccessKind accessKind() const { return accessKind_; }
 
-    /**
-     * Sets operator id.
-     */
-    void setAccessKind(AccessKind accessKind) { accessKind_ = accessKind; }
+                /**
+                 * Sets operator id.
+                 */
+                void setAccessKind(AccessKind accessKind) { accessKind_ = accessKind; }
 
-    /**
-     * \return Accessed struct or union.
-     */
-    std::unique_ptr<Expression> &compound() { return compound_; }
+                /**
+                 * \return Accessed struct or union.
+                 */
+                std::unique_ptr<Expression> & compound() { return compound_; }
 
-    /**
-     * \return Accessed struct or union.
-     */
-    const Expression *compound() const { return compound_.get(); }
+                /**
+                 * \return Accessed struct or union.
+                 */
+                const Expression* compound() const { return compound_.get(); }
 
-    /**
-     * \return Accessed member.
-     */
-    const MemberDeclaration *member() const { return member_; }
+                /**
+                 * \return Accessed member.
+                 */
+                const MemberDeclaration* member() const { return member_; }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Expression, nc::core::likec::MemberAccessOperator, nc::core::likec::Expression::MEMBER_ACCESS_OPERATOR)

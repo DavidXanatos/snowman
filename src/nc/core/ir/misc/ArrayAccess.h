@@ -27,63 +27,71 @@
 
 #include <cassert>
 
-namespace nc {
-namespace core {
-namespace ir {
-
-class Term;
-
-namespace misc {
-
-/**
- * Describes an indexing expression like "[base + stride * index]".
- */
-class ArrayAccess {
-    ConstantValue base_;
-    ConstantValue stride_;
-    const Term *index_;
-
-public:
-    /**
-     * Constructs an invalid indexing expression.
-     */
-    ArrayAccess(): index_(nullptr) {}
-
-    /**
-     * Constructs a valid indexing expression.
-     *
-     * \param base      Base offset.
-     * \param stride    Stride value.
-     * \param index     Valid pointer to the index term.
-     */
-    ArrayAccess(ConstantValue base, ConstantValue stride, const Term *index):
-        base_(base), stride_(stride), index_(index)
+namespace nc
+{
+    namespace core
     {
-        assert(index_ != nullptr);
+        namespace ir
+        {
+
+            class Term;
+
+            namespace misc
+            {
+
+                /**
+                 * Describes an indexing expression like "[base + stride * index]".
+                 */
+                class ArrayAccess
+                {
+                    ConstantValue base_;
+                    ConstantValue stride_;
+                    const Term* index_;
+
+                public:
+                    /**
+                     * Constructs an invalid indexing expression.
+                     */
+                    ArrayAccess(): index_(nullptr) {}
+
+                    /**
+                     * Constructs a valid indexing expression.
+                     *
+                     * \param base      Base offset.
+                     * \param stride    Stride value.
+                     * \param index     Valid pointer to the index term.
+                     */
+                    ArrayAccess(ConstantValue base, ConstantValue stride, const Term* index):
+                        base_(base), stride_(stride), index_(index)
+                    {
+                        assert(index_ != nullptr);
+                    }
+
+                    /**
+                     * \return Base, i.e. the constant offset in the expression.
+                     */
+                    ConstantValue base() const { assert(*this); return base_; }
+
+                    /**
+                     * \return Stride, i.e. the constant multiplier in the expression.
+                     */
+                    ConstantValue stride() const { assert(*this); return stride_; }
+
+                    /**
+                     * \return Valid pointer to the term serving as an index, i.e. the non-constant
+                     *         multiplier in the expression.
+                     */
+                    const Term* index() const { assert(*this); return index_; }
+
+                    /**
+                     * \return A non-nullptr pointer if and only if the descriptor is valid.
+                     */
+                    operator const void* () const { return index_; }
+                };
+
+            }
+        }
     }
-
-    /**
-     * \return Base, i.e. the constant offset in the expression.
-     */
-    ConstantValue base() const { assert(*this); return base_; }
-
-    /**
-     * \return Stride, i.e. the constant multiplier in the expression.
-     */
-    ConstantValue stride() const { assert(*this); return stride_; }
-
-    /**
-     * \return Valid pointer to the term serving as an index, i.e. the non-constant
-     *         multiplier in the expression.
-     */
-    const Term *index() const { assert(*this); return index_; }
-
-    /**
-     * \return A non-nullptr pointer if and only if the descriptor is valid.
-     */
-    operator const void*() const { return index_; }
-};
-
-}}}} // namespace nc::core::ir::misc
+} // namespace nc::core::ir::misc
 
 /* vim:set et sts=4 sw=4: */

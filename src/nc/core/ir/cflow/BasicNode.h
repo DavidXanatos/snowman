@@ -27,43 +27,48 @@
 
 #include "Node.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-
-class BasicBlock;
-
-namespace cflow {
-
-/**
- * Node representing a basic block.
- */
-class BasicNode: public Node {
-    const ir::BasicBlock *basicBlock_; ///< Basic block.
-
-public:
-    /**
-     * \param basicBlock Valid pointer to a basic block.
-     */
-    BasicNode(const ir::BasicBlock *basicBlock):
-        Node(BASIC), basicBlock_(basicBlock)
+namespace nc
+{
+    namespace core
     {
-        assert(basicBlock_ != nullptr);
-    }
+        namespace ir
+        {
 
-    /**
-     * \return Basic block.
-     */
-    const ir::BasicBlock *basicBlock() const { return basicBlock_; }
+            class BasicBlock;
 
-    virtual const BasicBlock *getEntryBasicBlock() const override { return basicBlock_; }
-    virtual bool isCondition() const override;
-    virtual void print(QTextStream &out) const override;
-};
+            namespace cflow
+            {
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+                /**
+                 * Node representing a basic block.
+                 */
+                class BasicNode: public Node
+                {
+                    const ir::BasicBlock* basicBlock_; ///< Basic block.
+
+                public:
+                    /**
+                     * \param basicBlock Valid pointer to a basic block.
+                     */
+                    BasicNode(const ir::BasicBlock* basicBlock):
+                        Node(BASIC), basicBlock_(basicBlock)
+                    {
+                        assert(basicBlock_ != nullptr);
+                    }
+
+                    /**
+                     * \return Basic block.
+                     */
+                    const ir::BasicBlock* basicBlock() const { return basicBlock_; }
+
+                    virtual const BasicBlock* getEntryBasicBlock() const override { return basicBlock_; }
+                    virtual bool isCondition() const override;
+                    virtual void print(QTextStream & out) const override;
+                };
+
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

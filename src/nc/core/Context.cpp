@@ -41,71 +41,86 @@
 #include <nc/core/ir/vars/Variables.h>
 #include <nc/core/likec/Tree.h>
 
-namespace nc {
-namespace core {
+namespace nc
+{
+    namespace core
+    {
 
-Context::Context():
-    image_(std::make_shared<image::Image>()),
-    instructions_(std::make_shared<arch::Instructions>())
-{}
+        Context::Context():
+            image_(std::make_shared<image::Image>()),
+            instructions_(std::make_shared<arch::Instructions>())
+        {}
 
-Context::~Context() {}
+        Context::~Context() {}
 
-void Context::setImage(const std::shared_ptr<image::Image> &image) {
-    image_ = image;
-}
+        void Context::setImage(const std::shared_ptr<image::Image> & image)
+        {
+            image_ = image;
+        }
 
-void Context::setInstructions(const std::shared_ptr<const arch::Instructions> &instructions) {
-    instructions_ = instructions;
-    Q_EMIT instructionsChanged();
-}
+        void Context::setInstructions(const std::shared_ptr<const arch::Instructions> & instructions)
+        {
+            instructions_ = instructions;
+            Q_EMIT instructionsChanged();
+        }
 
-void Context::setProgram(std::unique_ptr<ir::Program> program) {
-    program_ = std::move(program);
-}
+        void Context::setProgram(std::unique_ptr<ir::Program> program)
+        {
+            program_ = std::move(program);
+        }
 
-void Context::setFunctions(std::unique_ptr<ir::Functions> functions) {
-    functions_ = std::move(functions);
-}
+        void Context::setFunctions(std::unique_ptr<ir::Functions> functions)
+        {
+            functions_ = std::move(functions);
+        }
 
-void Context::setConventions(std::unique_ptr<ir::calling::Conventions> conventions) {
-    conventions_ = std::move(conventions);
-}
+        void Context::setConventions(std::unique_ptr<ir::calling::Conventions> conventions)
+        {
+            conventions_ = std::move(conventions);
+        }
 
-void Context::setHooks(std::unique_ptr<ir::calling::Hooks> hooks) {
-    hooks_ = std::move(hooks);
-}
+        void Context::setHooks(std::unique_ptr<ir::calling::Hooks> hooks)
+        {
+            hooks_ = std::move(hooks);
+        }
 
-void Context::setSignatures(std::unique_ptr<ir::calling::Signatures> signatures) {
-    signatures_ = std::move(signatures);
-}
+        void Context::setSignatures(std::unique_ptr<ir::calling::Signatures> signatures)
+        {
+            signatures_ = std::move(signatures);
+        }
 
-void Context::setDataflows(std::unique_ptr<ir::dflow::Dataflows> dataflows) {
-    dataflows_ = std::move(dataflows);
-}
+        void Context::setDataflows(std::unique_ptr<ir::dflow::Dataflows> dataflows)
+        {
+            dataflows_ = std::move(dataflows);
+        }
 
-void Context::setVariables(std::unique_ptr<ir::vars::Variables> variables) {
-    variables_ = std::move(variables);
-}
+        void Context::setVariables(std::unique_ptr<ir::vars::Variables> variables)
+        {
+            variables_ = std::move(variables);
+        }
 
-void Context::setLivenesses(std::unique_ptr<ir::liveness::Livenesses> livenesses) {
-    livenesses_ = std::move(livenesses);
-}
+        void Context::setLivenesses(std::unique_ptr<ir::liveness::Livenesses> livenesses)
+        {
+            livenesses_ = std::move(livenesses);
+        }
 
-void Context::setGraphs(std::unique_ptr<ir::cflow::Graphs> graphs) {
-    graphs_ = std::move(graphs);
-}
+        void Context::setGraphs(std::unique_ptr<ir::cflow::Graphs> graphs)
+        {
+            graphs_ = std::move(graphs);
+        }
 
-void Context::setTypes(std::unique_ptr<ir::types::Types> types) {
-    types_ = std::move(types);
-}
+        void Context::setTypes(std::unique_ptr<ir::types::Types> types)
+        {
+            types_ = std::move(types);
+        }
 
-void Context::setTree(std::unique_ptr<likec::Tree> tree) {
-    tree_ = std::move(tree);
-    Q_EMIT treeChanged();
-}
+        void Context::setTree(std::unique_ptr<likec::Tree> tree)
+        {
+            tree_ = std::move(tree);
+            Q_EMIT treeChanged();
+        }
 
-} // namespace core
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

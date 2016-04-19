@@ -30,64 +30,70 @@
 
 #include "Expression.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Function call.
- */
-class CallOperator: public Expression {
-    std::unique_ptr<Expression> callee_; ///< Callee.
-    std::vector<std::unique_ptr<Expression> > arguments_; ///< Function arguments.
+            /**
+             * Function call.
+             */
+            class CallOperator: public Expression
+            {
+                std::unique_ptr<Expression> callee_; ///< Callee.
+                std::vector<std::unique_ptr<Expression>> arguments_; ///< Function arguments.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] callee Callee.
-     */
-    explicit CallOperator(std::unique_ptr<Expression> callee):
-        Expression(CALL_OPERATOR), callee_(std::move(callee)) {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] callee Callee.
+                 */
+                explicit CallOperator(std::unique_ptr<Expression> callee):
+                    Expression(CALL_OPERATOR), callee_(std::move(callee)) {}
 
-    /**
-     * \return Callee.
-     */
-    std::unique_ptr<Expression> &callee() { return callee_; }
+                /**
+                 * \return Callee.
+                 */
+                std::unique_ptr<Expression> & callee() { return callee_; }
 
-    /**
-     * \return Callee.
-     */
-    const Expression *callee() const { return callee_.get(); }
+                /**
+                 * \return Callee.
+                 */
+                const Expression* callee() const { return callee_.get(); }
 
-    /**
-     * Function arguments.
-     */
-    std::vector<std::unique_ptr<Expression>> &arguments() { return arguments_; }
+                /**
+                 * Function arguments.
+                 */
+                std::vector<std::unique_ptr<Expression>> & arguments() { return arguments_; }
 
-    /**
-     * Function arguments.
-     */
-    const std::vector<Expression *> &arguments() const {
-        return reinterpret_cast<const std::vector<Expression *> &>(arguments_);
-    }
+                /**
+                 * Function arguments.
+                 */
+                const std::vector<Expression*> & arguments() const
+                {
+                    return reinterpret_cast<const std::vector<Expression*> &>(arguments_);
+                }
 
-    /**
-     * Adds argument to the function call and takes ownership of argument's expression.
-     *
-     * \param argument Valid pointer to an expression.
-     */
-    void addArgument(std::unique_ptr<Expression> argument) {
-        assert(argument != nullptr);
-        arguments_.push_back(std::move(argument));
-    }
+                /**
+                 * Adds argument to the function call and takes ownership of argument's expression.
+                 *
+                 * \param argument Valid pointer to an expression.
+                 */
+                void addArgument(std::unique_ptr<Expression> argument)
+                {
+                    assert(argument != nullptr);
+                    arguments_.push_back(std::move(argument));
+                }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Expression, nc::core::likec::CallOperator, nc::core::likec::Expression::CALL_OPERATOR)

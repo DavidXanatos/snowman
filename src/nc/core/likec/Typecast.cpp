@@ -24,16 +24,20 @@
 
 #include "Typecast.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-void Typecast::doCallOnChildren(const std::function<void(TreeNode *)> &fun) {
-    fun(operand_.get());
-}
+            void Typecast::doCallOnChildren(const std::function<void(TreeNode*)> & fun)
+            {
+                fun(operand_.get());
+            }
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

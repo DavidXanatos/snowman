@@ -29,56 +29,60 @@
 
 #include <memory>
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-class Expression;
+            class Expression;
 
-/**
- * Switch.
- */
-class Switch: public Statement {
-    std::unique_ptr<Expression> expression_; ///< Switch expression.
-    std::unique_ptr<Statement> body_; ///< Switch body.
+            /**
+             * Switch.
+             */
+            class Switch: public Statement
+            {
+                std::unique_ptr<Expression> expression_; ///< Switch expression.
+                std::unique_ptr<Statement> body_; ///< Switch body.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] expression Valid pointer to the switch expression.
-     * \param[in] body Valid pointer to the switch body.
-     */
-    Switch(std::unique_ptr<Expression> expression, std::unique_ptr<Statement> body):
-        Statement(SWITCH), expression_(std::move(expression)), body_(std::move(body))
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] expression Valid pointer to the switch expression.
+                 * \param[in] body Valid pointer to the switch body.
+                 */
+                Switch(std::unique_ptr<Expression> expression, std::unique_ptr<Statement> body):
+                    Statement(SWITCH), expression_(std::move(expression)), body_(std::move(body))
+                {}
 
-    /**
-     * \return Switch expression.
-     */
-    std::unique_ptr<Expression> &expression() { return expression_; }
+                /**
+                 * \return Switch expression.
+                 */
+                std::unique_ptr<Expression> & expression() { return expression_; }
 
-    /**
-     * \return Switch expression.
-     */
-    const Expression *expression() const { return expression_.get(); }
+                /**
+                 * \return Switch expression.
+                 */
+                const Expression* expression() const { return expression_.get(); }
 
-    /**
-     * \return Switch body.
-     */
-    std::unique_ptr<Statement> &body() { return body_; }
+                /**
+                 * \return Switch body.
+                 */
+                std::unique_ptr<Statement> & body() { return body_; }
 
-    /**
-     * \return Switch body.
-     */
-    const Statement *body() const { return body_.get(); }
+                /**
+                 * \return Switch body.
+                 */
+                const Statement* body() const { return body_.get(); }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::Switch, nc::core::likec::Statement::SWITCH)

@@ -7,19 +7,25 @@
 
 #include "Demangler.h"
 
-namespace nc {
-namespace core {
-namespace mangling {
+namespace nc
+{
+    namespace core
+    {
+        namespace mangling
+        {
 
-/**
- * A simple demangler delegating all the work to
- * __cxa_demangle and __unDName.
- */
-class DefaultDemangler: public Demangler {
-public:
-    QString demangle(const QString &symbol) const override;
-};
+            /**
+             * A simple demangler delegating all the work to
+             * __cxa_demangle and __unDName.
+             */
+            class DefaultDemangler: public Demangler
+            {
+            public:
+                QString demangle(const QString & symbol) const override;
+            };
 
-}}} // namespace nc::core::mangling
+        }
+    }
+} // namespace nc::core::mangling
 
 /* vim:set et sts=4 sw=4: */

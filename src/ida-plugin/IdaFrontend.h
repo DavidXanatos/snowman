@@ -41,136 +41,142 @@ QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    namespace image {
-        class Image;
+    namespace core
+    {
+        namespace image
+        {
+            class Image;
+        }
     }
-}
 
-namespace ida {
+    namespace ida
+    {
 
-typedef Range<ByteAddr> AddressRange;
+        typedef Range<ByteAddr> AddressRange;
 
-/**
- * This class exposes some of IDA functionality while not polluting the global
- * namespace with IDA includes.
- */    
-class IdaFrontend {
-public:
-    /**
-     * \param[in] address              Address to move cursor in IDA code view to.
-     *
-     * \return True on success, false otherwise.
-     */
-    static bool jumpToAddress(ByteAddr address);
+        /**
+         * This class exposes some of IDA functionality while not polluting the global
+         * namespace with IDA includes.
+         */
+        class IdaFrontend
+        {
+        public:
+            /**
+             * \param[in] address              Address to move cursor in IDA code view to.
+             *
+             * \return True on success, false otherwise.
+             */
+            static bool jumpToAddress(ByteAddr address);
 
-    /**
-     * \param[in] address              Address of a function.
-     * \returns                        Mangled name of a function starting at 
-     *                                 the given address.
-     */
-    static QString functionName(ByteAddr address);
+            /**
+             * \param[in] address              Address of a function.
+             * \returns                        Mangled name of a function starting at
+             *                                 the given address.
+             */
+            static QString functionName(ByteAddr address);
 
-    /**
-     * \param[in] address              Address.
-     * \returns                        Name for the given address, or empty string
-     *                                 if the given address does not have a name.
-     */
-    static QString addressName(ByteAddr address);
+            /**
+             * \param[in] address              Address.
+             * \returns                        Name for the given address, or empty string
+             *                                 if the given address does not have a name.
+             */
+            static QString addressName(ByteAddr address);
 
-    /**
-     * \returns                        Addresses and names of imported functions.
-     */
-    static std::vector<std::pair<ByteAddr, QString> > importedFunctions();
+            /**
+             * \returns                        Addresses and names of imported functions.
+             */
+            static std::vector<std::pair<ByteAddr, QString>> importedFunctions();
 
-    /**
-     * \returns                        Addresses of all function starts.
-     */
-    static std::vector<ByteAddr> functionStarts();
+            /**
+             * \returns                        Addresses of all function starts.
+             */
+            static std::vector<ByteAddr> functionStarts();
 
-    /**
-     * \param[in] mangled              Mangled name.
-     * \returns                        Demangled name.
-     */
-    static QString demangle(const QString &mangled);
+            /**
+             * \param[in] mangled              Mangled name.
+             * \returns                        Demangled name.
+             */
+            static QString demangle(const QString & mangled);
 
-    /**
-     * \returns The name of the archtecture of the current binary.
-     */
-    static QString architecture();
+            /**
+             * \returns The name of the archtecture of the current binary.
+             */
+            static QString architecture();
 
-    /**
-     * \returns The operating system of the current binary.
-     */
-    static core::image::Platform::OperatingSystem operatingSystem();
+            /**
+             * \returns The operating system of the current binary.
+             */
+            static core::image::Platform::OperatingSystem operatingSystem();
 
-    /**
-     * Converts the current image file to nc's internal representation.
-     *
-     * \param[in, out] image Valid pointer to the executable file image.
-     */
-    static void createSections(core::image::Image *image);
+            /**
+             * Converts the current image file to nc's internal representation.
+             *
+             * \param[in, out] image Valid pointer to the executable file image.
+             */
+            static void createSections(core::image::Image* image);
 
-    /**
-     * \param[in] address              Any address in a function.
-     * \returns                        All address ranges of a function, including function's tail chunks.
-     */
-    static std::vector<AddressRange> functionAddresses(ByteAddr address);
+            /**
+             * \param[in] address              Any address in a function.
+             * \returns                        All address ranges of a function, including function's tail chunks.
+             */
+            static std::vector<AddressRange> functionAddresses(ByteAddr address);
 
-    /**
-     * \returns                        The current address of a screen cursor.
-     */
-    static ByteAddr screenAddress();
+            /**
+             * \returns                        The current address of a screen cursor.
+             */
+            static ByteAddr screenAddress();
 
-    /**
-     * Adds a menu item in the IDA's UI.
-     *
-     * param[in] menuItem              Path to the menu item after which the insertion will take place.
-     * param[in] name                  Name of menu item.
-     * param[in] hotkey                Hotkey for menu item.
-     * param[in] callback              Valid pointer to the function which gets called when the user selects it.
-     *                                 If it returns true, IDA refreshes the screen.
-     */
-    static void addMenuItem(const QString &menuItem, const QString &name, const QString &hotkey, bool (*callback)());
+            /**
+             * Adds a menu item in the IDA's UI.
+             *
+             * param[in] menuItem              Path to the menu item after which the insertion will take place.
+             * param[in] name                  Name of menu item.
+             * param[in] hotkey                Hotkey for menu item.
+             * param[in] callback              Valid pointer to the function which gets called when the user selects it.
+             *                                 If it returns true, IDA refreshes the screen.
+             */
+            static void addMenuItem(const QString & menuItem, const QString & name, const QString & hotkey, bool (*callback)());
 
-    /**
-     * Deletes a menu item in the IDA's UI.
-     *
-     * param[in] menuItem              Path to the menu item after which the insertion will take place.
-     */
-    static void deleteMenuItem(const QString &menuItem);
+            /**
+             * Deletes a menu item in the IDA's UI.
+             *
+             * param[in] menuItem              Path to the menu item after which the insertion will take place.
+             */
+            static void deleteMenuItem(const QString & menuItem);
 
-    /**
-     * Prints a message to IDA console.
-     */
-    static void print(const QString &message);
+            /**
+             * Prints a message to IDA console.
+             */
+            static void print(const QString & message);
 
-    /**
-     * Creates a child MDI widget using IDA's API.
-     *
-     * \param caption Title of the widget.
-     *
-     * \return Valid pointer to the created widget.
-     */
-    static QWidget *createWidget(const QString &caption);
+            /**
+             * Creates a child MDI widget using IDA's API.
+             *
+             * \param caption Title of the widget.
+             *
+             * \return Valid pointer to the created widget.
+             */
+            static QWidget* createWidget(const QString & caption);
 
-    /**
-     * Switches focus to the given widget.
-     *
-     * \param widget Valid pointer to the IDA's widget.
-     */
-    static void activateWidget(QWidget *widget);
+            /**
+             * Switches focus to the given widget.
+             *
+             * \param widget Valid pointer to the IDA's widget.
+             */
+            static void activateWidget(QWidget* widget);
 
-    /**
-     * Closes given IDA's widget.
-     *
-     * \param widget Valid pointer to the IDA's widget.
-     */
-    static void closeWidget(QWidget *widget);
-};
+            /**
+             * Closes given IDA's widget.
+             *
+             * \param widget Valid pointer to the IDA's widget.
+             */
+            static void closeWidget(QWidget* widget);
+        };
 
-}} // namespace nc::ida
+    }
+} // namespace nc::ida
 
 /* vim:set et sts=4 sw=4: */

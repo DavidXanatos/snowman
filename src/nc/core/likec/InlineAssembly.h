@@ -29,34 +29,38 @@
 
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * An __asm__ statement.
- */
-class InlineAssembly: public Statement {
-    QString code_; ///< Assembler code.
+            /**
+             * An __asm__ statement.
+             */
+            class InlineAssembly: public Statement
+            {
+                QString code_; ///< Assembler code.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] code Assembler code.
-     */
-    InlineAssembly(QString code):
-        Statement(INLINE_ASSEMBLY), code_(std::move(code))
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] code Assembler code.
+                 */
+                InlineAssembly(QString code):
+                    Statement(INLINE_ASSEMBLY), code_(std::move(code))
+                {}
 
-    /**
-     * \return Assembler code.
-     */
-    const QString &code() const { return code_; }
-};
+                /**
+                 * \return Assembler code.
+                 */
+                const QString & code() const { return code_; }
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::InlineAssembly, nc::core::likec::Statement::INLINE_ASSEMBLY)

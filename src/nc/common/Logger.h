@@ -30,75 +30,79 @@
 
 #include "LogLevel.h"
 
-namespace nc {
+namespace nc
+{
 
-/**
- * Log level.
- */
-class LogLevel {
-    Q_DECLARE_TR_FUNCTIONS(LogLevel)
-public:
     /**
-     * Log level values.
+     * Log level.
      */
-    enum Level {
-        DEBUG,
-        INFO,
-        WARNING,
-        ERROR,
-        LOWEST = DEBUG,
-        HIGHEST = ERROR
+    class LogLevel
+    {
+        Q_DECLARE_TR_FUNCTIONS(LogLevel)
+    public:
+        /**
+         * Log level values.
+         */
+        enum Level
+        {
+            DEBUG,
+            INFO,
+            WARNING,
+            ERROR,
+            LOWEST = DEBUG,
+            HIGHEST = ERROR
+        };
+
+        /**
+         * Constructor.
+         *
+         * \param level Log level value.
+         */
+        LogLevel(Level level): level_(level) {}
+
+        /**
+         * \return Log level value.
+         */
+        operator Level() const { return level_; }
+
+        /**
+         * \param level Log level value.
+         *
+         * \return Name of the given level.
+         */
+        static QString getName(Level level);
+
+        /**
+         * \return Name of the log level.
+         */
+        QString getName() const { return getName(level_); }
+
+    private:
+        /** The value of the log level. */
+        Level level_;
     };
 
     /**
-     * Constructor.
+     * The base class for a logger.
      *
-     * \param level Log level value.
+     * Logger does the actual logging of messages.
      */
-    LogLevel(Level level): level_(level) {}
+    class Logger
+    {
+    public:
+        /**
+         * Virtual destructor.
+         */
+        virtual ~Logger() {}
 
-    /**
-     * \return Log level value.
-     */
-    operator Level() const { return level_; }
-
-    /**
-     * \param level Log level value.
-     *
-     * \return Name of the given level.
-     */
-    static QString getName(Level level);
-
-    /**
-     * \return Name of the log level.
-     */
-    QString getName() const { return getName(level_); }
-
-private:
-    /** The value of the log level. */
-    Level level_;
-};
-
-/**
- * The base class for a logger.
- *
- * Logger does the actual logging of messages.
- */
-class Logger {
-public:
-    /**
-     * Virtual destructor.
-     */
-    virtual ~Logger() {}
-
-    /**
-     * Logs a message with a given level.
-     *
-     * \param[in] level Log level of the message.
-     * \param[in] text  Text of the message.
-     */
-    virtual void log(LogLevel level, const QString &text) = 0;
-};
+        /**
+         * Logs a message with a given level.
+         *
+         * \param[in] level Log level of the message.
+         * \param[in] text  Text of the message.
+         */
+        virtual void log(LogLevel level, const QString & text) = 0;
+    };
 
 } // namespace nc
 

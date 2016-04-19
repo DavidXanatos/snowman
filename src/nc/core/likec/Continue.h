@@ -27,20 +27,24 @@
 
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Continue statement.
- */
-class Continue: public Statement {
-public:
-    Continue(): Statement(CONTINUE) {}
-};
+            /**
+             * Continue statement.
+             */
+            class Continue: public Statement
+            {
+            public:
+                Continue(): Statement(CONTINUE) {}
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::Continue, nc::core::likec::Statement::CONTINUE)

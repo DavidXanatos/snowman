@@ -39,84 +39,101 @@
 #include <loader.hpp>  /* For PLUGIN_KEEP. */
 #include "IdaWorkaroundEnd.h"
 
-namespace nc { namespace ida { namespace detail {
+namespace nc
+{
+    namespace ida
+    {
+        namespace detail
+        {
 
-namespace {
-    struct IdaPluginStorage {
-        std::vector<IdaPluginRegistrator::PluginFactory> pluginFactories;
-        std::vector<std::unique_ptr<IdaPlugin>> plugins;
-    };
+            namespace
+            {
+                struct IdaPluginStorage
+                {
+                    std::vector<IdaPluginRegistrator::PluginFactory> pluginFactories;
+                    std::vector<std::unique_ptr<IdaPlugin>> plugins;
+                };
 
-    IdaPluginStorage *storage = NULL;
-} // namespace `anonymous-namespace`
-
-
-bool IdaPluginRegistrator::registerPlugin(const PluginFactory &pluginFactory) {
-    assert(!pluginFactory.empty());
-
-    if(storage == NULL)
-        storage = new IdaPluginStorage(); /* No locking since it will be called at application startup time. */
-
-    storage->pluginFactories.push_back(pluginFactory);
-
-    return true;
-}
+                IdaPluginStorage* storage = NULL;
+            } // namespace `anonymous-namespace`
 
 
-namespace {
-// -------------------------------------------------------------------------- //
-// Plugin interface
-// -------------------------------------------------------------------------- //
-    char name[] = "Snowman";
-    char help[] = "";
-    char hotkey[] = "";
-    char comment[] = "";
+            bool IdaPluginRegistrator::registerPlugin(const PluginFactory & pluginFactory)
+            {
+                assert(!pluginFactory.empty());
 
-    int idaapi init() {
-        /* Documentation says:
-         * 
-         * Do checks here to ensure your plug-in is being used within
-         * an environment it was written for. Return PLUGIN_SKIP if the
-         * checks fail, otherwise return PLUGIN_KEEP. */
+                if(storage == NULL)
+                    storage = new IdaPluginStorage(); /* No locking since it will be called at application startup time. */
 
-        foreach (const IdaPluginRegistrator::PluginFactory &pluginFactory, storage->pluginFactories)
-            storage->plugins.push_back(std::unique_ptr<IdaPlugin>(pluginFactory()));
+                storage->pluginFactories.push_back(pluginFactory);
 
-        return PLUGIN_KEEP;
-    }
+                return true;
+            }
 
-    void idaapi run(int /*arg*/) {
-        /* Documentation says:
-         * 
-         * The plugin can be passed an integer argument from the plugins.cfg
-         * file. This can be useful when you want the one plug-in to do
-         * something different depending on the hot-key pressed or menu
-         * item selected. */
 
-        foreach (auto &plugin, storage->plugins) {
-            (*plugin)();
+            namespace
+            {
+                // -------------------------------------------------------------------------- //
+                // Plugin interface
+                // -------------------------------------------------------------------------- //
+                char name[] = "Snowman";
+                char help[] = "";
+                char hotkey[] = "";
+                char comment[] = "";
+
+                int idaapi init()
+                {
+                    /* Documentation says:
+                     *
+                     * Do checks here to ensure your plug-in is being used within
+                     * an environment it was written for. Return PLUGIN_SKIP if the
+                     * checks fail, otherwise return PLUGIN_KEEP. */
+
+                    foreach(const IdaPluginRegistrator::PluginFactory & pluginFactory, storage->pluginFactories)
+                    storage->plugins.push_back(std::unique_ptr<IdaPlugin>(pluginFactory()));
+
+                    return PLUGIN_KEEP;
+                }
+
+                void idaapi run(int /*arg*/)
+                {
+                    /* Documentation says:
+                     *
+                     * The plugin can be passed an integer argument from the plugins.cfg
+                     * file. This can be useful when you want the one plug-in to do
+                     * something different depending on the hot-key pressed or menu
+                     * item selected. */
+
+                    foreach(auto & plugin, storage->plugins)
+                    {
+                        (*plugin)();
+                    }
+                }
+
+                void idaapi terminate()
+                {
+                    /* Documentation says:
+                     *
+                     * Stuff to do when exiting, generally you'd put any sort
+                     * of clean-up jobs here. */
+
+                    /* Perform destruction in the reverse order. */
+                    while(!storage->plugins.empty())
+                    {
+                        storage->plugins.pop_back();
+                    }
+                }
+
+            } // namespace `anonymous-namespace`
         }
     }
-
-    void idaapi terminate() {
-        /* Documentation says:
-         * 
-         * Stuff to do when exiting, generally you'd put any sort
-         * of clean-up jobs here. */
-
-        /* Perform destruction in the reverse order. */
-        while (!storage->plugins.empty()) {
-            storage->plugins.pop_back();
-        }
-    }
-
-} // namespace `anonymous-namespace`
-}}} // namespace nc::ida::detail
+} // namespace nc::ida::detail
 
 #ifdef Q_OS_WIN
 __declspec(dllexport)
 #endif
-plugin_t PLUGIN = {
+plugin_t PLUGIN =
+{
     IDP_INTERFACE_VERSION,      /**< IDA version plug-in is written for. */
     0,                          /**< Flags. */
     nc::ida::detail::init,      /**< Initialization function. */

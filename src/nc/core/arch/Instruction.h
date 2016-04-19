@@ -30,70 +30,74 @@
 #include <nc/common/Printable.h>
 #include <nc/common/Types.h>
 
-namespace nc {
-namespace core {
-namespace arch {
-
-/**
- * Base class for instructions.
- */
-class Instruction: public Printable {
-    /** Instruction's address in bytes. */
-    ByteAddr addr_;
-
-    /** Instruction's size in bytes. */
-    SmallByteSize size_;
-
-public:
-    /**
-     * Constructor.
-     *
-     * \param[in] addr  Instruction's address in bytes.
-     * \param[in] size  Instruction's size in bytes.
-     */
-    Instruction(ByteAddr addr = 0, SmallByteSize size = 0):
-        addr_(addr), size_(size)
+namespace nc
+{
+    namespace core
     {
-        assert(size >= 0);
-    }
+        namespace arch
+        {
 
-    /**
-     * Virtual destructor.
-     */
-    virtual ~Instruction();
+            /**
+             * Base class for instructions.
+             */
+            class Instruction: public Printable
+            {
+                /** Instruction's address in bytes. */
+                ByteAddr addr_;
 
-    /**
-     * \return Instruction's address in bytes.
-     */
-    ByteAddr addr() const { return addr_; }
+                /** Instruction's size in bytes. */
+                SmallByteSize size_;
 
-    /**
-     * Sets this instruction's address.
-     *
-     * \param[in] addr Address in bytes.
-     */
-    void setAddr(ByteAddr addr) { addr_ = addr; }
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param[in] addr  Instruction's address in bytes.
+                 * \param[in] size  Instruction's size in bytes.
+                 */
+                Instruction(ByteAddr addr = 0, SmallByteSize size = 0):
+                    addr_(addr), size_(size)
+                {
+                    assert(size >= 0);
+                }
 
-    /**
-     * \return Instruction's size in bytes.
-     */
-    SmallByteSize size() const { return size_; }
+                /**
+                 * Virtual destructor.
+                 */
+                virtual ~Instruction();
 
-    /**
-     * Sets the size of this instruction.
-     *
-     * \param[in] size Size in bytes.
-     */
-    void setSize(SmallByteSize size) { assert(size > 0); size_ = size; }
+                /**
+                 * \return Instruction's address in bytes.
+                 */
+                ByteAddr addr() const { return addr_; }
 
-    /**
-     * \return Address of the next instruction in memory.
-     */
-    ByteAddr endAddr() const { return addr_ + size_; }
-};
+                /**
+                 * Sets this instruction's address.
+                 *
+                 * \param[in] addr Address in bytes.
+                 */
+                void setAddr(ByteAddr addr) { addr_ = addr; }
 
-} // namespace arch
-} // namespace core
+                /**
+                 * \return Instruction's size in bytes.
+                 */
+                SmallByteSize size() const { return size_; }
+
+                /**
+                 * Sets the size of this instruction.
+                 *
+                 * \param[in] size Size in bytes.
+                 */
+                void setSize(SmallByteSize size) { assert(size > 0); size_ = size; }
+
+                /**
+                 * \return Address of the next instruction in memory.
+                 */
+                ByteAddr endAddr() const { return addr_ + size_; }
+            };
+
+        } // namespace arch
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

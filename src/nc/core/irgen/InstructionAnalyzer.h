@@ -27,81 +27,87 @@
 
 #include <memory>
 
-namespace nc {
+namespace nc
+{
 
-class CancellationToken;
-class LogToken;
+    class CancellationToken;
+    class LogToken;
 
-namespace core {
+    namespace core
+    {
 
-namespace ir {
-    class Program;
-    class Term;
-}
+        namespace ir
+        {
+            class Program;
+            class Term;
+        }
 
-namespace arch {
-    class Instruction;
-    class Instructions;
-    class Register;
-}
+        namespace arch
+        {
+            class Instruction;
+            class Instructions;
+            class Register;
+        }
 
-namespace irgen {
+        namespace irgen
+        {
 
-/**
- * Class used for producing IR code from an instruction.
- */
-class InstructionAnalyzer {
-public:
-    /**
-     * Creates intermediate representation of the given set of instructions.
-     *
-     * \param[in] instructions  Valid pointer to the set of instructions.
-     * \param[out] program      Valid pointer to the intermediate representation of a program.
-     * \param canceled          Cancellation token.
-     * \param log               Log token.
-     */
-    void createStatements(const arch::Instructions *instructions, ir::Program *program,
-                          const CancellationToken &canceled, const LogToken &log);
+            /**
+             * Class used for producing IR code from an instruction.
+             */
+            class InstructionAnalyzer
+            {
+            public:
+                /**
+                 * Creates intermediate representation of the given set of instructions.
+                 *
+                 * \param[in] instructions  Valid pointer to the set of instructions.
+                 * \param[out] program      Valid pointer to the intermediate representation of a program.
+                 * \param canceled          Cancellation token.
+                 * \param log               Log token.
+                 */
+                void createStatements(const arch::Instructions* instructions, ir::Program* program,
+                                      const CancellationToken & canceled, const LogToken & log);
 
-    /**
-     * Creates intermediate representation of an instruction and adds newly created statements to
-     * the intermediate representation of the program.
-     *
-     * \param[in] instruction   Valid pointer to the instruction to generate intermediate representation for.
-     * \param[out] program      Valid pointer to the intermediate representation of a program.
-     */
-    void createStatements(const arch::Instruction *instruction, ir::Program *program);
+                /**
+                 * Creates intermediate representation of an instruction and adds newly created statements to
+                 * the intermediate representation of the program.
+                 *
+                 * \param[in] instruction   Valid pointer to the instruction to generate intermediate representation for.
+                 * \param[out] program      Valid pointer to the intermediate representation of a program.
+                 */
+                void createStatements(const arch::Instruction* instruction, ir::Program* program);
 
-    /**
-     * \param[in] reg Valid pointer to a register.
-     *
-     * \return Valid pointer to the intermediate representation of this register as a term.
-     */
-    static std::unique_ptr<ir::Term> createTerm(const arch::Register *reg);
+                /**
+                 * \param[in] reg Valid pointer to a register.
+                 *
+                 * \return Valid pointer to the intermediate representation of this register as a term.
+                 */
+                static std::unique_ptr<ir::Term> createTerm(const arch::Register* reg);
 
-protected:
-    /**
-     * Actually creates intermediate representation of the given set of instructions.
-     *
-     * \param[in] instructions  Valid pointer to the set of instructions.
-     * \param[out] program      Valid pointer to the intermediate representation of a program.
-     * \param canceled          Cancellation token.
-     * \param log               Log token.
-     */
-    virtual void doCreateStatements(const arch::Instructions *instructions, ir::Program *program,
-                          const CancellationToken &canceled, const LogToken &log);
+            protected:
+                /**
+                 * Actually creates intermediate representation of the given set of instructions.
+                 *
+                 * \param[in] instructions  Valid pointer to the set of instructions.
+                 * \param[out] program      Valid pointer to the intermediate representation of a program.
+                 * \param canceled          Cancellation token.
+                 * \param log               Log token.
+                 */
+                virtual void doCreateStatements(const arch::Instructions* instructions, ir::Program* program,
+                                                const CancellationToken & canceled, const LogToken & log);
 
-    /**
-     * Actually creates intermediate representation of an instruction.
-     *
-     * \param[in] instruction   Valid pointer to the instruction to generate intermediate representation for.
-     * \param[out] program      Valid pointer to the intermediate representation of a program.
-     */
-    virtual void doCreateStatements(const arch::Instruction *instruction, ir::Program *program) = 0;
-};
+                /**
+                 * Actually creates intermediate representation of an instruction.
+                 *
+                 * \param[in] instruction   Valid pointer to the instruction to generate intermediate representation for.
+                 * \param[out] program      Valid pointer to the intermediate representation of a program.
+                 */
+                virtual void doCreateStatements(const arch::Instruction* instruction, ir::Program* program) = 0;
+            };
 
-} // namespace irgen
-} // namespace core
+        } // namespace irgen
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

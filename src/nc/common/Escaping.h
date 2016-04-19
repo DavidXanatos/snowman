@@ -31,10 +31,11 @@ QT_BEGIN_NAMESPACE
 class QString;
 QT_END_NAMESPACE
 
-namespace nc {
+namespace nc
+{
 
-QString escapeDotString(const QString &string);
-QString escapeCString(const QString &string);
+    QString escapeDotString(const QString & string);
+    QString escapeCString(const QString & string);
 
 } // namespace nc
 

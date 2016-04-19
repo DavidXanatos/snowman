@@ -33,30 +33,34 @@
 #include "Decompilation.h"
 #include "Project.h"
 
-namespace nc {
-namespace gui {
-
-DecompileAll::DecompileAll(Project *project):
-    project_(project)
+namespace nc
 {
-    assert(project);
-    assert(project->instructions());
+    namespace gui
+    {
 
-    setBackground(true);
-}
+        DecompileAll::DecompileAll(Project* project):
+            project_(project)
+        {
+            assert(project);
+            assert(project->instructions());
 
-void DecompileAll::work() {
-    auto context = std::make_shared<core::Context>();
-    context->setImage(project_->image());
-    context->setInstructions(project_->instructions());
-    context->setCancellationToken(cancellationToken());
-    context->setLogToken(project_->logToken());
+            setBackground(true);
+        }
 
-    project_->setContext(context);
+        void DecompileAll::work()
+        {
+            auto context = std::make_shared<core::Context>();
+            context->setImage(project_->image());
+            context->setInstructions(project_->instructions());
+            context->setCancellationToken(cancellationToken());
+            context->setLogToken(project_->logToken());
 
-    delegate(std::make_unique<Decompilation>(context));
-}
+            project_->setContext(context);
 
-}} // namespace nc::gui
+            delegate(std::make_unique<Decompilation>(context));
+        }
+
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

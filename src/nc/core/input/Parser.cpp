@@ -31,32 +31,45 @@
 #include <nc/core/image/Image.h>
 #include <nc/core/input/ParseError.h>
 
-namespace nc { namespace core { namespace input {
+namespace nc
+{
+    namespace core
+    {
+        namespace input
+        {
 
-bool Parser::canParse(QIODevice *source) const {
-    assert(source != nullptr);
+            bool Parser::canParse(QIODevice* source) const
+            {
+                assert(source != nullptr);
 
-    source->seek(0);
-    return doCanParse(source);
-}
+                source->seek(0);
+                return doCanParse(source);
+            }
 
-void Parser::parse(QIODevice *source, image::Image *image, const LogToken &log) const {
-    assert(source != nullptr);
-    assert(image != nullptr);
+            void Parser::parse(QIODevice* source, image::Image* image, const LogToken & log) const
+            {
+                assert(source != nullptr);
+                assert(image != nullptr);
 
-    try {
-        source->seek(0);
-        doParse(source, image, log);
-    } catch (nc::Exception &e) {
-        if (!boost::get_error_info<ErrorOffset>(e)) {
-            e << ErrorOffset(source->pos());
+                try
+                {
+                    source->seek(0);
+                    doParse(source, image, log);
+                }
+                catch(nc::Exception & e)
+                {
+                    if(!boost::get_error_info<ErrorOffset>(e))
+                    {
+                        e << ErrorOffset(source->pos());
+                    }
+                    throw;
+                }
+
+                assert(image->platform().architecture() && "The parser must set the architecture.");
+            }
+
         }
-        throw;
     }
-
-    assert(image->platform().architecture() && "The parser must set the architecture.");
-}
-
-}}} // namespace nc::core::input
+} // namespace nc::core::input
 
 /* vim:set et sts=4 sw=4: */

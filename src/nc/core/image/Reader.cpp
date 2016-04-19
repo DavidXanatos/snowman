@@ -26,36 +26,45 @@
 
 #include <QString>
 
-namespace nc {
-namespace core {
-namespace image {
+namespace nc
+{
+    namespace core
+    {
+        namespace image
+        {
 
-ByteSize Reader::readBytes(ByteAddr addr, void *buf, ByteSize size) const {
-    return externalByteSource_->readBytes(addr, buf, size);
-}
+            ByteSize Reader::readBytes(ByteAddr addr, void* buf, ByteSize size) const
+            {
+                return externalByteSource_->readBytes(addr, buf, size);
+            }
 
-QString Reader::readAsciizString(ByteAddr addr, ByteSize maxSize) const {
-    assert(maxSize >= 0);
+            QString Reader::readAsciizString(ByteAddr addr, ByteSize maxSize) const
+            {
+                assert(maxSize >= 0);
 
-    if (maxSize == 0) {
-        return QString();
-    }
+                if(maxSize == 0)
+                {
+                    return QString();
+                }
 
-    std::unique_ptr<char[]> buf(new char[maxSize + 1]);
+                std::unique_ptr<char[]> buf(new char[maxSize + 1]);
 
-    ByteSize size = readBytes(addr, buf.get(), maxSize);
-    assert(size <= maxSize);
+                ByteSize size = readBytes(addr, buf.get(), maxSize);
+                assert(size <= maxSize);
 
-    if (size == 0) {
-        return QString();
-    } else {
-        buf.get()[size] = '\0';
-        return QString::fromLatin1(buf.get());
-    }
-}
+                if(size == 0)
+                {
+                    return QString();
+                }
+                else
+                {
+                    buf.get()[size] = '\0';
+                    return QString::fromLatin1(buf.get());
+                }
+            }
 
-} // namespace image
-} // namespace core
+        } // namespace image
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

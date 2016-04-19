@@ -28,30 +28,42 @@
 
 #include "Type.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace types {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace types
+            {
 
-Types::Types() {}
+                Types::Types() {}
 
-Types::~Types() {}
+                Types::~Types() {}
 
-Type *Types::getType(const Term *term) {
-    auto &type = types_[term];
-    if (!type) {
-        type.reset(new Type());
-        type->updateSize(term->size());
-        return type.get();
-    } else {
-        return type->findSet();
+                Type* Types::getType(const Term* term)
+                {
+                    auto & type = types_[term];
+                    if(!type)
+                    {
+                        type.reset(new Type());
+                        type->updateSize(term->size());
+                        return type.get();
+                    }
+                    else
+                    {
+                        return type->findSet();
+                    }
+                }
+
+                const Type* Types::getType(const Term* term) const
+                {
+                    return const_cast<Types*>(this)->getType(term);
+                }
+
+            }
+        }
     }
-}
-
-const Type *Types::getType(const Term *term) const {
-    return const_cast<Types *>(this)->getType(term);
-}
-
-}}}} // namespace nc::core::ir::types
+} // namespace nc::core::ir::types
 
 /* vim:set et sts=4 sw=4: */

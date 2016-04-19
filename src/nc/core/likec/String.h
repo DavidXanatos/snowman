@@ -29,34 +29,38 @@
 
 #include "Expression.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * C string.
- */
-class String: public Expression {
-    QString characters_; ///< Characters of the string.
+            /**
+             * C string.
+             */
+            class String: public Expression
+            {
+                QString characters_; ///< Characters of the string.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] characters Characters of the string.
-     */
-    explicit String(QString characters):
-        Expression(STRING), characters_(std::move(characters))
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] characters Characters of the string.
+                 */
+                explicit String(QString characters):
+                    Expression(STRING), characters_(std::move(characters))
+                {}
 
-    /**
-     * \return Characters of the string.
-     */
-    const QString &characters() const { return characters_; }
-};
+                /**
+                 * \return Characters of the string.
+                 */
+                const QString & characters() const { return characters_; }
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Expression, nc::core::likec::String, nc::core::likec::Expression::STRING)

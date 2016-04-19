@@ -30,39 +30,43 @@
 
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace likec {
-
-class Expression;
-
-/**
- * Case label.
- */
-class CaseLabel: public Statement {
-    /** Case expression. */
-    std::unique_ptr<Expression> expression_;
-
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] expression Valid pointer to the case expression.
-     */
-    explicit CaseLabel(std::unique_ptr<Expression> expression):
-        Statement(CASE_LABEL), expression_(std::move(expression))
+namespace nc
+{
+    namespace core
     {
-        assert(expression_);
-    }
+        namespace likec
+        {
 
-    /**
-     * \return Valid pointer to the case expression.
-     */
-    Expression *expression() const { return expression_.get(); }
-};
+            class Expression;
 
-} // namespace likec
-} // namespace core
+            /**
+             * Case label.
+             */
+            class CaseLabel: public Statement
+            {
+                /** Case expression. */
+                std::unique_ptr<Expression> expression_;
+
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] expression Valid pointer to the case expression.
+                 */
+                explicit CaseLabel(std::unique_ptr<Expression> expression):
+                    Statement(CASE_LABEL), expression_(std::move(expression))
+                {
+                    assert(expression_);
+                }
+
+                /**
+                 * \return Valid pointer to the case expression.
+                 */
+                Expression* expression() const { return expression_.get(); }
+            };
+
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::CaseLabel, nc::core::likec::Statement::CASE_LABEL)

@@ -33,78 +33,83 @@ class QStringListModel;
 class QPlainTextEdit;
 QT_END_NAMESPACE
 
-namespace nc { namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-/**
- * Widget providing the functionality of moving to the line with a given number in a QPlainTextEdit.
- */
-class GotoLineWidget: public QWidget {
-    Q_OBJECT
+        /**
+         * Widget providing the functionality of moving to the line with a given number in a QPlainTextEdit.
+         */
+        class GotoLineWidget: public QWidget
+        {
+            Q_OBJECT
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param[in] textEdit  Valid pointer to the associated QPlainTextEdit instance.
-     * \param[in] parent    Pointer to the parent widget. Can be nullptr.
-     */
-    GotoLineWidget(QPlainTextEdit *textEdit, QWidget *parent = nullptr);
+            /**
+             * Constructor.
+             *
+             * \param[in] textEdit  Valid pointer to the associated QPlainTextEdit instance.
+             * \param[in] parent    Pointer to the parent widget. Can be nullptr.
+             */
+            GotoLineWidget(QPlainTextEdit* textEdit, QWidget* parent = nullptr);
 
-    /**
-     * \return Valid pointer to the associated QPlainTextEdit instance.
-     */
-    QPlainTextEdit *textEdit() const { return textEdit_; }
+            /**
+             * \return Valid pointer to the associated QPlainTextEdit instance.
+             */
+            QPlainTextEdit* textEdit() const { return textEdit_; }
 
-    public Q_SLOTS:
+        public Q_SLOTS:
 
-    /**
-     * Shows the widget and sets input focus into it.
-     */
-    void activate();
+            /**
+             * Shows the widget and sets input focus into it.
+             */
+            void activate();
 
-    /**
-     * Hides the widget.
-     */
-    void deactivate();
+            /**
+             * Hides the widget.
+             */
+            void deactivate();
 
-    private Q_SLOTS:
+        private Q_SLOTS:
 
-    /**
-     * Moves the cursor in the associated QPlainTextEdit to the line with the entered number.
-     */
-    void go();
+            /**
+             * Moves the cursor in the associated QPlainTextEdit to the line with the entered number.
+             */
+            void go();
 
-    /**
-     * Indicates the status of goto operation.
-     *
-     * \param success Whether goto was successful.
-     */
-    void indicateStatus(bool success = true);
+            /**
+             * Indicates the status of goto operation.
+             *
+             * \param success Whether goto was successful.
+             */
+            void indicateStatus(bool success = true);
 
-    /**
-     * Remembers currently entered line number for completion.
-     */
-    void rememberCompletion();
+            /**
+             * Remembers currently entered line number for completion.
+             */
+            void rememberCompletion();
 
-    private:
+        private:
 
-    /** Associated QPlainTextEdit instance. */
-    QPlainTextEdit *textEdit_;
+            /** Associated QPlainTextEdit instance. */
+            QPlainTextEdit* textEdit_;
 
-    /** Input for entering a line number. */
-    QLineEdit *lineEdit_;
+            /** Input for entering a line number. */
+            QLineEdit* lineEdit_;
 
-    /** Completion model for the line number. */
-    QStringListModel *completionModel_;
+            /** Completion model for the line number. */
+            QStringListModel* completionModel_;
 
-    /** Palette of the line edit in a normal state. */
-    QPalette normalPalette_;
+            /** Palette of the line edit in a normal state. */
+            QPalette normalPalette_;
 
-    /** Palette of the line edit to let user know that the string was not found. */
-    QPalette notFoundPalette_;
-};
+            /** Palette of the line edit to let user know that the string was not found. */
+            QPalette notFoundPalette_;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

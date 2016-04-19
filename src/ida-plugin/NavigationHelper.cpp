@@ -39,57 +39,71 @@
 
 #include "IdaFrontend.h"
 
-namespace nc { namespace ida {
-
-NavigationHelper::NavigationHelper(gui::MainWindow *mainWindow):
-    QObject(mainWindow), mainWindow_(mainWindow)
+namespace nc
 {
-    jumpFromInstructionsViewAction_ = new QAction(tr("Show in IDA"), this);
-    jumpFromInstructionsViewAction_->setShortcut(Qt::CTRL + Qt::Key_Backspace);
-    jumpFromInstructionsViewAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    connect(jumpFromInstructionsViewAction_, SIGNAL(triggered()), this, SLOT(jumpFromInstructionsView()));
-    mainWindow_->instructionsView()->treeView()->addAction(jumpFromInstructionsViewAction_);
+    namespace ida
+    {
 
-    jumpFromCxxViewAction_ = new QAction(tr("Show in IDA"), this);
-    jumpFromCxxViewAction_->setShortcut(Qt::CTRL + Qt::Key_Backspace);
-    jumpFromCxxViewAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    connect(jumpFromCxxViewAction_, SIGNAL(triggered()), this, SLOT(jumpFromCxxView()));
-    mainWindow_->cxxView()->textEdit()->addAction(jumpFromCxxViewAction_);
+        NavigationHelper::NavigationHelper(gui::MainWindow* mainWindow):
+            QObject(mainWindow), mainWindow_(mainWindow)
+        {
+            jumpFromInstructionsViewAction_ = new QAction(tr("Show in IDA"), this);
+            jumpFromInstructionsViewAction_->setShortcut(Qt::CTRL + Qt::Key_Backspace);
+            jumpFromInstructionsViewAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+            connect(jumpFromInstructionsViewAction_, SIGNAL(triggered()), this, SLOT(jumpFromInstructionsView()));
+            mainWindow_->instructionsView()->treeView()->addAction(jumpFromInstructionsViewAction_);
 
-    connect(mainWindow->instructionsView(), SIGNAL(contextMenuCreated(QMenu *)), this, SLOT(populateInstructionsContextMenu(QMenu *)));
-    connect(mainWindow->cxxView(), SIGNAL(contextMenuCreated(QMenu *)), this, SLOT(populateCxxContextMenu(QMenu *)));
-}
+            jumpFromCxxViewAction_ = new QAction(tr("Show in IDA"), this);
+            jumpFromCxxViewAction_->setShortcut(Qt::CTRL + Qt::Key_Backspace);
+            jumpFromCxxViewAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+            connect(jumpFromCxxViewAction_, SIGNAL(triggered()), this, SLOT(jumpFromCxxView()));
+            mainWindow_->cxxView()->textEdit()->addAction(jumpFromCxxViewAction_);
 
-void NavigationHelper::populateInstructionsContextMenu(QMenu *menu) {
-    if (!mainWindow_->instructionsView()->selectedInstructions().empty()) {
-        menu->addSeparator();
-        menu->addAction(jumpFromInstructionsViewAction_);
-    }
-}
-
-void NavigationHelper::populateCxxContextMenu(QMenu *menu) {
-    if (!mainWindow_->cxxView()->selectedInstructions().empty()) {
-        menu->addSeparator();
-        menu->addAction(jumpFromCxxViewAction_);
-    }
-}
-
-void NavigationHelper::jumpFromInstructionsView() {
-    foreach (auto instruction, mainWindow_->instructionsView()->selectedInstructions()) {
-        if (IdaFrontend::jumpToAddress(instruction->addr())) {
-            break;
+            connect(mainWindow->instructionsView(), SIGNAL(contextMenuCreated(QMenu*)), this, SLOT(populateInstructionsContextMenu(QMenu*)));
+            connect(mainWindow->cxxView(), SIGNAL(contextMenuCreated(QMenu*)), this, SLOT(populateCxxContextMenu(QMenu*)));
         }
-    }
-}
 
-void NavigationHelper::jumpFromCxxView() {
-    foreach (auto instruction, mainWindow_->cxxView()->selectedInstructions()) {
-        if (IdaFrontend::jumpToAddress(instruction->addr())) {
-            break;
+        void NavigationHelper::populateInstructionsContextMenu(QMenu* menu)
+        {
+            if(!mainWindow_->instructionsView()->selectedInstructions().empty())
+            {
+                menu->addSeparator();
+                menu->addAction(jumpFromInstructionsViewAction_);
+            }
         }
-    }
-}
 
-}} // namespace nc::ida
+        void NavigationHelper::populateCxxContextMenu(QMenu* menu)
+        {
+            if(!mainWindow_->cxxView()->selectedInstructions().empty())
+            {
+                menu->addSeparator();
+                menu->addAction(jumpFromCxxViewAction_);
+            }
+        }
+
+        void NavigationHelper::jumpFromInstructionsView()
+        {
+            foreach(auto instruction, mainWindow_->instructionsView()->selectedInstructions())
+            {
+                if(IdaFrontend::jumpToAddress(instruction->addr()))
+                {
+                    break;
+                }
+            }
+        }
+
+        void NavigationHelper::jumpFromCxxView()
+        {
+            foreach(auto instruction, mainWindow_->cxxView()->selectedInstructions())
+            {
+                if(IdaFrontend::jumpToAddress(instruction->addr()))
+                {
+                    break;
+                }
+            }
+        }
+
+    }
+} // namespace nc::ida
 
 /* vim:set et sts=4 sw=4: */

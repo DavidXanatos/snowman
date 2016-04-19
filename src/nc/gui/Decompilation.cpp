@@ -29,25 +29,32 @@
 
 #include <cassert>
 
-namespace nc {
-namespace gui {
-
-Decompilation::Decompilation(const std::shared_ptr<core::Context> &context):
-    context_(context)
+namespace nc
 {
-    assert(context);
-}
+    namespace gui
+    {
 
-Decompilation::~Decompilation() {}
+        Decompilation::Decompilation(const std::shared_ptr<core::Context> & context):
+            context_(context)
+        {
+            assert(context);
+        }
 
-void Decompilation::work() {
-    try {
-        core::Driver::decompile(*context_);
-    } catch (const CancellationException &) {
-        /* Nothing to do. */
+        Decompilation::~Decompilation() {}
+
+        void Decompilation::work()
+        {
+            try
+            {
+                core::Driver::decompile(*context_);
+            }
+            catch(const CancellationException &)
+            {
+                /* Nothing to do. */
+            }
+        }
+
     }
-}
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

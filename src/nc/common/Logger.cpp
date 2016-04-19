@@ -5,10 +5,13 @@
 
 #include <QObject>
 
-namespace nc {
+namespace nc
+{
 
-QString LogLevel::getName(Level level) {
-    switch (level) {
+    QString LogLevel::getName(Level level)
+    {
+        switch(level)
+        {
         case DEBUG:
             return tr("Debug");
         case INFO:
@@ -17,9 +20,9 @@ QString LogLevel::getName(Level level) {
             return tr("Warning");
         case ERROR:
             return tr("Error");
+        }
+        return QString();
     }
-    return QString();
-}
 
 } // namespace nc
 

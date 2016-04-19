@@ -34,67 +34,87 @@
 #include "Dataflow.h"
 #include "Value.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Term;
+            class Term;
 
-namespace dflow {
-
-const Term *getFirstCopy(const Term *term, const Dataflow &dataflow) {
-    assert(term != nullptr);
-
-    /* Terms that were already seen. */
-    boost::unordered_set<const Term *> visited;
-
-    do {
-        visited.insert(term);
-
-        if (term->isWrite()) {
-            if (auto source = term->source()) {
-                term = source;
-            } else {
-                break;
-            }
-        } else if (term->isRead()) {
-            auto &definitions = dataflow.getDefinitions(term);
-
-            if (definitions.chunks().size() == 1 &&
-                definitions.chunks().front().location() == dataflow.getMemoryLocation(term) &&
-                definitions.chunks().front().definitions().size() == 1)
+            namespace dflow
             {
-                term = definitions.chunks().front().definitions().front();
-            } else {
-                break;
-            }
-        } else {
-            unreachable();
-        }
-    } while (!nc::contains(visited, term));
 
-    return term;
-}
+                const Term* getFirstCopy(const Term* term, const Dataflow & dataflow)
+                {
+                    assert(term != nullptr);
 
-bool isReturn(const Jump *jump, const Dataflow &dataflow) {
-    assert(jump != nullptr);
+                    /* Terms that were already seen. */
+                    boost::unordered_set<const Term*> visited;
 
-    return isReturnAddress(jump->thenTarget(), dataflow) || isReturnAddress(jump->elseTarget(), dataflow);
-}
+                    do
+                    {
+                        visited.insert(term);
 
-bool isReturnAddress(const JumpTarget &target, const Dataflow &dataflow) {
-    return target.address() && isReturnAddress(target.address(), dataflow);
-}
+                        if(term->isWrite())
+                        {
+                            if(auto source = term->source())
+                            {
+                                term = source;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else if(term->isRead())
+                        {
+                            auto & definitions = dataflow.getDefinitions(term);
 
-bool isReturnAddress(const Term *term, const Dataflow &dataflow) {
-    assert(term != nullptr);
+                            if(definitions.chunks().size() == 1 &&
+                                    definitions.chunks().front().location() == dataflow.getMemoryLocation(term) &&
+                                    definitions.chunks().front().definitions().size() == 1)
+                            {
+                                term = definitions.chunks().front().definitions().front();
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            unreachable();
+                        }
+                    }
+                    while(!nc::contains(visited, term));
 
-    return dataflow.getValue(term)->isReturnAddress();
-}
+                    return term;
+                }
 
-} // namespace dflow
-} // namespace ir
-} // namespace core
+                bool isReturn(const Jump* jump, const Dataflow & dataflow)
+                {
+                    assert(jump != nullptr);
+
+                    return isReturnAddress(jump->thenTarget(), dataflow) || isReturnAddress(jump->elseTarget(), dataflow);
+                }
+
+                bool isReturnAddress(const JumpTarget & target, const Dataflow & dataflow)
+                {
+                    return target.address() && isReturnAddress(target.address(), dataflow);
+                }
+
+                bool isReturnAddress(const Term* term, const Dataflow & dataflow)
+                {
+                    assert(term != nullptr);
+
+                    return dataflow.getValue(term)->isReturnAddress();
+                }
+
+            } // namespace dflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

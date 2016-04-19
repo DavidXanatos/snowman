@@ -20,6 +20,6 @@
 #include "../../MCInst.h"
 #include "../../SStream.h"
 
-void Mips_printInst(MCInst *MI, SStream *O, void *info);
+void Mips_printInst(MCInst* MI, SStream* O, void* info);
 
 #endif

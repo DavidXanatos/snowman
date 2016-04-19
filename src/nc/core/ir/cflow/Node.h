@@ -31,114 +31,120 @@
 
 #include <vector>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class BasicBlock;
+            class BasicBlock;
 
-namespace cflow {
+            namespace cflow
+            {
 
-class BasicNode;
-class Edge;
-class Graph;
-class Region;
+                class BasicNode;
+                class Edge;
+                class Graph;
+                class Region;
 
-/**
- * Graph node.
- */
-class Node: public Printable {
-    NC_BASE_CLASS(Node, nodeKind)
-    friend class Edge;
+                /**
+                 * Graph node.
+                 */
+                class Node: public Printable
+                {
+                    NC_BASE_CLASS(Node, nodeKind)
+                    friend class Edge;
 
-public:
-    /**
-     * Node kind.
-     */
-    enum NodeKind {
-        BASIC, ///< Basic block node.
-        REGION ///< Region.
-    };
+                public:
+                    /**
+                     * Node kind.
+                     */
+                    enum NodeKind
+                    {
+                        BASIC, ///< Basic block node.
+                        REGION ///< Region.
+                    };
 
-private:
-    Region *parent_; ///< Parent region.
-    std::vector<Edge *> inEdges_; ///< Incoming edges.
-    std::vector<Edge *> outEdges_; ///< Outgoing edges.
+                private:
+                    Region* parent_; ///< Parent region.
+                    std::vector<Edge*> inEdges_;  ///< Incoming edges.
+                    std::vector<Edge*> outEdges_;  ///< Outgoing edges.
 
-public:
-    /**
-     * \param kind Kind of the node.
-     */
-    Node(NodeKind kind): nodeKind_(kind), parent_(nullptr) {}
+                public:
+                    /**
+                     * \param kind Kind of the node.
+                     */
+                    Node(NodeKind kind): nodeKind_(kind), parent_(nullptr) {}
 
-    /**
-     * Virtual destructor.
-     */
-    virtual ~Node();
+                    /**
+                     * Virtual destructor.
+                     */
+                    virtual ~Node();
 
-    /**
-     * \return Pointer to the parent region. Can be nullptr.
-     */
-    Region *parent() const { return parent_; }
+                    /**
+                     * \return Pointer to the parent region. Can be nullptr.
+                     */
+                    Region* parent() const { return parent_; }
 
-    /**
-     * Sets parent region.
-     *
-     * \param[in] parent Parent region.
-     */
-    void setParent(Region *parent) { parent_ = parent; }
+                    /**
+                     * Sets parent region.
+                     *
+                     * \param[in] parent Parent region.
+                     */
+                    void setParent(Region* parent) { parent_ = parent; }
 
-    /**
-     * \return Incoming edges.
-     */
-    const std::vector<Edge *> &inEdges() const { return inEdges_; }
+                    /**
+                     * \return Incoming edges.
+                     */
+                    const std::vector<Edge*> & inEdges() const { return inEdges_; }
 
-    /**
-     * \return Outgoing edges.
-     */
-    const std::vector<Edge *> &outEdges() const { return outEdges_; }
+                    /**
+                     * \return Outgoing edges.
+                     */
+                    const std::vector<Edge*> & outEdges() const { return outEdges_; }
 
-    /**
-     * \return Valid pointer to the entry basic block of the node.
-     */
-    virtual const BasicBlock *getEntryBasicBlock() const = 0;
+                    /**
+                     * \return Valid pointer to the entry basic block of the node.
+                     */
+                    virtual const BasicBlock* getEntryBasicBlock() const = 0;
 
-    /**
-     * \return Valid pointer to the predecessor node if there is only one
-     *         incoming edges, nullptr otherwise.
-     */
-    Node *uniquePredecessor() const;
+                    /**
+                     * \return Valid pointer to the predecessor node if there is only one
+                     *         incoming edges, nullptr otherwise.
+                     */
+                    Node* uniquePredecessor() const;
 
-    /**
-     * \return Valid pointer to the successor node if there is only one
-     *         outgoing edges, nullptr otherwise.
-     */
-    Node *uniqueSuccessor() const;
+                    /**
+                     * \return Valid pointer to the successor node if there is only one
+                     *         outgoing edges, nullptr otherwise.
+                     */
+                    Node* uniqueSuccessor() const;
 
-    /**
-     * \return True if the node has two different successors.
-     */
-    bool isFork() const;
+                    /**
+                     * \return True if the node has two different successors.
+                     */
+                    bool isFork() const;
 
-    /**
-     * \param[in] notThis Valid pointer to a node.
-     *
-     * \return Pointer to any successor different from the notThis;
-     *         nullptr if there is no such successor.
-     */
-    Node *getOtherSuccessor(const Node *notThis) const;
+                    /**
+                     * \param[in] notThis Valid pointer to a node.
+                     *
+                     * \return Pointer to any successor different from the notThis;
+                     *         nullptr if there is no such successor.
+                     */
+                    Node* getOtherSuccessor(const Node* notThis) const;
 
-    /**
-     * \return True if this is a basic block node with a conditional jump whose
-     *         destinations are known basic blocks or a compound condition,
-     *         false otherwise.
-     */
-    virtual bool isCondition() const = 0;
-};
+                    /**
+                     * \return True if this is a basic block node with a conditional jump whose
+                     *         destinations are known basic blocks or a compound condition,
+                     *         false otherwise.
+                     */
+                    virtual bool isCondition() const = 0;
+                };
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::ir::cflow::Node, nc::core::ir::cflow::BasicNode, nc::core::ir::cflow::Node::BASIC)

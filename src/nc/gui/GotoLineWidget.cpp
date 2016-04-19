@@ -34,88 +34,103 @@
 #include <QTextBlock>
 #include <QPlainTextEdit>
 
-namespace nc { namespace gui {
-
-GotoLineWidget::GotoLineWidget(QPlainTextEdit *textEdit, QWidget *parent):
-    QWidget(parent), textEdit_(textEdit)
+namespace nc
 {
-    QLabel *goLabel = new QLabel(tr("Go to line:"), this);
+    namespace gui
+    {
 
-    completionModel_ = new QStringListModel(this);
+        GotoLineWidget::GotoLineWidget(QPlainTextEdit* textEdit, QWidget* parent):
+            QWidget(parent), textEdit_(textEdit)
+        {
+            QLabel* goLabel = new QLabel(tr("Go to line:"), this);
 
-    QIntValidator *validator = new QIntValidator(this);
-    validator->setBottom(1);
+            completionModel_ = new QStringListModel(this);
 
-    lineEdit_ = new QLineEdit(this);
-    lineEdit_->setCompleter(new QCompleter(completionModel_, this));
-    lineEdit_->setValidator(validator);
+            QIntValidator* validator = new QIntValidator(this);
+            validator->setBottom(1);
 
-    connect(lineEdit_, SIGNAL(textChanged(const QString &)), this, SLOT(indicateStatus()));
-    connect(lineEdit_, SIGNAL(returnPressed()), this, SLOT(go()));
+            lineEdit_ = new QLineEdit(this);
+            lineEdit_->setCompleter(new QCompleter(completionModel_, this));
+            lineEdit_->setValidator(validator);
 
-    QPushButton *goButton = new QPushButton(tr("&Go"), this);
-    connect(goButton, SIGNAL(clicked()), this, SLOT(go()));
+            connect(lineEdit_, SIGNAL(textChanged(const QString &)), this, SLOT(indicateStatus()));
+            connect(lineEdit_, SIGNAL(returnPressed()), this, SLOT(go()));
 
-    QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->setContentsMargins(4, 0, 4, 4);
-    layout->addWidget(goLabel);
-    layout->addWidget(lineEdit_);
-    layout->addWidget(goButton);
+            QPushButton* goButton = new QPushButton(tr("&Go"), this);
+            connect(goButton, SIGNAL(clicked()), this, SLOT(go()));
 
-    normalPalette_   = lineEdit_->palette();
-    notFoundPalette_ = lineEdit_->palette();
-    notFoundPalette_.setColor(QPalette::Base, QColor(255, 192, 192));
-}
+            QHBoxLayout* layout = new QHBoxLayout(this);
+            layout->setContentsMargins(4, 0, 4, 4);
+            layout->addWidget(goLabel);
+            layout->addWidget(lineEdit_);
+            layout->addWidget(goButton);
 
-void GotoLineWidget::activate() {
-    show();
-    lineEdit_->selectAll();
-    lineEdit_->setFocus();
-}
+            normalPalette_   = lineEdit_->palette();
+            notFoundPalette_ = lineEdit_->palette();
+            notFoundPalette_.setColor(QPalette::Base, QColor(255, 192, 192));
+        }
 
-void GotoLineWidget::deactivate() {
-    if (!isVisible()) {
-        return;
+        void GotoLineWidget::activate()
+        {
+            show();
+            lineEdit_->selectAll();
+            lineEdit_->setFocus();
+        }
+
+        void GotoLineWidget::deactivate()
+        {
+            if(!isVisible())
+            {
+                return;
+            }
+
+            textEdit()->setFocus();
+            hide();
+        }
+
+        void GotoLineWidget::go()
+        {
+            QTextBlock block;
+
+            if(textEdit()->document())
+            {
+                block = textEdit()->document()->findBlockByNumber(lineEdit_->text().toInt() - 1);
+            }
+
+            if(block.isValid())
+            {
+                QTextCursor cursor(block);
+                textEdit()->setTextCursor(cursor);
+                textEdit()->ensureCursorVisible();
+
+                indicateStatus(true);
+
+                deactivate();
+            }
+            else
+            {
+                indicateStatus(false);
+            }
+
+            rememberCompletion();
+        }
+
+        void GotoLineWidget::indicateStatus(bool success)
+        {
+            lineEdit_->setPalette(success ? normalPalette_ : notFoundPalette_);
+        }
+
+        void GotoLineWidget::rememberCompletion()
+        {
+            QStringList list = completionModel_->stringList();
+            if(!list.contains(lineEdit_->text(), lineEdit_->completer()->caseSensitivity()))
+            {
+                list.append(lineEdit_->text());
+                completionModel_->setStringList(list);
+            }
+        }
+
     }
-
-    textEdit()->setFocus();
-    hide();
-}
-
-void GotoLineWidget::go() {
-    QTextBlock block;
-
-    if (textEdit()->document()) {
-        block = textEdit()->document()->findBlockByNumber(lineEdit_->text().toInt() - 1);
-    }
-
-    if (block.isValid()) {
-        QTextCursor cursor(block);
-        textEdit()->setTextCursor(cursor);
-        textEdit()->ensureCursorVisible();
-
-        indicateStatus(true);
-
-        deactivate();
-    } else {
-        indicateStatus(false);
-    }
-
-    rememberCompletion();
-}
-
-void GotoLineWidget::indicateStatus(bool success) {
-    lineEdit_->setPalette(success ? normalPalette_ : notFoundPalette_);
-}
-
-void GotoLineWidget::rememberCompletion() {
-    QStringList list = completionModel_->stringList();
-    if (!list.contains(lineEdit_->text(), lineEdit_->completer()->caseSensitivity())) {
-        list.append(lineEdit_->text());
-        completionModel_->setStringList(list);
-    }
-}
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

@@ -30,38 +30,43 @@
 
 #include "SectionsModel.h"
 
-namespace nc {
-namespace gui {
-
-SectionsView::SectionsView(QWidget *parent):
-    TreeView(tr("Sections"), parent),
-    model_(nullptr)
+namespace nc
 {
-    treeView()->setItemsExpandable(false);
-    treeView()->setRootIsDecorated(false);
-    treeView()->setSelectionBehavior(QAbstractItemView::SelectRows);
-    treeView()->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    treeView()->setUniformRowHeights(true);
-    treeView()->setSortingEnabled(true);
-    this->setDocumentFont(QFont("Consolas", 8));
+    namespace gui
+    {
 
-    proxyModel_ = new QSortFilterProxyModel(this);
-    proxyModel_->setSortRole(SectionsModel::SortRole);
-    treeView()->setModel(proxyModel_);
-}
+        SectionsView::SectionsView(QWidget* parent):
+            TreeView(tr("Sections"), parent),
+            model_(nullptr)
+        {
+            treeView()->setItemsExpandable(false);
+            treeView()->setRootIsDecorated(false);
+            treeView()->setSelectionBehavior(QAbstractItemView::SelectRows);
+            treeView()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+            treeView()->setUniformRowHeights(true);
+            treeView()->setSortingEnabled(true);
+            this->setDocumentFont(QFont("Consolas", 8));
 
-void SectionsView::setModel(SectionsModel *model) {
-    if (model != model_) {
-        model_ = model;
-        proxyModel_->setSourceModel(model);
-    }
-}
+            proxyModel_ = new QSortFilterProxyModel(this);
+            proxyModel_->setSortRole(SectionsModel::SortRole);
+            treeView()->setModel(proxyModel_);
+        }
 
-const core::image::Section *SectionsView::selectedSection() const {
-    return model_->getSection(proxyModel_->mapToSource(treeView()->currentIndex()));
-}
+        void SectionsView::setModel(SectionsModel* model)
+        {
+            if(model != model_)
+            {
+                model_ = model;
+                proxyModel_->setSourceModel(model);
+            }
+        }
 
-} // namespace gui
+        const core::image::Section* SectionsView::selectedSection() const
+        {
+            return model_->getSection(proxyModel_->mapToSource(treeView()->currentIndex()));
+        }
+
+    } // namespace gui
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

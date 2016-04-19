@@ -27,27 +27,31 @@
 
 #include <nc/core/input/Parser.h>
 
-namespace nc {
-namespace input {
-namespace elf {
+namespace nc
+{
+    namespace input
+    {
+        namespace elf
+        {
 
-/**
- * Parser for ELF32 and ELF64 formats.
- */
-class ElfParser: public core::input::Parser {
-public:
-    /**
-     * Constructor.
-     */
-    ElfParser();
+            /**
+             * Parser for ELF32 and ELF64 formats.
+             */
+            class ElfParser: public core::input::Parser
+            {
+            public:
+                /**
+                 * Constructor.
+                 */
+                ElfParser();
 
-protected:
-    virtual bool doCanParse(QIODevice *source) const override;
-    virtual void doParse(QIODevice *source, core::image::Image *image, const LogToken &logToken) const override;
-};
+            protected:
+                virtual bool doCanParse(QIODevice* source) const override;
+                virtual void doParse(QIODevice* source, core::image::Image* image, const LogToken & logToken) const override;
+            };
 
-} // namespace elf
-} // namespace input
+        } // namespace elf
+    } // namespace input
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

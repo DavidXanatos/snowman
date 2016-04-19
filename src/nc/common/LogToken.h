@@ -30,74 +30,78 @@
 
 #include "Logger.h"
 
-namespace nc {
-
-/**
- * A copy-constructable class carrying a shared pointer to a logger.
- */
-class LogToken {
-    /** Logger. */
-    std::shared_ptr<Logger> logger_;
-
-public:
-    /**
-     * Default constructor.
-     *
-     * Creates a token that does not actually log anything.
-     */
-    LogToken() {}
+namespace nc
+{
 
     /**
-     * Constructor creating a token logging messages via a given logger.
-     *
-     * \param logger Valid pointer to a logger.
+     * A copy-constructable class carrying a shared pointer to a logger.
      */
-    LogToken(std::shared_ptr<Logger> logger):
-        logger_(std::move(logger))
+    class LogToken
     {
-        assert(logger_);
-    }
+        /** Logger. */
+        std::shared_ptr<Logger> logger_;
 
-    /**
-     * Logs a message with a given level.
-     *
-     * \param[in] level Log level of the message.
-     * \param[in] text  Text of the message.
-     */
-    void log(LogLevel level, const QString &text) const {
-        if (logger_) {
-            logger_->log(level, text);
+    public:
+        /**
+         * Default constructor.
+         *
+         * Creates a token that does not actually log anything.
+         */
+        LogToken() {}
+
+        /**
+         * Constructor creating a token logging messages via a given logger.
+         *
+         * \param logger Valid pointer to a logger.
+         */
+        LogToken(std::shared_ptr<Logger> logger):
+            logger_(std::move(logger))
+        {
+            assert(logger_);
         }
-    }
 
-    /**
-     * Logs a message with the debug level.
-     *
-     * \param[in] text Text of the message.
-     */
-    void debug(const QString &text) const { log(LogLevel::DEBUG, text); }
+        /**
+         * Logs a message with a given level.
+         *
+         * \param[in] level Log level of the message.
+         * \param[in] text  Text of the message.
+         */
+        void log(LogLevel level, const QString & text) const
+        {
+            if(logger_)
+            {
+                logger_->log(level, text);
+            }
+        }
 
-    /**
-     * Logs a message with the info level.
-     *
-     * \param[in] text Text of the message.
-     */
-    void info(const QString &text) const { log(LogLevel::INFO, text); }
+        /**
+         * Logs a message with the debug level.
+         *
+         * \param[in] text Text of the message.
+         */
+        void debug(const QString & text) const { log(LogLevel::DEBUG, text); }
 
-    /**
-     * Logs a message with the warning level.
-     *
-     * \param[in] text Text of the message.
-     */
-    void warning(const QString &text) const { log(LogLevel::WARNING, text); }
+        /**
+         * Logs a message with the info level.
+         *
+         * \param[in] text Text of the message.
+         */
+        void info(const QString & text) const { log(LogLevel::INFO, text); }
 
-    /**
-     * Logs a message with the error level.
-     *
-     * \param[in] text Text of the message.
-     */
-    void error(const QString &text) const { log(LogLevel::ERROR, text); }
-};
+        /**
+         * Logs a message with the warning level.
+         *
+         * \param[in] text Text of the message.
+         */
+        void warning(const QString & text) const { log(LogLevel::WARNING, text); }
+
+        /**
+         * Logs a message with the error level.
+         *
+         * \param[in] text Text of the message.
+         */
+        void error(const QString & text) const { log(LogLevel::ERROR, text); }
+    };
 
 } // namespace nc
 

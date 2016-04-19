@@ -30,89 +30,94 @@
 #include "JumpTarget.h"
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Term;
+            class Term;
 
-/**
- * Jump to an address and/or basic block.
- */
-class Jump: public Statement {
-    /** Jump condition. */
-    std::unique_ptr<Term> condition_;
+            /**
+             * Jump to an address and/or basic block.
+             */
+            class Jump: public Statement
+            {
+                /** Jump condition. */
+                std::unique_ptr<Term> condition_;
 
-    /** Jump destination if condition is non-zero. */
-    JumpTarget thenTarget_;
+                /** Jump destination if condition is non-zero. */
+                JumpTarget thenTarget_;
 
-    /** Jump destination if condition is zero. */
-    JumpTarget elseTarget_;
+                /** Jump destination if condition is zero. */
+                JumpTarget elseTarget_;
 
-public:
-    /**
-     * Constructor of a conditional jump.
-     *
-     * \param[in] condition     Valid pointer to the term representing jump condition.
-     * \param[in] thenTarget    Jump target if condition is non-zero.
-     * \param[in] elseTarget    Jump target if condition is zero.
-     */
-    Jump(std::unique_ptr<Term> condition, JumpTarget thenTarget, JumpTarget elseTarget);
+            public:
+                /**
+                 * Constructor of a conditional jump.
+                 *
+                 * \param[in] condition     Valid pointer to the term representing jump condition.
+                 * \param[in] thenTarget    Jump target if condition is non-zero.
+                 * \param[in] elseTarget    Jump target if condition is zero.
+                 */
+                Jump(std::unique_ptr<Term> condition, JumpTarget thenTarget, JumpTarget elseTarget);
 
-    /**
-     * Constructor of an unconditional jump.
-     *
-     * \param[in] thenTarget    Jump target.
-     */
-    Jump(JumpTarget thenTarget);
+                /**
+                 * Constructor of an unconditional jump.
+                 *
+                 * \param[in] thenTarget    Jump target.
+                 */
+                Jump(JumpTarget thenTarget);
 
-    /**
-     * \return Pointer to the term representing jump condition, nullptr for unconditional jump.
-     */
-    const Term *condition() const { return condition_.get(); }
+                /**
+                 * \return Pointer to the term representing jump condition, nullptr for unconditional jump.
+                 */
+                const Term* condition() const { return condition_.get(); }
 
-    /**
-     * \return True if this is a conditional jump, false if this is an unconditional jump.
-     */
-    bool isConditional() const { return condition() != nullptr; }
+                /**
+                 * \return True if this is a conditional jump, false if this is an unconditional jump.
+                 */
+                bool isConditional() const { return condition() != nullptr; }
 
-    /**
-     * \return True if this is a unconditional jump, false if this is an conditional jump.
-     */
-    bool isUnconditional() const { return !isConditional(); }
+                /**
+                 * \return True if this is a unconditional jump, false if this is an conditional jump.
+                 */
+                bool isUnconditional() const { return !isConditional(); }
 
-    /**
-     * \return Jump destination if condition is non-zero.
-     */
-    JumpTarget &thenTarget() { return thenTarget_; }
+                /**
+                 * \return Jump destination if condition is non-zero.
+                 */
+                JumpTarget & thenTarget() { return thenTarget_; }
 
-    /**
-     * \return Jump destination if condition is non-zero.
-     */
-    const JumpTarget &thenTarget() const { return thenTarget_; }
+                /**
+                 * \return Jump destination if condition is non-zero.
+                 */
+                const JumpTarget & thenTarget() const { return thenTarget_; }
 
-    /**
-     * \return Jump destination if condition is zero.
-     */
-    JumpTarget &elseTarget() { return elseTarget_; }
+                /**
+                 * \return Jump destination if condition is zero.
+                 */
+                JumpTarget & elseTarget() { return elseTarget_; }
 
-    /**
-     * \return Jump destination if condition is zero.
-     */
-    const JumpTarget &elseTarget() const { return elseTarget_; }
+                /**
+                 * \return Jump destination if condition is zero.
+                 */
+                const JumpTarget & elseTarget() const { return elseTarget_; }
 
-    virtual void print(QTextStream &out) const override;
+                virtual void print(QTextStream & out) const override;
 
-protected:
-    std::unique_ptr<Statement> doClone() const override;
-};
+            protected:
+                std::unique_ptr<Statement> doClone() const override;
+            };
 
-const Jump *Statement::asJump() const {
-    return as<Jump>();
-}
+            const Jump* Statement::asJump() const
+            {
+                return as<Jump>();
+            }
 
-} // namespace ir
-} // namespace core
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

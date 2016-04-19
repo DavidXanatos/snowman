@@ -10,33 +10,38 @@
 #include "ArmArchitecture.h"
 #include "ArmRegisters.h"
 
-namespace nc {
-namespace arch {
-namespace arm {
-
-DefaultCallingConvention::DefaultCallingConvention():
-    core::ir::calling::Convention(QLatin1String("Default"))
+namespace nc
 {
-    setStackPointer(ArmRegisters::sp()->memoryLocation());
+    namespace arch
+    {
+        namespace arm
+        {
 
-    setFirstArgumentOffset(0);
-    setArgumentAlignment(32);
+            DefaultCallingConvention::DefaultCallingConvention():
+                core::ir::calling::Convention(QLatin1String("Default"))
+            {
+                setStackPointer(ArmRegisters::sp()->memoryLocation());
 
-    std::vector<core::ir::MemoryLocation> args;
-    args.push_back(ArmRegisters::r0()->memoryLocation());
-    args.push_back(ArmRegisters::r1()->memoryLocation());
-    args.push_back(ArmRegisters::r2()->memoryLocation());
-    args.push_back(ArmRegisters::r3()->memoryLocation());
-    addArgumentGroup(std::move(args));
+                setFirstArgumentOffset(0);
+                setArgumentAlignment(32);
 
-    addReturnValueLocation(ArmRegisters::r0()->memoryLocation());
+                std::vector<core::ir::MemoryLocation> args;
+                args.push_back(ArmRegisters::r0()->memoryLocation());
+                args.push_back(ArmRegisters::r1()->memoryLocation());
+                args.push_back(ArmRegisters::r2()->memoryLocation());
+                args.push_back(ArmRegisters::r3()->memoryLocation());
+                addArgumentGroup(std::move(args));
 
-    addEnterStatement(std::make_unique<core::ir::Assignment>(
-        std::make_unique<core::ir::MemoryLocationAccess>(ArmRegisters::lr()->memoryLocation()),
-        std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, ArmRegisters::lr()->size())
-    ));
-}
+                addReturnValueLocation(ArmRegisters::r0()->memoryLocation());
 
-}}} // namespace nc::arch::arm
+                addEnterStatement(std::make_unique<core::ir::Assignment>(
+                                      std::make_unique<core::ir::MemoryLocationAccess>(ArmRegisters::lr()->memoryLocation()),
+                                      std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, ArmRegisters::lr()->size())
+                                  ));
+            }
+
+        }
+    }
+} // namespace nc::arch::arm
 
 /* vim:set et sts=4 sw=4: */

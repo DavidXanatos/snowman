@@ -35,168 +35,176 @@
 
 #include <nc/core/ir/MemoryDomain.h>
 
-namespace nc {
-namespace core {
+namespace nc
+{
+    namespace core
+    {
 
-class MasterAnalyzer;
+        class MasterAnalyzer;
 
-namespace ir {
-    class MemoryLocation;
+        namespace ir
+        {
+            class MemoryLocation;
 
-    namespace calling {
-        class Convention;
-    }
-}
+            namespace calling
+            {
+                class Convention;
+            }
+        }
 
-namespace irgen {
-    class InstructionAnalyzer;
-}
+        namespace irgen
+        {
+            class InstructionAnalyzer;
+        }
 
-namespace arch {
+        namespace arch
+        {
 
-class Disassembler;
-class Register;
-class Registers;
+            class Disassembler;
+            class Register;
+            class Registers;
 
-/**
- * Immutable class describing an architecture.
- */
-class Architecture {
-public:
-    /**
-     * Constructor.
-     */
-    Architecture();
+            /**
+             * Immutable class describing an architecture.
+             */
+            class Architecture
+            {
+            public:
+                /**
+                 * Constructor.
+                 */
+                Architecture();
 
-    /**
-     * Virtual destructor.
-     */
-    virtual ~Architecture();
+                /**
+                 * Virtual destructor.
+                 */
+                virtual ~Architecture();
 
-    /**
-     * \return Name of the architecture.
-     */
-    const QString &name() const { return mName; }
+                /**
+                 * \return Name of the architecture.
+                 */
+                const QString & name() const { return mName; }
 
-    /**
-     * \returns Architecture's bitness (data pointer size).
-     */
-    SmallBitSize bitness() const { assert(mBitness); return mBitness; }
+                /**
+                 * \returns Architecture's bitness (data pointer size).
+                 */
+                SmallBitSize bitness() const { assert(mBitness); return mBitness; }
 
-    /**
-     * \return Maximal length of an instruction.
-     */
-    SmallByteSize maxInstructionSize() const { assert(mMaxInstructionSize); return mMaxInstructionSize; }
+                /**
+                 * \return Maximal length of an instruction.
+                 */
+                SmallByteSize maxInstructionSize() const { assert(mMaxInstructionSize); return mMaxInstructionSize; }
 
-    /**
-     * \returns Valid pointer to the disassembler for a single instruction.
-     */
-    virtual std::unique_ptr<Disassembler> createDisassembler() const = 0;
+                /**
+                 * \returns Valid pointer to the disassembler for a single instruction.
+                 */
+                virtual std::unique_ptr<Disassembler> createDisassembler() const = 0;
 
-    /**
-     * \returns Valid pointer to the instruction analyzer for this architecture.
-     */
-    virtual std::unique_ptr<irgen::InstructionAnalyzer> createInstructionAnalyzer() const = 0;
+                /**
+                 * \returns Valid pointer to the instruction analyzer for this architecture.
+                 */
+                virtual std::unique_ptr<irgen::InstructionAnalyzer> createInstructionAnalyzer() const = 0;
 
-    /**
-     * \returns Valid pointer to the universal analyzer for this architecture.
-     */
-    const MasterAnalyzer *masterAnalyzer() const { return mMasterAnalyzer; }
+                /**
+                 * \returns Valid pointer to the universal analyzer for this architecture.
+                 */
+                const MasterAnalyzer* masterAnalyzer() const { return mMasterAnalyzer; }
 
-    /**
-     * \returns Valid pointer to the register container for this architecture.
-     */
-    const Registers *registers() const { return mRegisters; }
+                /**
+                 * \returns Valid pointer to the register container for this architecture.
+                 */
+                const Registers* registers() const { return mRegisters; }
 
-    /**
-     * \param domain Memory domain.
-     *
-     * \return Byte order for this domain.
-     */
-    virtual ByteOrder getByteOrder(ir::Domain domain) const = 0;
+                /**
+                 * \param domain Memory domain.
+                 *
+                 * \return Byte order for this domain.
+                 */
+                virtual ByteOrder getByteOrder(ir::Domain domain) const = 0;
 
-    /**
-     * \param memoryLocation Memory location.
-     *
-     * \return True, if the memory location belongs to global memory accessible by all functions.
-     */
-    virtual bool isGlobalMemory(const ir::MemoryLocation &memoryLocation) const;
+                /**
+                 * \param memoryLocation Memory location.
+                 *
+                 * \return True, if the memory location belongs to global memory accessible by all functions.
+                 */
+                virtual bool isGlobalMemory(const ir::MemoryLocation & memoryLocation) const;
 
-    /**
-     * \return List of available calling conventions.
-     */
-    const std::vector<const ir::calling::Convention *> &conventions() const {
-        return reinterpret_cast<const std::vector<const ir::calling::Convention *> &>(conventions_);
-    }
+                /**
+                 * \return List of available calling conventions.
+                 */
+                const std::vector<const ir::calling::Convention*> & conventions() const
+                {
+                    return reinterpret_cast<const std::vector<const ir::calling::Convention*> &>(conventions_);
+                }
 
-    /**
-     * \param name Name of a calling convention.
-     *
-     * \return Pointer to the calling convention with the given name. Can be nullptr.
-     */
-    const ir::calling::Convention *getCallingConvention(const QString &name) const;
+                /**
+                 * \param name Name of a calling convention.
+                 *
+                 * \return Pointer to the calling convention with the given name. Can be nullptr.
+                 */
+                const ir::calling::Convention* getCallingConvention(const QString & name) const;
 
-protected:
-    /**
-     * Sets the name of the architecture.
-     * The name must be sent only once.
-     *
-     * \param name Non-empty new name of the architecture.
-     */
-    void setName(QString name);
+            protected:
+                /**
+                 * Sets the name of the architecture.
+                 * The name must be sent only once.
+                 *
+                 * \param name Non-empty new name of the architecture.
+                 */
+                void setName(QString name);
 
-    /**
-     * Sets the architecture's bitness.
-     *
-     * \param bitness Architecture's bitness.
-     */
-    void setBitness(SmallBitSize bitness);
+                /**
+                 * Sets the architecture's bitness.
+                 *
+                 * \param bitness Architecture's bitness.
+                 */
+                void setBitness(SmallBitSize bitness);
 
-    /**
-     * \param size Architecture's maximum instruction size.
-     */
-    void setMaxInstructionSize(SmallBitSize size);
+                /**
+                 * \param size Architecture's maximum instruction size.
+                 */
+                void setMaxInstructionSize(SmallBitSize size);
 
-    /**
-     * \param masterAnalyzer Valid pointer to the master analyzer for this architecture.
-     */
-    void setMasterAnalyzer(const MasterAnalyzer *masterAnalyzer);
+                /**
+                 * \param masterAnalyzer Valid pointer to the master analyzer for this architecture.
+                 */
+                void setMasterAnalyzer(const MasterAnalyzer* masterAnalyzer);
 
-    /**
-     * \param registers Valid pointer to the registers container for this architecture.
-     */
-    void setRegisters(Registers *registers);
+                /**
+                 * \param registers Valid pointer to the registers container for this architecture.
+                 */
+                void setRegisters(Registers* registers);
 
-    /**
-     * Adds a calling convention.
-     * There must be no convention with the same name already added.
-     *
-     * \param convention Valid pointer to the calling convention.
-     */
-    void addCallingConvention(std::unique_ptr<ir::calling::Convention> convention);
+                /**
+                 * Adds a calling convention.
+                 * There must be no convention with the same name already added.
+                 *
+                 * \param convention Valid pointer to the calling convention.
+                 */
+                void addCallingConvention(std::unique_ptr<ir::calling::Convention> convention);
 
-private:
-    /** Name of the architecture. */
-    QString mName;
+            private:
+                /** Name of the architecture. */
+                QString mName;
 
-    /** Architecture's bitness. */
-    SmallBitSize mBitness;
+                /** Architecture's bitness. */
+                SmallBitSize mBitness;
 
-    /** Maximum length of an instruction on this architecture. */
-    SmallBitSize mMaxInstructionSize;
+                /** Maximum length of an instruction on this architecture. */
+                SmallBitSize mMaxInstructionSize;
 
-    /** Master analyzer for this architecture. */
-    const MasterAnalyzer *mMasterAnalyzer;
+                /** Master analyzer for this architecture. */
+                const MasterAnalyzer* mMasterAnalyzer;
 
-    /** Register container for this architecture. */
-    Registers *mRegisters;
+                /** Register container for this architecture. */
+                Registers* mRegisters;
 
-    /** Calling conventions. */
-    std::vector<std::unique_ptr<ir::calling::Convention>> conventions_;
-};
+                /** Calling conventions. */
+                std::vector<std::unique_ptr<ir::calling::Convention>> conventions_;
+            };
 
-} // namespace arch
-} // namespace core
+        } // namespace arch
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

@@ -27,20 +27,24 @@
 
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Break statement.
- */
-class Break: public Statement {
-public:
-    Break(): Statement(BREAK) {}
-};
+            /**
+             * Break statement.
+             */
+            class Break: public Statement
+            {
+            public:
+                Break(): Statement(BREAK) {}
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::Break, nc::core::likec::Statement::BREAK)

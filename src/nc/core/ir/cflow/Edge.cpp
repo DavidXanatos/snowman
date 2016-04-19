@@ -28,41 +28,51 @@
 
 #include "Node.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace cflow {
-
-Edge::Edge(Node *tail, Node *head):
-    tail_(nullptr), head_(nullptr)
+namespace nc
 {
-    setTail(tail);
-    setHead(head);
-}
+    namespace core
+    {
+        namespace ir
+        {
+            namespace cflow
+            {
 
-void Edge::setTail(Node *tail) {
-    if (tail_) {
-        tail_->outEdges_.erase(std::find(tail_->outEdges_.begin(), tail_->outEdges_.end(), this));
-    }
-    tail_ = tail;
-    if (tail_) {
-        tail_->outEdges_.push_back(this);
-    }
-}
+                Edge::Edge(Node* tail, Node* head):
+                    tail_(nullptr), head_(nullptr)
+                {
+                    setTail(tail);
+                    setHead(head);
+                }
 
-void Edge::setHead(Node *head) {
-    if (head_) {
-        head_->inEdges_.erase(std::find(head_->inEdges_.begin(), head_->inEdges_.end(), this));
-    }
-    head_ = head;
-    if (head_) {
-        head_->inEdges_.push_back(this);
-    }
-}
+                void Edge::setTail(Node* tail)
+                {
+                    if(tail_)
+                    {
+                        tail_->outEdges_.erase(std::find(tail_->outEdges_.begin(), tail_->outEdges_.end(), this));
+                    }
+                    tail_ = tail;
+                    if(tail_)
+                    {
+                        tail_->outEdges_.push_back(this);
+                    }
+                }
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+                void Edge::setHead(Node* head)
+                {
+                    if(head_)
+                    {
+                        head_->inEdges_.erase(std::find(head_->inEdges_.begin(), head_->inEdges_.end(), this));
+                    }
+                    head_ = head;
+                    if(head_)
+                    {
+                        head_->inEdges_.push_back(this);
+                    }
+                }
+
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

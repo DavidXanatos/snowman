@@ -3,11 +3,13 @@
 
 #include "SignalLogger.h"
 
-namespace nc {
+namespace nc
+{
 
-void SignalLogger::log(LogLevel level, const QString &text) {
-    Q_EMIT onMessage(tr("[%1] %2").arg(level.getName()).arg(text));
-}
+    void SignalLogger::log(LogLevel level, const QString & text)
+    {
+        Q_EMIT onMessage(tr("[%1] %2").arg(level.getName()).arg(text));
+    }
 
 } // namespace nc
 

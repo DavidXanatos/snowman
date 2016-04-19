@@ -27,16 +27,21 @@
 
 #include <nc/core/image/ByteSource.h>
 
-namespace nc { namespace ida {
+namespace nc
+{
+    namespace ida
+    {
 
-/**
- * Implementation of an image byte source for IDA plugin.
- */
-class IdaByteSource: public core::image::ByteSource {
-public:
-    virtual ByteSize readBytes(ByteAddr addr, void *buf, ByteSize size) const override;
-};
+        /**
+         * Implementation of an image byte source for IDA plugin.
+         */
+        class IdaByteSource: public core::image::ByteSource
+        {
+        public:
+            virtual ByteSize readBytes(ByteAddr addr, void* buf, ByteSize size) const override;
+        };
 
-}} // namespace nc::ida
+    }
+} // namespace nc::ida
 
 /* vim:set et sts=4 sw=4: */

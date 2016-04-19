@@ -27,28 +27,32 @@
 
 #include "VariableDeclaration.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Formal argument declaration.
- */
-class ArgumentDeclaration: public VariableDeclaration {
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] identifier Name of this variable.
-     * \param[in] type Type of this variable.
-     */
-    ArgumentDeclaration(const QString &identifier, const Type *type):
-        VariableDeclaration(identifier, type)
-    {}
-};
+            /**
+             * Formal argument declaration.
+             */
+            class ArgumentDeclaration: public VariableDeclaration
+            {
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] identifier Name of this variable.
+                 * \param[in] type Type of this variable.
+                 */
+                ArgumentDeclaration(const QString & identifier, const Type* type):
+                    VariableDeclaration(identifier, type)
+                {}
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

@@ -34,22 +34,24 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/and.hpp>
 
-namespace nc {
+namespace nc
+{
 
     /**
      * Performs a static numeric cast with range checking in debug build.
-     * 
+     *
      * \param value                    Value to cast.
      * \returns                        Cast result.
      */
     template<class To, class From>
-    typename boost::enable_if<
-        boost::mpl::and_<
-            boost::is_integral<To>,
-            boost::is_integral<From>
-        >,
-        To
-    >::type checked_cast(const From &value) {
+    typename boost::enable_if <
+    boost::mpl::and_ <
+    boost::is_integral<To>,
+          boost::is_integral<From>
+          >,
+          To
+          >::type checked_cast(const From & value)
+    {
         assert(static_cast<From>(static_cast<To>(value)) == value);
 
         return static_cast<To>(value);
@@ -57,15 +59,16 @@ namespace nc {
 
     /**
      * Performs a static cast that is checked in debug build.
-     * 
+     *
      * \param source                   Pointer to cast.
      * \returns                        Cast result.
      */
     template<class To, class From>
-    typename boost::enable_if<
-        boost::is_polymorphic<From>,
-        To
-    >::type checked_cast(From *source) {
+    typename boost::enable_if <
+    boost::is_polymorphic<From>,
+          To
+          >::type checked_cast(From* source)
+    {
         static_assert(boost::is_pointer<To>::value, "Target type must be a pointer");
 #ifndef NDEBUG
         To result = dynamic_cast<To>(source);
@@ -78,15 +81,16 @@ namespace nc {
 
     /**
      * Performs a static cast that is checked in debug build.
-     * 
+     *
      * \param source                   Value to cast.
      * \returns                        Cast result.
      */
     template<class To, class From>
-    typename boost::enable_if<
-        boost::is_polymorphic<From>,
-        To
-    >::type checked_cast(From &source) {
+    typename boost::enable_if <
+    boost::is_polymorphic<From>,
+          To
+          >::type checked_cast(From & source)
+    {
         static_assert(boost::is_reference<To>::value, "Target type must be a reference");
 #ifndef NDEBUG
         return dynamic_cast<To>(source);

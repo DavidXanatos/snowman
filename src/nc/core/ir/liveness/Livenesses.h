@@ -9,22 +9,26 @@
 
 #include "Liveness.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Function;
+            class Function;
 
-namespace liveness {
+            namespace liveness
+            {
 
-/**
- * Mapping from a function to its liveness.
- */
-class Livenesses: public boost::unordered_map<const Function *, std::unique_ptr<const Liveness>> {};
+                /**
+                 * Mapping from a function to its liveness.
+                 */
+                class Livenesses: public boost::unordered_map<const Function*, std::unique_ptr<const Liveness>> {};
 
-} // namespace liveness
-} // namespace ir
-} // namespace core
+            } // namespace liveness
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

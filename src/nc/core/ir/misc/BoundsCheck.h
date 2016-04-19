@@ -27,64 +27,72 @@
 
 #include <cassert>
 
-namespace nc {
-namespace core {
-namespace ir {
-
-class BasicBlock;
-class Term;
-
-namespace misc {
-
-/**
- * Describes a jump of the form "if (index <= maxValue) then goto ifPassed else goto ifFailed".
- */
-class BoundsCheck {
-    const Term *index_;
-    ConstantValue maxValue_;
-    const ir::BasicBlock *ifFailed_;
-
-public:
-    /**
-     * Constructs an invalid index check.
-     */
-    BoundsCheck(): index_(nullptr) {}
-
-    /**
-     * Constructs a valid index check.
-     *
-     * \param index     Valid pointer to the index term.
-     * \param maxValue  Maximal value the index can have.
-     * \param ifFailed  Pointer to the basic block getting control if the check fails. Can be nullptr.
-     */
-    BoundsCheck(const Term *index, ConstantValue maxValue, const BasicBlock *ifFailed):
-        index_(index), maxValue_(maxValue), ifFailed_(ifFailed)
+namespace nc
+{
+    namespace core
     {
-        assert(index_ != nullptr);
+        namespace ir
+        {
+
+            class BasicBlock;
+            class Term;
+
+            namespace misc
+            {
+
+                /**
+                 * Describes a jump of the form "if (index <= maxValue) then goto ifPassed else goto ifFailed".
+                 */
+                class BoundsCheck
+                {
+                    const Term* index_;
+                    ConstantValue maxValue_;
+                    const ir::BasicBlock* ifFailed_;
+
+                public:
+                    /**
+                     * Constructs an invalid index check.
+                     */
+                    BoundsCheck(): index_(nullptr) {}
+
+                    /**
+                     * Constructs a valid index check.
+                     *
+                     * \param index     Valid pointer to the index term.
+                     * \param maxValue  Maximal value the index can have.
+                     * \param ifFailed  Pointer to the basic block getting control if the check fails. Can be nullptr.
+                     */
+                    BoundsCheck(const Term* index, ConstantValue maxValue, const BasicBlock* ifFailed):
+                        index_(index), maxValue_(maxValue), ifFailed_(ifFailed)
+                    {
+                        assert(index_ != nullptr);
+                    }
+
+                    /**
+                     * \return Valid pointer to the term serving as the index, i.e. the value
+                     *         being compared against a constant max value.
+                     */
+                    const Term* index() const { assert(*this); return index_; }
+
+                    /**
+                     * \return Maximal value the index can have.
+                     */
+                    ConstantValue maxValue() const { assert(*this); return maxValue_; }
+
+                    /**
+                     * \return Pointer to the basic block getting control if the check fails. Can be nullptr.
+                     */
+                    const BasicBlock* ifFailed() const { assert(*this); return ifFailed_; }
+
+                    /**
+                     * \return A non-nullptr pointer if and only if the object describes a valid index check.
+                     */
+                    operator const void* () const { return index_; }
+                };
+
+            }
+        }
     }
-
-    /**
-     * \return Valid pointer to the term serving as the index, i.e. the value
-     *         being compared against a constant max value.
-     */
-    const Term *index() const { assert(*this); return index_; }
-
-    /**
-     * \return Maximal value the index can have.
-     */
-    ConstantValue maxValue() const { assert(*this); return maxValue_; }
-
-    /**
-     * \return Pointer to the basic block getting control if the check fails. Can be nullptr.
-     */
-    const BasicBlock *ifFailed() const { assert(*this); return ifFailed_; }
-
-    /**
-     * \return A non-nullptr pointer if and only if the object describes a valid index check.
-     */
-    operator const void*() const { return index_; }
-};
-
-}}}} // namespace nc::core::ir::misc
+} // namespace nc::core::ir::misc
 
 /* vim:set et sts=4 sw=4: */

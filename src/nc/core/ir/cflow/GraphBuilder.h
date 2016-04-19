@@ -25,34 +25,39 @@
 
 #include <nc/config.h>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Function;
+            class Function;
 
-namespace cflow {
+            namespace cflow
+            {
 
-class Graph;
+                class Graph;
 
-/**
- * Class building control flow graph from function's basic blocks.
- */
-class GraphBuilder {
-    public:
+                /**
+                 * Class building control flow graph from function's basic blocks.
+                 */
+                class GraphBuilder
+                {
+                public:
 
-    /**
-     * Builds control flow graph.
-     *
-     * \param[out] graph Result graph.
-     * \param[in] function Function to build control flow graph for.
-     */
-    void operator()(Graph &graph, const ir::Function *function) const;
-};
+                    /**
+                     * Builds control flow graph.
+                     *
+                     * \param[out] graph Result graph.
+                     * \param[in] function Function to build control flow graph for.
+                     */
+                    void operator()(Graph & graph, const ir::Function* function) const;
+                };
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

@@ -11,162 +11,165 @@
 #include "X86Architecture.h"
 #include "X86Registers.h"
 
-namespace nc {
-namespace arch {
-namespace x86 {
-
-AMD64CallingConvention::AMD64CallingConvention(const X86Architecture *architecture):
-    Convention(QLatin1String("amd64"))
+namespace nc
 {
-    setStackPointer(architecture->stackPointer()->memoryLocation());
+    namespace arch
+    {
+        namespace x86
+        {
 
-    setFirstArgumentOffset(architecture->bitness());
-    setArgumentAlignment(architecture->bitness());
+            AMD64CallingConvention::AMD64CallingConvention(const X86Architecture* architecture):
+                Convention(QLatin1String("amd64"))
+            {
+                setStackPointer(architecture->stackPointer()->memoryLocation());
 
-    /* Used for integer and pointer arguments. */
-    std::vector<core::ir::MemoryLocation> scalarArgs;
-    scalarArgs.push_back(X86Registers::rdi()->memoryLocation());
-    scalarArgs.push_back(X86Registers::rsi()->memoryLocation());
-    scalarArgs.push_back(X86Registers::rdx()->memoryLocation());
-    scalarArgs.push_back(X86Registers::rcx()->memoryLocation());
-    scalarArgs.push_back(X86Registers::r8()->memoryLocation());
-    scalarArgs.push_back(X86Registers::r9()->memoryLocation());
-    addArgumentGroup(std::move(scalarArgs));
+                setFirstArgumentOffset(architecture->bitness());
+                setArgumentAlignment(architecture->bitness());
 
-    /* Used for floating-point arguments. */
-    std::vector<core::ir::MemoryLocation> fpArgs;
-    fpArgs.push_back(X86Registers::xmm0()->memoryLocation());
-    fpArgs.push_back(X86Registers::xmm1()->memoryLocation());
-    fpArgs.push_back(X86Registers::xmm2()->memoryLocation());
-    fpArgs.push_back(X86Registers::xmm3()->memoryLocation());
-    fpArgs.push_back(X86Registers::xmm4()->memoryLocation());
-    fpArgs.push_back(X86Registers::xmm5()->memoryLocation());
-    fpArgs.push_back(X86Registers::xmm6()->memoryLocation());
-    fpArgs.push_back(X86Registers::xmm7()->memoryLocation());
-    addArgumentGroup(std::move(fpArgs));
+                /* Used for integer and pointer arguments. */
+                std::vector<core::ir::MemoryLocation> scalarArgs;
+                scalarArgs.push_back(X86Registers::rdi()->memoryLocation());
+                scalarArgs.push_back(X86Registers::rsi()->memoryLocation());
+                scalarArgs.push_back(X86Registers::rdx()->memoryLocation());
+                scalarArgs.push_back(X86Registers::rcx()->memoryLocation());
+                scalarArgs.push_back(X86Registers::r8()->memoryLocation());
+                scalarArgs.push_back(X86Registers::r9()->memoryLocation());
+                addArgumentGroup(std::move(scalarArgs));
 
-    addReturnValueLocation(X86Registers::rax()->memoryLocation());
-    addReturnValueLocation(X86Registers::xmm0()->memoryLocation());
+                /* Used for floating-point arguments. */
+                std::vector<core::ir::MemoryLocation> fpArgs;
+                fpArgs.push_back(X86Registers::xmm0()->memoryLocation());
+                fpArgs.push_back(X86Registers::xmm1()->memoryLocation());
+                fpArgs.push_back(X86Registers::xmm2()->memoryLocation());
+                fpArgs.push_back(X86Registers::xmm3()->memoryLocation());
+                fpArgs.push_back(X86Registers::xmm4()->memoryLocation());
+                fpArgs.push_back(X86Registers::xmm5()->memoryLocation());
+                fpArgs.push_back(X86Registers::xmm6()->memoryLocation());
+                fpArgs.push_back(X86Registers::xmm7()->memoryLocation());
+                addArgumentGroup(std::move(fpArgs));
 
-    addEnterStatement(std::make_unique<core::ir::Assignment>(
-        std::make_unique<core::ir::MemoryLocationAccess>(core::ir::MemoryLocation(core::ir::MemoryDomain::STACK, 0, architecture->bitness())),
-        std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, architecture->bitness())
-    ));
-    addEnterStatement(std::make_unique<core::ir::Assignment>(
-        std::make_unique<core::ir::MemoryLocationAccess>(X86Registers::df()->memoryLocation()),
-        std::make_unique<core::ir::Constant>(SizedValue(X86Registers::df()->size(), 0))
-    ));
-}
+                addReturnValueLocation(X86Registers::rax()->memoryLocation());
+                addReturnValueLocation(X86Registers::xmm0()->memoryLocation());
 
-Microsoft64CallingConvention::Microsoft64CallingConvention(const X86Architecture *architecture):
-    Convention(QLatin1String("microsoft64"))
-{
-    setStackPointer(architecture->stackPointer()->memoryLocation());
+                addEnterStatement(std::make_unique<core::ir::Assignment>(
+                                      std::make_unique<core::ir::MemoryLocationAccess>(core::ir::MemoryLocation(core::ir::MemoryDomain::STACK, 0, architecture->bitness())),
+                                      std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, architecture->bitness())
+                                  ));
+                addEnterStatement(std::make_unique<core::ir::Assignment>(
+                                      std::make_unique<core::ir::MemoryLocationAccess>(X86Registers::df()->memoryLocation()),
+                                      std::make_unique<core::ir::Constant>(SizedValue(X86Registers::df()->size(), 0))
+                                  ));
+            }
 
-    setFirstArgumentOffset(architecture->bitness());
-    setArgumentAlignment(architecture->bitness());
+            Microsoft64CallingConvention::Microsoft64CallingConvention(const X86Architecture* architecture):
+                Convention(QLatin1String("microsoft64"))
+            {
+                setStackPointer(architecture->stackPointer()->memoryLocation());
 
-    /* Used for integer and pointer arguments. */
-    std::vector<core::ir::MemoryLocation> scalarArgs;
-    scalarArgs.push_back(X86Registers::rcx()->memoryLocation());
-    scalarArgs.push_back(X86Registers::rdx()->memoryLocation());
-    scalarArgs.push_back(X86Registers::r8()->memoryLocation());
-    scalarArgs.push_back(X86Registers::r9()->memoryLocation());
-    addArgumentGroup(std::move(scalarArgs));
+                setFirstArgumentOffset(architecture->bitness());
+                setArgumentAlignment(architecture->bitness());
 
-    /* Used for floating-point arguments. */
-    std::vector<core::ir::MemoryLocation> fpArgs;
-    fpArgs.push_back(X86Registers::xmm0()->memoryLocation());
-    fpArgs.push_back(X86Registers::xmm1()->memoryLocation());
-    fpArgs.push_back(X86Registers::xmm2()->memoryLocation());
-    fpArgs.push_back(X86Registers::xmm3()->memoryLocation());
-    addArgumentGroup(std::move(fpArgs));
+                /* Used for integer and pointer arguments. */
+                std::vector<core::ir::MemoryLocation> scalarArgs;
+                scalarArgs.push_back(X86Registers::rcx()->memoryLocation());
+                scalarArgs.push_back(X86Registers::rdx()->memoryLocation());
+                scalarArgs.push_back(X86Registers::r8()->memoryLocation());
+                scalarArgs.push_back(X86Registers::r9()->memoryLocation());
+                addArgumentGroup(std::move(scalarArgs));
 
-    addReturnValueLocation(X86Registers::rax()->memoryLocation());
-    addReturnValueLocation(X86Registers::xmm0()->memoryLocation());
+                /* Used for floating-point arguments. */
+                std::vector<core::ir::MemoryLocation> fpArgs;
+                fpArgs.push_back(X86Registers::xmm0()->memoryLocation());
+                fpArgs.push_back(X86Registers::xmm1()->memoryLocation());
+                fpArgs.push_back(X86Registers::xmm2()->memoryLocation());
+                fpArgs.push_back(X86Registers::xmm3()->memoryLocation());
+                addArgumentGroup(std::move(fpArgs));
 
-    addEnterStatement(std::make_unique<core::ir::Assignment>(
-        std::make_unique<core::ir::MemoryLocationAccess>(core::ir::MemoryLocation(core::ir::MemoryDomain::STACK, 0, architecture->bitness())),
-        std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, architecture->bitness())
-    ));
-    addEnterStatement(std::make_unique<core::ir::Assignment>(
-        std::make_unique<core::ir::MemoryLocationAccess>(X86Registers::df()->memoryLocation()),
-        std::make_unique<core::ir::Constant>(SizedValue(X86Registers::df()->size(), 0))
-    ));
-}
+                addReturnValueLocation(X86Registers::rax()->memoryLocation());
+                addReturnValueLocation(X86Registers::xmm0()->memoryLocation());
 
-Cdecl32CallingConvention::Cdecl32CallingConvention(const X86Architecture *architecture):
-    Convention(QLatin1String("cdecl32"))
-{
-    setStackPointer(architecture->stackPointer()->memoryLocation());
+                addEnterStatement(std::make_unique<core::ir::Assignment>(
+                                      std::make_unique<core::ir::MemoryLocationAccess>(core::ir::MemoryLocation(core::ir::MemoryDomain::STACK, 0, architecture->bitness())),
+                                      std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, architecture->bitness())
+                                  ));
+                addEnterStatement(std::make_unique<core::ir::Assignment>(
+                                      std::make_unique<core::ir::MemoryLocationAccess>(X86Registers::df()->memoryLocation()),
+                                      std::make_unique<core::ir::Constant>(SizedValue(X86Registers::df()->size(), 0))
+                                  ));
+            }
 
-    setFirstArgumentOffset(architecture->bitness());
-    setArgumentAlignment(architecture->bitness());
+            Cdecl32CallingConvention::Cdecl32CallingConvention(const X86Architecture* architecture):
+                Convention(QLatin1String("cdecl32"))
+            {
+                setStackPointer(architecture->stackPointer()->memoryLocation());
 
-    addArgumentGroup(std::vector<core::ir::MemoryLocation>(1, X86Registers::ecx()->memoryLocation()));
-    addArgumentGroup(std::vector<core::ir::MemoryLocation>());
+                setFirstArgumentOffset(architecture->bitness());
+                setArgumentAlignment(architecture->bitness());
 
-    addReturnValueLocation(X86Registers::eax()->memoryLocation());
-    addReturnValueLocation(X86Registers::st0()->memoryLocation());
+                addArgumentGroup(std::vector<core::ir::MemoryLocation>(1, X86Registers::ecx()->memoryLocation()));
+                addArgumentGroup(std::vector<core::ir::MemoryLocation>());
 
-    addEnterStatement(std::make_unique<core::ir::Assignment>(
-        std::make_unique<core::ir::MemoryLocationAccess>(core::ir::MemoryLocation(core::ir::MemoryDomain::STACK, 0, architecture->bitness())),
-        std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, architecture->bitness())
-    ));
-    addEnterStatement(std::make_unique<core::ir::Assignment>(
-        std::make_unique<core::ir::MemoryLocationAccess>(X86Registers::df()->memoryLocation()),
-        std::make_unique<core::ir::Constant>(SizedValue(X86Registers::df()->size(), 0))
-    ));
-}
+                addReturnValueLocation(X86Registers::eax()->memoryLocation());
+                addReturnValueLocation(X86Registers::st0()->memoryLocation());
 
-Cdecl16CallingConvention::Cdecl16CallingConvention(const X86Architecture *architecture):
-    Convention(QLatin1String("cdecl16"))
-{
-    setStackPointer(architecture->stackPointer()->memoryLocation());
+                addEnterStatement(std::make_unique<core::ir::Assignment>(
+                                      std::make_unique<core::ir::MemoryLocationAccess>(core::ir::MemoryLocation(core::ir::MemoryDomain::STACK, 0, architecture->bitness())),
+                                      std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, architecture->bitness())
+                                  ));
+                addEnterStatement(std::make_unique<core::ir::Assignment>(
+                                      std::make_unique<core::ir::MemoryLocationAccess>(X86Registers::df()->memoryLocation()),
+                                      std::make_unique<core::ir::Constant>(SizedValue(X86Registers::df()->size(), 0))
+                                  ));
+            }
 
-    setFirstArgumentOffset(architecture->bitness());
-    setArgumentAlignment(architecture->bitness());
+            Cdecl16CallingConvention::Cdecl16CallingConvention(const X86Architecture* architecture):
+                Convention(QLatin1String("cdecl16"))
+            {
+                setStackPointer(architecture->stackPointer()->memoryLocation());
 
-    addReturnValueLocation(X86Registers::ax()->memoryLocation());
-    addReturnValueLocation(X86Registers::st0()->memoryLocation());
+                setFirstArgumentOffset(architecture->bitness());
+                setArgumentAlignment(architecture->bitness());
 
-    addEnterStatement(std::make_unique<core::ir::Assignment>(
-        std::make_unique<core::ir::MemoryLocationAccess>(core::ir::MemoryLocation(core::ir::MemoryDomain::STACK, 0, architecture->bitness())),
-        std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, architecture->bitness())
-    ));
-    addEnterStatement(std::make_unique<core::ir::Assignment>(
-        std::make_unique<core::ir::MemoryLocationAccess>(X86Registers::df()->memoryLocation()),
-        std::make_unique<core::ir::Constant>(SizedValue(X86Registers::df()->size(), 0))
-    ));
-}
+                addReturnValueLocation(X86Registers::ax()->memoryLocation());
+                addReturnValueLocation(X86Registers::st0()->memoryLocation());
 
-Stdcall32CallingConvention::Stdcall32CallingConvention(const X86Architecture *architecture):
-    Convention(QLatin1String("stdcall32"))
-{
-    setStackPointer(architecture->stackPointer()->memoryLocation());
+                addEnterStatement(std::make_unique<core::ir::Assignment>(
+                                      std::make_unique<core::ir::MemoryLocationAccess>(core::ir::MemoryLocation(core::ir::MemoryDomain::STACK, 0, architecture->bitness())),
+                                      std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, architecture->bitness())
+                                  ));
+                addEnterStatement(std::make_unique<core::ir::Assignment>(
+                                      std::make_unique<core::ir::MemoryLocationAccess>(X86Registers::df()->memoryLocation()),
+                                      std::make_unique<core::ir::Constant>(SizedValue(X86Registers::df()->size(), 0))
+                                  ));
+            }
 
-    setFirstArgumentOffset(architecture->bitness());
-    setArgumentAlignment(architecture->bitness());
-    setCalleeCleanup(true);
+            Stdcall32CallingConvention::Stdcall32CallingConvention(const X86Architecture* architecture):
+                Convention(QLatin1String("stdcall32"))
+            {
+                setStackPointer(architecture->stackPointer()->memoryLocation());
 
-    addArgumentGroup(std::vector<core::ir::MemoryLocation>(1, X86Registers::ecx()->memoryLocation()));
-    addArgumentGroup(std::vector<core::ir::MemoryLocation>());
+                setFirstArgumentOffset(architecture->bitness());
+                setArgumentAlignment(architecture->bitness());
+                setCalleeCleanup(true);
 
-    addReturnValueLocation(X86Registers::ax()->memoryLocation());
-    addReturnValueLocation(X86Registers::st0()->memoryLocation());
+                addArgumentGroup(std::vector<core::ir::MemoryLocation>(1, X86Registers::ecx()->memoryLocation()));
+                addArgumentGroup(std::vector<core::ir::MemoryLocation>());
 
-    addEnterStatement(std::make_unique<core::ir::Assignment>(
-        std::make_unique<core::ir::MemoryLocationAccess>(core::ir::MemoryLocation(core::ir::MemoryDomain::STACK, 0, architecture->bitness())),
-        std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, architecture->bitness())
-    ));
-    addEnterStatement(std::make_unique<core::ir::Assignment>(
-        std::make_unique<core::ir::MemoryLocationAccess>(X86Registers::df()->memoryLocation()),
-        std::make_unique<core::ir::Constant>(SizedValue(X86Registers::df()->size(), 0))
-    ));
-}
+                addReturnValueLocation(X86Registers::ax()->memoryLocation());
+                addReturnValueLocation(X86Registers::st0()->memoryLocation());
 
-} // namespace x86
-} // namespace arch
+                addEnterStatement(std::make_unique<core::ir::Assignment>(
+                                      std::make_unique<core::ir::MemoryLocationAccess>(core::ir::MemoryLocation(core::ir::MemoryDomain::STACK, 0, architecture->bitness())),
+                                      std::make_unique<core::ir::Intrinsic>(core::ir::Intrinsic::RETURN_ADDRESS, architecture->bitness())
+                                  ));
+                addEnterStatement(std::make_unique<core::ir::Assignment>(
+                                      std::make_unique<core::ir::MemoryLocationAccess>(X86Registers::df()->memoryLocation()),
+                                      std::make_unique<core::ir::Constant>(SizedValue(X86Registers::df()->size(), 0))
+                                  ));
+            }
+
+        } // namespace x86
+    } // namespace arch
 } // namespace nc
 
 /* vim:set et ts=4 sw=4: */

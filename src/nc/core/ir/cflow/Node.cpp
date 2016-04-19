@@ -29,45 +29,61 @@
 #include "Edge.h"
 #include "Graph.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace cflow {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace cflow
+            {
 
-Node::~Node() {}
+                Node::~Node() {}
 
-Node *Node::uniquePredecessor() const {
-    if (inEdges().size() == 1) {
-        return inEdges()[0]->tail();
-    } else {
-        return nullptr;
-    }
-}
+                Node* Node::uniquePredecessor() const
+                {
+                    if(inEdges().size() == 1)
+                    {
+                        return inEdges()[0]->tail();
+                    }
+                    else
+                    {
+                        return nullptr;
+                    }
+                }
 
-Node *Node::uniqueSuccessor() const {
-    if (outEdges().size() == 1) {
-        return outEdges()[0]->head();
-    } else {
-        return nullptr;
-    }
-}
+                Node* Node::uniqueSuccessor() const
+                {
+                    if(outEdges().size() == 1)
+                    {
+                        return outEdges()[0]->head();
+                    }
+                    else
+                    {
+                        return nullptr;
+                    }
+                }
 
-bool Node::isFork() const {
-    return outEdges().size() == 2 && outEdges()[0]->head() != outEdges()[1]->head();
-}
+                bool Node::isFork() const
+                {
+                    return outEdges().size() == 2 && outEdges()[0]->head() != outEdges()[1]->head();
+                }
 
-Node *Node::getOtherSuccessor(const Node *notThis) const {
-    foreach (const Edge *edge, outEdges()) {
-        if (edge->head() != notThis) {
-            return edge->head();
-        }
-    }
-    return nullptr;
-}
+                Node* Node::getOtherSuccessor(const Node* notThis) const
+                {
+                    foreach(const Edge * edge, outEdges())
+                    {
+                        if(edge->head() != notThis)
+                        {
+                            return edge->head();
+                        }
+                    }
+                    return nullptr;
+                }
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

@@ -29,56 +29,60 @@
 
 #include <memory> /* unique_ptr */
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-class Expression;
+            class Expression;
 
-/**
- * While loop.
- */
-class While: public Statement {
-    std::unique_ptr<Expression> condition_; ///< Loop condition.
-    std::unique_ptr<Statement> body_; ///< Loop body.
+            /**
+             * While loop.
+             */
+            class While: public Statement
+            {
+                std::unique_ptr<Expression> condition_; ///< Loop condition.
+                std::unique_ptr<Statement> body_; ///< Loop body.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] condition Valid pointer to the loop condition.
-     * \param[in] body Valid pointer to the loop body.
-     */
-    While(std::unique_ptr<Expression> condition, std::unique_ptr<Statement> body):
-        Statement(WHILE), condition_(std::move(condition)), body_(std::move(body))
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] condition Valid pointer to the loop condition.
+                 * \param[in] body Valid pointer to the loop body.
+                 */
+                While(std::unique_ptr<Expression> condition, std::unique_ptr<Statement> body):
+                    Statement(WHILE), condition_(std::move(condition)), body_(std::move(body))
+                {}
 
-    /**
-     * \return Loop condition.
-     */
-    std::unique_ptr<Expression> &condition() { return condition_; }
+                /**
+                 * \return Loop condition.
+                 */
+                std::unique_ptr<Expression> & condition() { return condition_; }
 
-    /**
-     * \return Loop condition.
-     */
-    const Expression *condition() const { return condition_.get(); }
+                /**
+                 * \return Loop condition.
+                 */
+                const Expression* condition() const { return condition_.get(); }
 
-    /**
-     * \return Loop body.
-     */
-    std::unique_ptr<Statement> &body() { return body_; }
+                /**
+                 * \return Loop body.
+                 */
+                std::unique_ptr<Statement> & body() { return body_; }
 
-    /**
-     * \return Loop body.
-     */
-    const Statement *body() const { return body_.get(); }
+                /**
+                 * \return Loop body.
+                 */
+                const Statement* body() const { return body_.get(); }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::While, nc::core::likec::Statement::WHILE)

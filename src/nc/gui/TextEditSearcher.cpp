@@ -29,70 +29,88 @@
 #include <QPlainTextEdit>
 #include <QScrollBar>
 
-namespace nc { namespace gui {
-
-TextEditSearcher::TextEditSearcher(QPlainTextEdit *textEdit):
-    textEdit_(textEdit), hvalue_(-1), vvalue_(-1)
+namespace nc
 {
-    assert(textEdit != nullptr);
-}
+    namespace gui
+    {
 
-void TextEditSearcher::startTrackingViewport() {
-    connect(textEdit_, SIGNAL(cursorPositionChanged()), this, SLOT(rememberViewport()));
-}
+        TextEditSearcher::TextEditSearcher(QPlainTextEdit* textEdit):
+            textEdit_(textEdit), hvalue_(-1), vvalue_(-1)
+        {
+            assert(textEdit != nullptr);
+        }
 
-void TextEditSearcher::stopTrackingViewport() {
-    disconnect(textEdit_, SIGNAL(cursorPositionChanged()), this, SLOT(rememberViewport()));
-}
+        void TextEditSearcher::startTrackingViewport()
+        {
+            connect(textEdit_, SIGNAL(cursorPositionChanged()), this, SLOT(rememberViewport()));
+        }
 
-void TextEditSearcher::rememberViewport() {
-    cursor_ = textEdit_->textCursor();
-    hvalue_ = textEdit_->horizontalScrollBar()->value();
-    vvalue_ = textEdit_->verticalScrollBar()->value();
-}
+        void TextEditSearcher::stopTrackingViewport()
+        {
+            disconnect(textEdit_, SIGNAL(cursorPositionChanged()), this, SLOT(rememberViewport()));
+        }
 
-void TextEditSearcher::restoreViewport() {
-    if (hvalue_ == -1) {
-        return;
+        void TextEditSearcher::rememberViewport()
+        {
+            cursor_ = textEdit_->textCursor();
+            hvalue_ = textEdit_->horizontalScrollBar()->value();
+            vvalue_ = textEdit_->verticalScrollBar()->value();
+        }
+
+        void TextEditSearcher::restoreViewport()
+        {
+            if(hvalue_ == -1)
+            {
+                return;
+            }
+
+            textEdit_->setTextCursor(cursor_);
+            textEdit_->horizontalScrollBar()->setValue(hvalue_);
+            textEdit_->verticalScrollBar()->setValue(vvalue_);
+        }
+
+        Searcher::FindFlags TextEditSearcher::supportedFlags() const
+        {
+            return FindBackward | FindCaseSensitive | FindWholeWords;
+        }
+
+        bool TextEditSearcher::find(const QString & expression, FindFlags flags)
+        {
+            if(expression.isEmpty())
+            {
+                return true;
+            }
+
+            auto options = QTextDocument::FindFlags();
+
+            if(flags & FindBackward)
+            {
+                options |= QTextDocument::FindBackward;
+            }
+            if(flags & FindCaseSensitive)
+            {
+                options |= QTextDocument::FindCaseSensitively;
+            }
+            if(flags & FindWholeWords)
+            {
+                options |= QTextDocument::FindWholeWords;
+            }
+
+            if(textEdit_->find(expression, options))
+            {
+                return true;
+            }
+            else
+            {
+                QTextCursor cursor = textEdit_->textCursor();
+                cursor.movePosition((flags & FindBackward) ? QTextCursor::End : QTextCursor::Start);
+                textEdit_->setTextCursor(cursor);
+
+                return textEdit_->find(expression, options);
+            }
+        }
+
     }
-
-    textEdit_->setTextCursor(cursor_);
-    textEdit_->horizontalScrollBar()->setValue(hvalue_);
-    textEdit_->verticalScrollBar()->setValue(vvalue_);
-}
-
-Searcher::FindFlags TextEditSearcher::supportedFlags() const {
-    return FindBackward | FindCaseSensitive | FindWholeWords;
-}
-
-bool TextEditSearcher::find(const QString &expression, FindFlags flags) {
-    if (expression.isEmpty()) {
-        return true;
-    }
-
-    auto options = QTextDocument::FindFlags();
-
-    if (flags & FindBackward) {
-        options |= QTextDocument::FindBackward;
-    }
-    if (flags & FindCaseSensitive) {
-        options |= QTextDocument::FindCaseSensitively;
-    }
-    if (flags & FindWholeWords) {
-        options |= QTextDocument::FindWholeWords;
-    }
-
-    if (textEdit_->find(expression, options)) {
-        return true;
-    } else {
-        QTextCursor cursor = textEdit_->textCursor();
-        cursor.movePosition((flags & FindBackward) ? QTextCursor::End : QTextCursor::Start);
-        textEdit_->setTextCursor(cursor);
-
-        return textEdit_->find(expression, options);
-    }
-}
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

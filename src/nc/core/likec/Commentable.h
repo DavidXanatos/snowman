@@ -27,46 +27,50 @@
 
 #include <QString>
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Class capable of storing.
- *
- * Use it as the second base class for the tree nodes that can be commented.
- */
-class Commentable {
-    QString comment_; ///< Comment.
+            /**
+             * Class capable of storing.
+             *
+             * Use it as the second base class for the tree nodes that can be commented.
+             */
+            class Commentable
+            {
+                QString comment_; ///< Comment.
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param[in] comment Comment.
-     */
-    explicit Commentable(const QString &comment = QString()): comment_(comment) {}
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param[in] comment Comment.
+                 */
+                explicit Commentable(const QString & comment = QString()): comment_(comment) {}
 
-    /**
-     * Virtual destructor.
-     */
-    virtual ~Commentable() {}
+                /**
+                 * Virtual destructor.
+                 */
+                virtual ~Commentable() {}
 
-    /**
-     * \return Comments.
-     */
-    const QString &comment() const { return comment_; }
+                /**
+                 * \return Comments.
+                 */
+                const QString & comment() const { return comment_; }
 
-    /**
-     * Sets the comment.
-     *
-     * \param[in] comment New comment value.
-     */
-    void setComment(const QString &comment) { comment_ = comment; }
-};
+                /**
+                 * Sets the comment.
+                 *
+                 * \param[in] comment New comment value.
+                 */
+                void setComment(const QString & comment) { comment_ = comment; }
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

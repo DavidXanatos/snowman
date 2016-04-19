@@ -24,22 +24,27 @@
 
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-std::unique_ptr<Statement> Statement::clone() const {
-    auto result = doClone();
+            std::unique_ptr<Statement> Statement::clone() const
+            {
+                auto result = doClone();
 
-    if (instruction()) {
-        result->setInstruction(instruction());
-    }
+                if(instruction())
+                {
+                    result->setInstruction(instruction());
+                }
 
-    return result;
-}
+                return result;
+            }
 
-} // namespace ir
-} // namespace core
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

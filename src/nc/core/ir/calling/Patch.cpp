@@ -7,30 +7,38 @@
 #include <nc/core/ir/BasicBlock.h>
 #include <nc/core/ir/Statement.h>
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace calling {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace calling
+            {
 
-Patch::~Patch() {}
+                Patch::~Patch() {}
 
-void Patch::insertAfter(Statement *after) {
-    assert(after != nullptr);
+                void Patch::insertAfter(Statement* after)
+                {
+                    assert(after != nullptr);
 
-    while (!statements_.empty()) {
-        insertedStatements_.push_back(after->basicBlock()->insertAfter(after, statements_.pop_back()));
-    }
-}
+                    while(!statements_.empty())
+                    {
+                        insertedStatements_.push_back(after->basicBlock()->insertAfter(after, statements_.pop_back()));
+                    }
+                }
 
-void Patch::remove() {
-    foreach (auto statement, insertedStatements_) {
-        statements_.push_front(statement->basicBlock()->erase(statement));
-    }
-}
+                void Patch::remove()
+                {
+                    foreach(auto statement, insertedStatements_)
+                    {
+                        statements_.push_front(statement->basicBlock()->erase(statement));
+                    }
+                }
 
-} // namespace calling
-} // namespace ir
-} // namespace core
+            } // namespace calling
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

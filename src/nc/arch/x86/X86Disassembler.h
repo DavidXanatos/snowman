@@ -29,32 +29,36 @@
 
 #include "udis86.h"
 
-namespace nc {
-namespace arch {
-namespace x86 {
+namespace nc
+{
+    namespace arch
+    {
+        namespace x86
+        {
 
-class X86Architecture;
+            class X86Architecture;
 
-/**
- * Disassembler for x86 instructions.
- */
-class X86Disassembler: public core::arch::Disassembler {
-    ud_t ud_obj_;
+            /**
+             * Disassembler for x86 instructions.
+             */
+            class X86Disassembler: public core::arch::Disassembler
+            {
+                ud_t ud_obj_;
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param architecture Valid pointer to the architecture.
-     */
-    explicit
-    X86Disassembler(const X86Architecture *architecture);
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param architecture Valid pointer to the architecture.
+                 */
+                explicit
+                X86Disassembler(const X86Architecture* architecture);
 
-    std::shared_ptr<core::arch::Instruction> disassembleSingleInstruction(ByteAddr pc, const void *buffer, ByteSize size) override;
-};
+                std::shared_ptr<core::arch::Instruction> disassembleSingleInstruction(ByteAddr pc, const void* buffer, ByteSize size) override;
+            };
 
-} // namespace x86
-} // namespace arch
+        } // namespace x86
+    } // namespace arch
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

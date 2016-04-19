@@ -27,39 +27,43 @@
 
 #include "Declaration.h"
 
-namespace nc {
-namespace core {
-namespace likec {
-
-class Type;
-
-/**
- * Declaration of a struct or union member.
- */
-class MemberDeclaration: public Declaration {
-    const Type *type_; ///< Type.
-
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] identifier Name of this field.
-     * \param[in] type Valid pointer to the type of this variable.
-     */
-    MemberDeclaration(const QString &identifier, const Type *type):
-        Declaration(MEMBER_DECLARATION, identifier), type_(type)
+namespace nc
+{
+    namespace core
     {
-        assert(type);
-    }
+        namespace likec
+        {
 
-    /**
-     * \return Valid pointer to the type of this variable.
-     */
-    const Type *type() const { return type_; }
-};
+            class Type;
 
-} // namespace likec
-} // namespace core
+            /**
+             * Declaration of a struct or union member.
+             */
+            class MemberDeclaration: public Declaration
+            {
+                const Type* type_; ///< Type.
+
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] identifier Name of this field.
+                 * \param[in] type Valid pointer to the type of this variable.
+                 */
+                MemberDeclaration(const QString & identifier, const Type* type):
+                    Declaration(MEMBER_DECLARATION, identifier), type_(type)
+                {
+                    assert(type);
+                }
+
+                /**
+                 * \return Valid pointer to the type of this variable.
+                 */
+                const Type* type() const { return type_; }
+            };
+
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Declaration, nc::core::likec::MemberDeclaration, nc::core::likec::Declaration::MEMBER_DECLARATION)

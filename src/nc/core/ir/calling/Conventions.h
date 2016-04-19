@@ -12,71 +12,83 @@
 
 #include "CalleeId.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace calling {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace calling
+            {
 
-class Convention;
+                class Convention;
 
-/**
- * Information about assigned calling conventions and their parameters.
- */
-class Conventions {
-    /** Mapping from a callee id to the associated calling convention. */
-    boost::unordered_map<CalleeId, const Convention *> id2convention_;
+                /**
+                 * Information about assigned calling conventions and their parameters.
+                 */
+                class Conventions
+                {
+                    /** Mapping from a callee id to the associated calling convention. */
+                    boost::unordered_map<CalleeId, const Convention*> id2convention_;
 
-    /** Mapping from a callee id to the size of its arguments passed on the stack. */
-    boost::unordered_map<CalleeId, ByteSize> id2stackArgumentsSize_;
+                    /** Mapping from a callee id to the size of its arguments passed on the stack. */
+                    boost::unordered_map<CalleeId, ByteSize> id2stackArgumentsSize_;
 
-public:
+                public:
 
-    /**
-     * Assigns a calling convention to a callee id.
-     *
-     * \param calleeId Callee id.
-     * \param convention Pointer to a calling convention of the function. Can be nullptr.
-     */
-    void setConvention(const CalleeId &calleeId, const Convention *convention) {
-        id2convention_[calleeId] = convention;
-    }
+                    /**
+                     * Assigns a calling convention to a callee id.
+                     *
+                     * \param calleeId Callee id.
+                     * \param convention Pointer to a calling convention of the function. Can be nullptr.
+                     */
+                    void setConvention(const CalleeId & calleeId, const Convention* convention)
+                    {
+                        id2convention_[calleeId] = convention;
+                    }
 
-    /**
-     * \param calleeId Callee id.
-     *
-     * \return Pointer to the calling convention used for calls to given address. Can be nullptr.
-     */
-    const Convention *getConvention(const CalleeId &calleeId) const {
-        return nc::find(id2convention_, calleeId);
-    }
+                    /**
+                     * \param calleeId Callee id.
+                     *
+                     * \return Pointer to the calling convention used for calls to given address. Can be nullptr.
+                     */
+                    const Convention* getConvention(const CalleeId & calleeId) const
+                    {
+                        return nc::find(id2convention_, calleeId);
+                    }
 
-    /**
-     * Sets the stack arguments size for the given callee id.
-     *
-     * \param calleeId Callee id.
-     * \param size Size of the arguments passed on the stack, or boost::none if unknown.
-     */
-    void setStackArgumentsSize(const CalleeId &calleeId, const boost::optional<ByteSize> &size) {
-        if (size) {
-            id2stackArgumentsSize_[calleeId] = *size;
-        } else {
-            id2stackArgumentsSize_.erase(calleeId);
-        }
-    }
+                    /**
+                     * Sets the stack arguments size for the given callee id.
+                     *
+                     * \param calleeId Callee id.
+                     * \param size Size of the arguments passed on the stack, or boost::none if unknown.
+                     */
+                    void setStackArgumentsSize(const CalleeId & calleeId, const boost::optional<ByteSize> & size)
+                    {
+                        if(size)
+                        {
+                            id2stackArgumentsSize_[calleeId] = *size;
+                        }
+                        else
+                        {
+                            id2stackArgumentsSize_.erase(calleeId);
+                        }
+                    }
 
-    /**
-     * \param calleeId Callee id.
-     *
-     * \return Size of the arguments passed on the stack, or boost::none if unknown.
-     */
-    boost::optional<ByteSize> getStackArgumentsSize(const CalleeId &calleeId) const {
-        return nc::find_optional(id2stackArgumentsSize_, calleeId);
-    }
-};
+                    /**
+                     * \param calleeId Callee id.
+                     *
+                     * \return Size of the arguments passed on the stack, or boost::none if unknown.
+                     */
+                    boost::optional<ByteSize> getStackArgumentsSize(const CalleeId & calleeId) const
+                    {
+                        return nc::find_optional(id2stackArgumentsSize_, calleeId);
+                    }
+                };
 
-} // namespace calling
-} // namespace ir
-} // namespace core
+            } // namespace calling
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

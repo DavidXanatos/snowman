@@ -27,39 +27,43 @@
 
 #include "Expression.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-class LabelDeclaration;
+            class LabelDeclaration;
 
-/**
- * Label identifier.
- */
-class LabelIdentifier: public Expression {
-    LabelDeclaration *declaration_; ///< Label declaration.
+            /**
+             * Label identifier.
+             */
+            class LabelIdentifier: public Expression
+            {
+                LabelDeclaration* declaration_; ///< Label declaration.
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param[in] declaration Label declaration.
-     */
-    explicit LabelIdentifier(LabelDeclaration *declaration);
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param[in] declaration Label declaration.
+                 */
+                explicit LabelIdentifier(LabelDeclaration* declaration);
 
-    /**
-     * \return Label declaration.
-     */
-    LabelDeclaration *declaration() { return declaration_; }
+                /**
+                 * \return Label declaration.
+                 */
+                LabelDeclaration* declaration() { return declaration_; }
 
-    /**
-     * \return Label declaration.
-     */
-    const LabelDeclaration *declaration() const { return declaration_; }
-};
+                /**
+                 * \return Label declaration.
+                 */
+                const LabelDeclaration* declaration() const { return declaration_; }
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Expression, nc::core::likec::LabelIdentifier, nc::core::likec::Expression::LABEL_IDENTIFIER)

@@ -27,38 +27,42 @@
 
 #include <nc/core/irgen/InstructionAnalyzer.h>
 
-namespace nc {
-namespace arch {
-namespace x86 {
+namespace nc
+{
+    namespace arch
+    {
+        namespace x86
+        {
 
-class X86Architecture;
+            class X86Architecture;
 
-class X86InstructionAnalyzerImpl;
+            class X86InstructionAnalyzerImpl;
 
-class X86InstructionAnalyzer: public core::irgen::InstructionAnalyzer {
-    /** The object actually doing all the work. */
-    std::unique_ptr<X86InstructionAnalyzerImpl> impl_;
+            class X86InstructionAnalyzer: public core::irgen::InstructionAnalyzer
+            {
+                /** The object actually doing all the work. */
+                std::unique_ptr<X86InstructionAnalyzerImpl> impl_;
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param architecture Valid pointer to the architecture.
-     */
-    X86InstructionAnalyzer(const X86Architecture *architecture);
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param architecture Valid pointer to the architecture.
+                 */
+                X86InstructionAnalyzer(const X86Architecture* architecture);
 
-    /**
-     * Destructor.
-     */
-    ~X86InstructionAnalyzer();
+                /**
+                 * Destructor.
+                 */
+                ~X86InstructionAnalyzer();
 
-protected:
-    virtual void doCreateStatements(const core::arch::Instruction *instruction, core::ir::Program *program) override;
-};
+            protected:
+                virtual void doCreateStatements(const core::arch::Instruction* instruction, core::ir::Program* program) override;
+            };
 
 
-} // namespace x86
-} // namespace arch
+        } // namespace x86
+    } // namespace arch
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

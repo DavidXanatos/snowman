@@ -35,82 +35,90 @@
 
 #include "Instruction.h"
 
-namespace nc { namespace core { namespace arch {
+namespace nc
+{
+    namespace core
+    {
+        namespace arch
+        {
 
-class Instruction;
+            class Instruction;
 
-/**
- * Class representing a set of instructions.
- */
-class Instructions {
-    /** Type of mapping of addresses to instruction. */
-    typedef std::map<ByteAddr, std::shared_ptr<const Instruction>> AddressInstructionMap;
+            /**
+             * Class representing a set of instructions.
+             */
+            class Instructions
+            {
+                /** Type of mapping of addresses to instruction. */
+                typedef std::map<ByteAddr, std::shared_ptr<const Instruction>> AddressInstructionMap;
 
-    /** Mapping of addresses to instructions. */
-    AddressInstructionMap address2instruction_;
+                /** Mapping of addresses to instructions. */
+                AddressInstructionMap address2instruction_;
 
-public:
-    /** Type for the sorted range of instructions. */
-    typedef boost::select_second_const_range<AddressInstructionMap> InstructionsRange;
+            public:
+                /** Type for the sorted range of instructions. */
+                typedef boost::select_second_const_range<AddressInstructionMap> InstructionsRange;
 
-    /**
-     * \return Range of instructions sorted by their addresses in ascending order.
-     */
-    InstructionsRange all() const { return address2instruction_ | boost::adaptors::map_values; }
+                /**
+                 * \return Range of instructions sorted by their addresses in ascending order.
+                 */
+                InstructionsRange all() const { return address2instruction_ | boost::adaptors::map_values; }
 
-    /**
-     * \param[in] addr Address.
-     *
-     * \return Pointer to the instruction starting at the given address.
-     *         Can be nullptr, if there is no such instructions.
-     */
-    const std::shared_ptr<const Instruction> &get(ByteAddr addr) const { return nc::find(address2instruction_, addr); }
+                /**
+                 * \param[in] addr Address.
+                 *
+                 * \return Pointer to the instruction starting at the given address.
+                 *         Can be nullptr, if there is no such instructions.
+                 */
+                const std::shared_ptr<const Instruction> & get(ByteAddr addr) const { return nc::find(address2instruction_, addr); }
 
-    /**
-     * \param[in] addr Address.
-     *
-     * \return Pointer to the instruction covering the given address.
-     *         Can be nullptr, if there are no instructions.
-     */
-    const std::shared_ptr<const Instruction> &getCovering(ByteAddr addr) const;
+                /**
+                 * \param[in] addr Address.
+                 *
+                 * \return Pointer to the instruction covering the given address.
+                 *         Can be nullptr, if there are no instructions.
+                 */
+                const std::shared_ptr<const Instruction> & getCovering(ByteAddr addr) const;
 
-    /**
-     * Adds instruction if there is no instruction with the given address yet.
-     *
-     * \param instruction Valid pointer to an instruction.
-     *
-     * \return True if the instruction was added, false otherwise.
-     */
-    bool add(std::shared_ptr<const Instruction> instruction);
+                /**
+                 * Adds instruction if there is no instruction with the given address yet.
+                 *
+                 * \param instruction Valid pointer to an instruction.
+                 *
+                 * \return True if the instruction was added, false otherwise.
+                 */
+                bool add(std::shared_ptr<const Instruction> instruction);
 
-    /**
-     * Deletes given instruction from the set.
-     *
-     * \param[in] instruction Instruction to be removed.
-     *
-     * \return True if the instruction was removed, false otherwise.
-     */
-    bool remove(const Instruction *instruction);
+                /**
+                 * Deletes given instruction from the set.
+                 *
+                 * \param[in] instruction Instruction to be removed.
+                 *
+                 * \return True if the instruction was removed, false otherwise.
+                 */
+                bool remove(const Instruction* instruction);
 
-    /**
-     * \return Number of instructions in the set.
-     */
-    std::size_t size() const { return address2instruction_.size(); }
+                /**
+                 * \return Number of instructions in the set.
+                 */
+                std::size_t size() const { return address2instruction_.size(); }
 
-    /**
-     * \return True if the set is empty, false is otherwise.
-     */
-    bool empty() const { return size() == 0; }
+                /**
+                 * \return True if the set is empty, false is otherwise.
+                 */
+                bool empty() const { return size() == 0; }
 
-    /**
-     * Prints all the instructions into a stream.
-     *
-     * \param out Output stream.
-     * \param callback Pointer to the print callback. Can be nullptr.
-     */
-    void print(QTextStream &out, PrintCallback<const Instruction *> *callback = nullptr) const;
-};
+                /**
+                 * Prints all the instructions into a stream.
+                 *
+                 * \param out Output stream.
+                 * \param callback Pointer to the print callback. Can be nullptr.
+                 */
+                void print(QTextStream & out, PrintCallback<const Instruction*>* callback = nullptr) const;
+            };
 
-}}} // namespace nc::core::arch
+        }
+    }
+} // namespace nc::core::arch
 
 /* vim:set et sts=4 sw=4: */

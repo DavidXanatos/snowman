@@ -28,69 +28,85 @@
 
 #include "Command.h"
 
-namespace nc {
-namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-CommandQueue::CommandQueue(QObject *parent):
-    QObject(parent)
-{}
+        CommandQueue::CommandQueue(QObject* parent):
+            QObject(parent)
+        {}
 
-CommandQueue::~CommandQueue() {
-    cancel();
-}
+        CommandQueue::~CommandQueue()
+        {
+            cancel();
+        }
 
-void CommandQueue::push(std::unique_ptr<Command> command) {
-    assert(command);
+        void CommandQueue::push(std::unique_ptr<Command> command)
+        {
+            assert(command);
 
-    queue_.push_back(std::move(command));
-    executeNext();
-}
+            queue_.push_back(std::move(command));
+            executeNext();
+        }
 
-void CommandQueue::cancel() {
-    if (front()) {
-        front()->cancel();
+        void CommandQueue::cancel()
+        {
+            if(front())
+            {
+                front()->cancel();
+            }
+        }
+
+        void CommandQueue::clear()
+        {
+            if(!empty())
+            {
+                cancel();
+                front_.reset();
+                queue_.clear();
+                Q_EMIT idle();
+            }
+        }
+
+        void CommandQueue::executeNext()
+        {
+            if(front())
+            {
+                /* Some command is already being executed. */
+                return;
+            }
+            else if(queue_.empty())
+            {
+                /* No commands left. */
+                Q_EMIT idle();
+            }
+            else
+            {
+                /* Pop the front command. */
+                front_ = std::move(queue_.front());
+                queue_.pop_front();
+
+                /* Notify everybody. */
+                Q_EMIT nextCommand();
+
+                /* Make sure the command is not deleted while we are executing it. */
+                auto command = front_;
+
+                /* Execute it. */
+                connect(command.get(), SIGNAL(finished()), this, SLOT(commandFinished()), Qt::QueuedConnection);
+                command->execute();
+            }
+        }
+
+        void CommandQueue::commandFinished()
+        {
+            assert(front_ != nullptr);
+            front_.reset();
+            executeNext();
+        }
+
     }
-}
-
-void CommandQueue::clear() {
-    if (!empty()) {
-        cancel();
-        front_.reset();
-        queue_.clear();
-        Q_EMIT idle();
-    }
-}
-
-void CommandQueue::executeNext() {
-    if (front()) {
-        /* Some command is already being executed. */
-        return;
-    } else if (queue_.empty()) {
-        /* No commands left. */
-        Q_EMIT idle();
-    } else {
-        /* Pop the front command. */
-        front_ = std::move(queue_.front());
-        queue_.pop_front();
-
-        /* Notify everybody. */
-        Q_EMIT nextCommand();
-
-        /* Make sure the command is not deleted while we are executing it. */
-        auto command = front_;
-
-        /* Execute it. */
-        connect(command.get(), SIGNAL(finished()), this, SLOT(commandFinished()), Qt::QueuedConnection);
-        command->execute();
-    }
-}
-
-void CommandQueue::commandFinished() {
-    assert(front_ != nullptr);
-    front_.reset();
-    executeNext();
-}
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

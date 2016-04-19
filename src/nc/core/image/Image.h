@@ -36,151 +36,163 @@
 #include "Platform.h"
 #include "Symbol.h"
 
-namespace nc { namespace core {
+namespace nc
+{
+    namespace core
+    {
 
-namespace arch {
-    class Architecture;
-}
+        namespace arch
+        {
+            class Architecture;
+        }
 
-namespace mangling {
-    class Demangler;
-}
+        namespace mangling
+        {
+            class Demangler;
+        }
 
-namespace image {
+        namespace image
+        {
 
-class Section;
-class Relocation;
+            class Section;
+            class Relocation;
 
-/**
- * An executable image.
- */
-class Image: public ByteSource {
-    Platform platform_;
-    std::vector<std::unique_ptr<Section>> sections_; ///< The list of sections.
-    std::vector<std::unique_ptr<Symbol>> symbols_; ///< The list of symbols.
-    boost::unordered_map<ConstantValue, Symbol *> value2symbol_; ///< Mapping from value to the symbol with this value.
-    std::vector<std::unique_ptr<Relocation>> relocations_; ///< The list of relocations.
-    boost::unordered_map<ByteAddr, Relocation *> address2relocation_; ///< Mapping from an address to the relocation with this address.
-    std::unique_ptr<mangling::Demangler> demangler_; ///< Demangler.
+            /**
+             * An executable image.
+             */
+            class Image: public ByteSource
+            {
+                Platform platform_;
+                std::vector<std::unique_ptr<Section>> sections_; ///< The list of sections.
+                std::vector<std::unique_ptr<Symbol>> symbols_; ///< The list of symbols.
+                boost::unordered_map<ConstantValue, Symbol*> value2symbol_;  ///< Mapping from value to the symbol with this value.
+                std::vector<std::unique_ptr<Relocation>> relocations_; ///< The list of relocations.
+                boost::unordered_map<ByteAddr, Relocation*> address2relocation_;  ///< Mapping from an address to the relocation with this address.
+                std::unique_ptr<mangling::Demangler> demangler_; ///< Demangler.
 
-public:
-    /**
-     * Constructor.
-     */
-    Image();
+            public:
+                /**
+                 * Constructor.
+                 */
+                Image();
 
-    /**
-     * Destructor.
-     */
-    ~Image();
+                /**
+                 * Destructor.
+                 */
+                ~Image();
 
-    /**
-     * \return The platform of the image.
-     */
-    Platform &platform() { return platform_; }
+                /**
+                 * \return The platform of the image.
+                 */
+                Platform & platform() { return platform_; }
 
-    /**
-     * \return The platform of the image.
-     */
-    const Platform &platform() const { return platform_; }
+                /**
+                 * \return The platform of the image.
+                 */
+                const Platform & platform() const { return platform_; }
 
-    /**
-     * Adds a new section.
-     *
-     * \param section Valid pointer to the section.
-     */
-    void addSection(std::unique_ptr<Section> section);
+                /**
+                 * Adds a new section.
+                 *
+                 * \param section Valid pointer to the section.
+                 */
+                void addSection(std::unique_ptr<Section> section);
 
-    /**
-     * \return List of all sections.
-     */
-    const std::vector<Section *> &sections() {
-        return reinterpret_cast<const std::vector<Section *> &>(sections_);
+                /**
+                 * \return List of all sections.
+                 */
+                const std::vector<Section*> & sections()
+                {
+                    return reinterpret_cast<const std::vector<Section*> &>(sections_);
+                }
+
+                /**
+                 * \return List of all sections.
+                 */
+                const std::vector<const Section*> & sections() const
+                {
+                    return reinterpret_cast<const std::vector<const Section*> &>(sections_);
+                }
+
+                /**
+                 * \param[in] addr Linear address.
+                 *
+                 * \return A valid pointer to allocated section containing given
+                 *         virtual address or nullptr if there is no such section.
+                 */
+                const Section* getSectionContainingAddress(ByteAddr addr) const;
+
+                /**
+                 * \param[in] name Section name.
+                 *
+                 * \return Valid pointer to a section with the given name,
+                 *         nullptr if there is no such section.
+                 */
+                const Section* getSectionByName(const QString & name) const;
+
+                /**
+                 * Reads a sequence of bytes from the section containing
+                 * the given address and allocated during program execution.
+                 */
+                ByteSize readBytes(ByteAddr addr, void* buf, ByteSize size) const override;
+
+                /**
+                 * Adds a symbol.
+                 *
+                 * \param symbol Valid pointer to the symbol.
+                 *
+                 * \return Pointer to the added symbol.
+                 */
+                const Symbol* addSymbol(std::unique_ptr<Symbol> symbol);
+
+                /**
+                 * \return List of all symbols.
+                 */
+                const std::vector<const Symbol*> & symbols() const
+                {
+                    return reinterpret_cast<const std::vector<const Symbol*> &>(symbols_);
+                }
+
+                /**
+                 * Finds a symbol with a given type and value.
+                 *
+                 * \param value Value of the symbol.
+                 *
+                 * \return Pointer to a symbol with the given value. Can be nullptr.
+                 */
+                const Symbol* getSymbol(ConstantValue value) const;
+
+                /**
+                 * Adds an information about relocation.
+                 *
+                 * \param relocation Valid pointer to a relocation information.
+                 *
+                 * \return Pointer to the added relocation.
+                 */
+                const Relocation* addRelocation(std::unique_ptr<Relocation> relocation);
+
+                /**
+                 * \param address Virtual address.
+                 *
+                 * \return Pointer to a relocation for this address. Can be nullptr.
+                 */
+                const Relocation* getRelocation(ByteAddr address) const;
+
+                /**
+                 * \return Valid pointer to a demangler.
+                 */
+                const mangling::Demangler* demangler() const { return demangler_.get(); }
+
+                /**
+                 * Sets the demangler.
+                 *
+                 * \param demangler Valid pointer to the new demangler.
+                 */
+                void setDemangler(std::unique_ptr<mangling::Demangler> demangler);
+            };
+
+        }
     }
-
-    /**
-     * \return List of all sections.
-     */
-    const std::vector<const Section *> &sections() const {
-        return reinterpret_cast<const std::vector<const Section *> &>(sections_);
-    }
-
-    /**
-     * \param[in] addr Linear address.
-     *
-     * \return A valid pointer to allocated section containing given
-     *         virtual address or nullptr if there is no such section.
-     */
-    const Section *getSectionContainingAddress(ByteAddr addr) const;
-
-    /**
-     * \param[in] name Section name.
-     *
-     * \return Valid pointer to a section with the given name,
-     *         nullptr if there is no such section.
-     */
-    const Section *getSectionByName(const QString &name) const;
-
-    /**
-     * Reads a sequence of bytes from the section containing
-     * the given address and allocated during program execution.
-     */
-    ByteSize readBytes(ByteAddr addr, void *buf, ByteSize size) const override;
-
-    /**
-     * Adds a symbol.
-     *
-     * \param symbol Valid pointer to the symbol.
-     *
-     * \return Pointer to the added symbol.
-     */
-    const Symbol *addSymbol(std::unique_ptr<Symbol> symbol);
-
-    /**
-     * \return List of all symbols.
-     */
-    const std::vector<const Symbol *> &symbols() const {
-        return reinterpret_cast<const std::vector<const Symbol *> &>(symbols_);
-    }
-
-    /**
-     * Finds a symbol with a given type and value.
-     *
-     * \param value Value of the symbol.
-     *
-     * \return Pointer to a symbol with the given value. Can be nullptr.
-     */
-    const Symbol *getSymbol(ConstantValue value) const;
-
-    /**
-     * Adds an information about relocation.
-     *
-     * \param relocation Valid pointer to a relocation information.
-     *
-     * \return Pointer to the added relocation.
-     */
-    const Relocation *addRelocation(std::unique_ptr<Relocation> relocation);
-
-    /**
-     * \param address Virtual address.
-     *
-     * \return Pointer to a relocation for this address. Can be nullptr.
-     */
-    const Relocation *getRelocation(ByteAddr address) const;
-
-    /**
-     * \return Valid pointer to a demangler.
-     */
-    const mangling::Demangler *demangler() const { return demangler_.get(); }
-
-    /**
-     * Sets the demangler.
-     *
-     * \param demangler Valid pointer to the new demangler.
-     */
-    void setDemangler(std::unique_ptr<mangling::Demangler> demangler);
-};
-
-}}} // namespace nc::core::image
+} // namespace nc::core::image
 
 /* vim:set et sts=4 sw=4: */

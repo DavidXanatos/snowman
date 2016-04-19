@@ -25,53 +25,57 @@
 
 #include <nc/config.h>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Jump;
-class JumpTarget;
-class Term;
+            class Jump;
+            class JumpTarget;
+            class Term;
 
-namespace dflow {
+            namespace dflow
+            {
 
-class Dataflow;
+                class Dataflow;
 
-/**
- * \param[in] term      Valid pointer to a term.
- * \param[in] dataflow  Dataflow information.
- *
- * \return Valid pointer to the term being the first copy of the given one.
- */
-const ir::Term *getFirstCopy(const Term *term, const Dataflow &dataflow);
+                /**
+                 * \param[in] term      Valid pointer to a term.
+                 * \param[in] dataflow  Dataflow information.
+                 *
+                 * \return Valid pointer to the term being the first copy of the given one.
+                 */
+                const ir::Term* getFirstCopy(const Term* term, const Dataflow & dataflow);
 
-/**
- * \param[in] jump      Valid pointer to a jump.
- * \param[in] dataflow  Dataflow information.
- *
- * \return True iff the jump has a jump target being a return address.
- */
-bool isReturn(const Jump *jump, const Dataflow &dataflow);
+                /**
+                 * \param[in] jump      Valid pointer to a jump.
+                 * \param[in] dataflow  Dataflow information.
+                 *
+                 * \return True iff the jump has a jump target being a return address.
+                 */
+                bool isReturn(const Jump* jump, const Dataflow & dataflow);
 
-/**
- * \param[in] target    Jump target.
- * \param[in] dataflow  Dataflow information.
- *
- * \return True iff the jump target is a return address.
- */
-bool isReturnAddress(const JumpTarget &target, const Dataflow &dataflow);
+                /**
+                 * \param[in] target    Jump target.
+                 * \param[in] dataflow  Dataflow information.
+                 *
+                 * \return True iff the jump target is a return address.
+                 */
+                bool isReturnAddress(const JumpTarget & target, const Dataflow & dataflow);
 
-/**
- * \param[in] term      Valid pointer to a term.
- * \param[in] dataflow  Dataflow information.
- *
- * \return True iff the term contains a return address.
- */
-bool isReturnAddress(const Term *term, const Dataflow &dataflow);
+                /**
+                 * \param[in] term      Valid pointer to a term.
+                 * \param[in] dataflow  Dataflow information.
+                 *
+                 * \return True iff the term contains a return address.
+                 */
+                bool isReturnAddress(const Term* term, const Dataflow & dataflow);
 
-} // namespace dflow
-} // namespace ir
-} // namespace core
+            } // namespace dflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

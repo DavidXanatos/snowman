@@ -40,65 +40,75 @@
 #include <nc/core/likec/FunctionDeclaration.h>
 #include <nc/core/likec/Tree.h>
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace cgen {
-
-DeclarationGenerator::DeclarationGenerator(CodeGenerator &parent, const calling::CalleeId &calleeId, const calling::FunctionSignature *signature):
-    parent_(parent),
-    calleeId_(calleeId),
-    signature_(signature),
-    declaration_(nullptr)
+namespace nc
 {
-    assert(signature != nullptr);
-}
+    namespace core
+    {
+        namespace ir
+        {
+            namespace cgen
+            {
 
-void DeclarationGenerator::setDeclaration(likec::FunctionDeclaration *declaration) {
-    assert(!declaration_); 
-    declaration_ = declaration;
-    parent().setFunctionDeclaration(signature_, declaration);
-}
+                DeclarationGenerator::DeclarationGenerator(CodeGenerator & parent, const calling::CalleeId & calleeId, const calling::FunctionSignature* signature):
+                    parent_(parent),
+                    calleeId_(calleeId),
+                    signature_(signature),
+                    declaration_(nullptr)
+                {
+                    assert(signature != nullptr);
+                }
 
-std::unique_ptr<likec::FunctionDeclaration> DeclarationGenerator::createDeclaration() {
-    auto nameAndComment = parent().nameGenerator().getFunctionName(calleeId_);
+                void DeclarationGenerator::setDeclaration(likec::FunctionDeclaration* declaration)
+                {
+                    assert(!declaration_);
+                    declaration_ = declaration;
+                    parent().setFunctionDeclaration(signature_, declaration);
+                }
 
-    auto functionDeclaration = std::make_unique<likec::FunctionDeclaration>(tree(),
-        std::move(nameAndComment.name()), makeReturnType(), signature()->variadic());
-    functionDeclaration->setComment(std::move(nameAndComment.comment()));
+                std::unique_ptr<likec::FunctionDeclaration> DeclarationGenerator::createDeclaration()
+                {
+                    auto nameAndComment = parent().nameGenerator().getFunctionName(calleeId_);
 
-    setDeclaration(functionDeclaration.get());
+                    auto functionDeclaration = std::make_unique<likec::FunctionDeclaration>(tree(),
+                                               std::move(nameAndComment.name()), makeReturnType(), signature()->variadic());
+                    functionDeclaration->setComment(std::move(nameAndComment.comment()));
 
-    foreach (const auto &argument, signature()->arguments()) {
-        makeArgumentDeclaration(argument.get());
-    }
+                    setDeclaration(functionDeclaration.get());
 
-    return functionDeclaration;
-}
+                    foreach(const auto & argument, signature()->arguments())
+                    {
+                        makeArgumentDeclaration(argument.get());
+                    }
 
-const likec::Type *DeclarationGenerator::makeReturnType() {
-    if (signature()->returnValue()) {
-        return parent().makeType(parent().types().getType(signature()->returnValue().get()));
-    }
-    return tree().makeVoidType();
-}
+                    return functionDeclaration;
+                }
 
-likec::ArgumentDeclaration *DeclarationGenerator::makeArgumentDeclaration(const Term *term) {
-    auto nameAndComment = parent().nameGenerator().getArgumentName(term, declaration()->arguments().size() + 1);
+                const likec::Type* DeclarationGenerator::makeReturnType()
+                {
+                    if(signature()->returnValue())
+                    {
+                        return parent().makeType(parent().types().getType(signature()->returnValue().get()));
+                    }
+                    return tree().makeVoidType();
+                }
 
-    auto argumentDeclaration = std::make_unique<likec::ArgumentDeclaration>(
-        std::move(nameAndComment.name()), parent().makeType(parent().types().getType(term)));
-    argumentDeclaration->setComment(std::move(nameAndComment.comment()));
+                likec::ArgumentDeclaration* DeclarationGenerator::makeArgumentDeclaration(const Term* term)
+                {
+                    auto nameAndComment = parent().nameGenerator().getArgumentName(term, declaration()->arguments().size() + 1);
 
-    auto result = argumentDeclaration.get();
-    declaration()->addArgument(std::move(argumentDeclaration));
+                    auto argumentDeclaration = std::make_unique<likec::ArgumentDeclaration>(
+                                                   std::move(nameAndComment.name()), parent().makeType(parent().types().getType(term)));
+                    argumentDeclaration->setComment(std::move(nameAndComment.comment()));
 
-    return result;
-}
+                    auto result = argumentDeclaration.get();
+                    declaration()->addArgument(std::move(argumentDeclaration));
 
-} // namespace cgen
-} // namespace ir
-} // namespace core
+                    return result;
+                }
+
+            } // namespace cgen
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

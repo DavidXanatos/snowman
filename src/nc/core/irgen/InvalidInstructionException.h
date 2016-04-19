@@ -28,42 +28,50 @@
 
 #include <QCoreApplication>
 
-namespace nc { namespace core {
+namespace nc
+{
+    namespace core
+    {
 
-namespace arch {
-    class Instruction;
-}
+        namespace arch
+        {
+            class Instruction;
+        }
 
-namespace irgen {
+        namespace irgen
+        {
 
-/**
- * Error info structure for the pointer to the instruction which caused the exception.
- */
-typedef boost::error_info<struct InstructionTag, const arch::Instruction *> ExceptionInstruction;
+            /**
+             * Error info structure for the pointer to the instruction which caused the exception.
+             */
+            typedef boost::error_info<struct InstructionTag, const arch::Instruction*> ExceptionInstruction;
 
-/**
- * Exception that is thrown when an invalid instruction is detected.
- */
-class InvalidInstructionException: public Exception {
-    Q_DECLARE_TR_FUNCTIONS(InvalidInstructionException)
-public:
-    /**
-     * Constructor.
-     *
-     * \param message Exception message.
-     */
-    InvalidInstructionException(const QString &message):
-        Exception(message)
-    {}
+            /**
+             * Exception that is thrown when an invalid instruction is detected.
+             */
+            class InvalidInstructionException: public Exception
+            {
+                Q_DECLARE_TR_FUNCTIONS(InvalidInstructionException)
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param message Exception message.
+                 */
+                InvalidInstructionException(const QString & message):
+                    Exception(message)
+                {}
 
-    /**
-     * Destructor.
-     */
-    virtual ~InvalidInstructionException() noexcept {}
+                /**
+                 * Destructor.
+                 */
+                virtual ~InvalidInstructionException() noexcept {}
 
-    virtual QString unicodeWhat() const noexcept;
-};
+                virtual QString unicodeWhat() const noexcept;
+            };
 
-}}} // namespace nc::core::irgen
+        }
+    }
+} // namespace nc::core::irgen
 
 /* vim:set et sts=4 sw=4: */

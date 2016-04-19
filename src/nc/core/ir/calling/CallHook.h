@@ -37,115 +37,122 @@
 
 #include "Patch.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Statement;
-class Term;
+            class Statement;
+            class Term;
 
-namespace calling {
+            namespace calling
+            {
 
-class Convention;
-class CallSignature;
+                class Convention;
+                class CallSignature;
 
-/**
- * Hooks installed at a call site.
- */
-class CallHook {
-    /** Term for tracking stack pointer. */
-    const Term *stackPointer_;
+                /**
+                 * Hooks installed at a call site.
+                 */
+                class CallHook
+                {
+                    /** Term for tracking stack pointer. */
+                    const Term* stackPointer_;
 
-    /** Statement for snapshotting reaching definitions. */
-    const Statement *snapshotStatement_;
+                    /** Statement for snapshotting reaching definitions. */
+                    const Statement* snapshotStatement_;
 
-    /** Mapping from argument terms to their clones. */
-    boost::unordered_map<const Term *, const Term *> argumentTerms_;
+                    /** Mapping from argument terms to their clones. */
+                    boost::unordered_map<const Term*, const Term*> argumentTerms_;
 
-    /** Mapping from return value terms to their clones. */
-    boost::unordered_map<const Term *, const Term *> returnValueTerms_;
+                    /** Mapping from return value terms to their clones. */
+                    boost::unordered_map<const Term*, const Term*> returnValueTerms_;
 
-    /** Mapping from memory locations that can be used for returning values to terms. */
-    std::vector<std::pair<MemoryLocation, const Term *>> speculativeReturnValueTerms_;
+                    /** Mapping from memory locations that can be used for returning values to terms. */
+                    std::vector<std::pair<MemoryLocation, const Term*>> speculativeReturnValueTerms_;
 
-    Patch patch_;
+                    Patch patch_;
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] convention Valid pointer to the calling convention.
-     * \param[in] signature Pointer to the call's signature. Can be nullptr.
-     * \param[in] stackArgumentsSize Size of arguments passed on the stack.
-     */
-    CallHook(const Convention *convention, const CallSignature *signature, const boost::optional<ByteSize> &stackArgumentsSize);
+                public:
+                    /**
+                     * Class constructor.
+                     *
+                     * \param[in] convention Valid pointer to the calling convention.
+                     * \param[in] signature Pointer to the call's signature. Can be nullptr.
+                     * \param[in] stackArgumentsSize Size of arguments passed on the stack.
+                     */
+                    CallHook(const Convention* convention, const CallSignature* signature, const boost::optional<ByteSize> & stackArgumentsSize);
 
-    /**
-     * Destructor.
-     */
-    ~CallHook();
+                    /**
+                     * Destructor.
+                     */
+                    ~CallHook();
 
-    /**
-     * \return Patch to be inserted at the call site.
-     */
-    Patch &patch() { return patch_; }
+                    /**
+                     * \return Patch to be inserted at the call site.
+                     */
+                    Patch & patch() { return patch_; }
 
-    /**
-     * \return Pointer to the statement used for snapshotting reaching definitions.
-     *         Will be nullptr if signature was given to the constructor.
-     */
-    const Statement *snapshotStatement() const { return snapshotStatement_; }
+                    /**
+                     * \return Pointer to the statement used for snapshotting reaching definitions.
+                     *         Will be nullptr if signature was given to the constructor.
+                     */
+                    const Statement* snapshotStatement() const { return snapshotStatement_; }
 
-    /**
-     * \param term Valid pointer to a term representing the argument
-     *             in the signature.
-     *
-     * \return Pointer to the term representing this argument in the hook.
-     *         Will be nullptr, if signature does not include such an argument.
-     */
-    const Term *getArgumentTerm(const Term *term) const {
-        assert(term != nullptr);
-        return nc::find(argumentTerms_, term);
-    }
+                    /**
+                     * \param term Valid pointer to a term representing the argument
+                     *             in the signature.
+                     *
+                     * \return Pointer to the term representing this argument in the hook.
+                     *         Will be nullptr, if signature does not include such an argument.
+                     */
+                    const Term* getArgumentTerm(const Term* term) const
+                    {
+                        assert(term != nullptr);
+                        return nc::find(argumentTerms_, term);
+                    }
 
-    /**
-     * \param term Valid pointer to a term representing the return value
-     *             in the signature.
-     *
-     * \return Pointer to the term representing the return value in the hook.
-     *         Will be nullptr, if the signature does not include such an argument.
-     */
-    const Term *getReturnValueTerm(const Term *term) const {
-        assert(term != nullptr);
-        return nc::find(returnValueTerms_, term);
-    }
+                    /**
+                     * \param term Valid pointer to a term representing the return value
+                     *             in the signature.
+                     *
+                     * \return Pointer to the term representing the return value in the hook.
+                     *         Will be nullptr, if the signature does not include such an argument.
+                     */
+                    const Term* getReturnValueTerm(const Term* term) const
+                    {
+                        assert(term != nullptr);
+                        return nc::find(returnValueTerms_, term);
+                    }
 
-    /**
-     * \return Pointer to the stack pointer term. Can be nullptr if the corresponding
-     *         calling convention defines no stack pointer.
-     */
-    const Term *stackPointer() const { return stackPointer_; }
+                    /**
+                     * \return Pointer to the stack pointer term. Can be nullptr if the corresponding
+                     *         calling convention defines no stack pointer.
+                     */
+                    const Term* stackPointer() const { return stackPointer_; }
 
-    /**
-     * \return Mapping from argument terms from the signature to their clones.
-     */
-    const boost::unordered_map<const Term *, const Term *> &argumentTerms() const { return argumentTerms_; }
+                    /**
+                     * \return Mapping from argument terms from the signature to their clones.
+                     */
+                    const boost::unordered_map<const Term*, const Term*> & argumentTerms() const { return argumentTerms_; }
 
-    /**
-     * \return Mapping from return value terms from the signature to their clones.
-     */
-    const boost::unordered_map<const Term *, const Term *> &returnValueTerms() const { return returnValueTerms_; }
+                    /**
+                     * \return Mapping from return value terms from the signature to their clones.
+                     */
+                    const boost::unordered_map<const Term*, const Term*> & returnValueTerms() const { return returnValueTerms_; }
 
-    /**
-     * \return Mapping of the memory locations that can contain return values
-     *         to terms representing writes to these locations.
-     */
-    const std::vector<std::pair<MemoryLocation, const Term *>> &speculativeReturnValueTerms() const { return speculativeReturnValueTerms_; }
-};
+                    /**
+                     * \return Mapping of the memory locations that can contain return values
+                     *         to terms representing writes to these locations.
+                     */
+                    const std::vector<std::pair<MemoryLocation, const Term*>> & speculativeReturnValueTerms() const { return speculativeReturnValueTerms_; }
+                };
 
-} // namespace calling
-} // namespace ir
-} // namespace core
+            } // namespace calling
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et ts=4 sw=4: */

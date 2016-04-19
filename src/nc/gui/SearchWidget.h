@@ -36,123 +36,128 @@ class QLineEdit;
 class QStringListModel;
 QT_END_NAMESPACE
 
-namespace nc { namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-class Searcher;
+        class Searcher;
 
-/**
- * Widget providing a text search functionality.
- */
-class SearchWidget: public QWidget {
-    Q_OBJECT
+        /**
+         * Widget providing a text search functionality.
+         */
+        class SearchWidget: public QWidget
+        {
+            Q_OBJECT
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param searcher  Valid pointer to the searcher.
-     * \param parent    Pointer to the parent widget. Can be nullptr.
-     */
-    SearchWidget(std::unique_ptr<Searcher> searcher, QWidget *parent = nullptr);
+            /**
+             * Constructor.
+             *
+             * \param searcher  Valid pointer to the searcher.
+             * \param parent    Pointer to the parent widget. Can be nullptr.
+             */
+            SearchWidget(std::unique_ptr<Searcher> searcher, QWidget* parent = nullptr);
 
-    /**
-     * Destructor.
-     */
-    ~SearchWidget();
+            /**
+             * Destructor.
+             */
+            ~SearchWidget();
 
-    /**
-     * \return Valid pointer to the searcher.
-     */
-    Searcher *searcher() const { return searcher_.get(); }
+            /**
+             * \return Valid pointer to the searcher.
+             */
+            Searcher* searcher() const { return searcher_.get(); }
 
-    public Q_SLOTS:
+        public Q_SLOTS:
 
-    /**
-     * Shows the widget and sets input focus into it.
-     */
-    void activate();
+            /**
+             * Shows the widget and sets input focus into it.
+             */
+            void activate();
 
-    /**
-     * Hides the widget.
-     */
-    void deactivate();
+            /**
+             * Hides the widget.
+             */
+            void deactivate();
 
-    /**
-     * Finds the next occurrence of the entered search string.
-     */
-    void findNext();
+            /**
+             * Finds the next occurrence of the entered search string.
+             */
+            void findNext();
 
-    /**
-     * Finds the previous occurrence of the entered search string.
-     */
-    void findPrevious();
+            /**
+             * Finds the previous occurrence of the entered search string.
+             */
+            void findPrevious();
 
-    private Q_SLOTS:
+        private Q_SLOTS:
 
-    /**
-     * Schedules incremental search.
-     */
-    void scheduleIncrementalSearch();
+            /**
+             * Schedules incremental search.
+             */
+            void scheduleIncrementalSearch();
 
-    /**
-     * Finds the first occurrence of the search string.
-     */
-    void performIncrementalSearch();
+            /**
+             * Finds the first occurrence of the search string.
+             */
+            void performIncrementalSearch();
 
-    /**
-     * Remembers currently entered string for completion.
-     */
-    void rememberCompletion();
+            /**
+             * Remembers currently entered string for completion.
+             */
+            void rememberCompletion();
 
-    private:
+        private:
 
-    /** Associated searcher. */
-    std::unique_ptr<Searcher> searcher_;
+            /** Associated searcher. */
+            std::unique_ptr<Searcher> searcher_;
 
-    /** Input for entering a search string. */
-    QLineEdit *lineEdit_;
+            /** Input for entering a search string. */
+            QLineEdit* lineEdit_;
 
-    /** Completion model for the search string. */
-    QStringListModel *completionModel_;
+            /** Completion model for the search string. */
+            QStringListModel* completionModel_;
 
-    /** Action for toggling incremental search. */
-    QAction *incrementalSearchAction_;
+            /** Action for toggling incremental search. */
+            QAction* incrementalSearchAction_;
 
-    /** Action for choosing case sensitivity mode. */
-    QAction *caseSensitiveAction_;
+            /** Action for choosing case sensitivity mode. */
+            QAction* caseSensitiveAction_;
 
-    /** Action for choosing whole words search mode. */
-    QAction *wholeWordsAction_;
+            /** Action for choosing whole words search mode. */
+            QAction* wholeWordsAction_;
 
-    /** Action for choosing regexp search mode. */
-    QAction *regexpAction_;
+            /** Action for choosing regexp search mode. */
+            QAction* regexpAction_;
 
-    /** Palette of the line edit in a normal state. */
-    QPalette normalPalette_;
+            /** Palette of the line edit in a normal state. */
+            QPalette normalPalette_;
 
-    /** Palette of the line edit to let user know that the string was not found. */
-    QPalette failurePalette_;
+            /** Palette of the line edit to let user know that the string was not found. */
+            QPalette failurePalette_;
 
-    /** Timer for implementing delayed incremental search. */
-    QTimer *incrementalSearchTimer_;
+            /** Timer for implementing delayed incremental search. */
+            QTimer* incrementalSearchTimer_;
 
-    /**
-     * \return Searcher encoding of search flags selected by the user.
-     */
-    int searchFlags() const;
+            /**
+             * \return Searcher encoding of search flags selected by the user.
+             */
+            int searchFlags() const;
 
-    /**
-     * Indicates that the search has succeeded.
-     */
-    void indicateSuccess();
+            /**
+             * Indicates that the search has succeeded.
+             */
+            void indicateSuccess();
 
-    /**
-     * Indicates that the search has failed.
-     */
-    void indicateFailure();
-};
+            /**
+             * Indicates that the search has failed.
+             */
+            void indicateFailure();
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

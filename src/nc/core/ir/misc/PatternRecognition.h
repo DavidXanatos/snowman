@@ -25,47 +25,55 @@
 
 #include <nc/config.h>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class BasicBlock;
-class Jump;
-class Term;
+            class BasicBlock;
+            class Jump;
+            class Term;
 
-namespace dflow {
-    class Dataflow;
-}
+            namespace dflow
+            {
+                class Dataflow;
+            }
 
-namespace misc {
+            namespace misc
+            {
 
-class ArrayAccess;
-class BoundsCheck;
+                class ArrayAccess;
+                class BoundsCheck;
 
-/**
- * Parses an expression of the form [base + stride * index], with constant base and stride.
- *
- * \param[in] term      Valid pointer to a term.
- * \param[in] dataflow  Dataflow information.
- *
- * \returns Valid indexing expression if the term has a form like [a+b*x].
- *          Otherwise, an invalid descriptors is returned.
- */
-ArrayAccess recognizeArrayAccess(const Term *term, const dflow::Dataflow &dataflow);
+                /**
+                 * Parses an expression of the form [base + stride * index], with constant base and stride.
+                 *
+                 * \param[in] term      Valid pointer to a term.
+                 * \param[in] dataflow  Dataflow information.
+                 *
+                 * \returns Valid indexing expression if the term has a form like [a+b*x].
+                 *          Otherwise, an invalid descriptors is returned.
+                 */
+                ArrayAccess recognizeArrayAccess(const Term* term, const dflow::Dataflow & dataflow);
 
-/**
- * Parses a jump of the form "if (index <= maxValue) then goto ifPassed else goto ifFailed",
- * with constant maxValue.
- *
- * \param[in] jump      Valid pointer to a jump.
- * \param[in] ifPassed  Valid pointer to the basic block getting control if the bounds check passes.
- * \param[in] dataflow  Dataflow information.
- *
- * \return Valid bounds check description if the jump implements a check like "x <= c".
- *         Otherwise, an invalid descriptor is returned.
- */
-BoundsCheck recognizeBoundsCheck(const Jump *jump, const BasicBlock *ifPassed, const dflow::Dataflow &dataflow);
+                /**
+                 * Parses a jump of the form "if (index <= maxValue) then goto ifPassed else goto ifFailed",
+                 * with constant maxValue.
+                 *
+                 * \param[in] jump      Valid pointer to a jump.
+                 * \param[in] ifPassed  Valid pointer to the basic block getting control if the bounds check passes.
+                 * \param[in] dataflow  Dataflow information.
+                 *
+                 * \return Valid bounds check description if the jump implements a check like "x <= c".
+                 *         Otherwise, an invalid descriptor is returned.
+                 */
+                BoundsCheck recognizeBoundsCheck(const Jump* jump, const BasicBlock* ifPassed, const dflow::Dataflow & dataflow);
 
-}}}} // namespace nc::core::ir::misc
+            }
+        }
+    }
+} // namespace nc::core::ir::misc
 
 /* vim:set et sts=4 sw=4: */

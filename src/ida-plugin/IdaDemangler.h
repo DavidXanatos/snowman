@@ -27,18 +27,22 @@
 
 #include <nc/core/mangling/Demangler.h>
 
-namespace nc {
-namespace ida {
+namespace nc
+{
+    namespace ida
+    {
 
-/**
- * Demangler using IDA's facilities.
- */
-class IdaDemangler: public core::mangling::Demangler {
-    public:
+        /**
+         * Demangler using IDA's facilities.
+         */
+        class IdaDemangler: public core::mangling::Demangler
+        {
+        public:
 
-    virtual QString demangle(const QString &symbol) const override;
-};
+            virtual QString demangle(const QString & symbol) const override;
+        };
 
-}} // namespace nc::ida
+    }
+} // namespace nc::ida
 
 /* vim:set et sts=4 sw=4: */

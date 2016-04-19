@@ -30,37 +30,44 @@
 
 #include "Project.h"
 
-namespace nc {
-namespace gui {
-
-DeleteInstructions::DeleteInstructions(Project *project, const std::vector<const core::arch::Instruction *> &instructions):
-    project_(project)
+namespace nc
 {
-    assert(project);
+    namespace gui
+    {
 
-    instructions_.reserve(instructions.size());
+        DeleteInstructions::DeleteInstructions(Project* project, const std::vector<const core::arch::Instruction*> & instructions):
+            project_(project)
+        {
+            assert(project);
 
-    foreach (const core::arch::Instruction *instruction, instructions) {
-        auto instr = project->instructions()->get(instruction->addr());
-        if (instr.get() == instruction) {
-            instructions_.push_back(instr);
+            instructions_.reserve(instructions.size());
+
+            foreach(const core::arch::Instruction * instruction, instructions)
+            {
+                auto instr = project->instructions()->get(instruction->addr());
+                if(instr.get() == instruction)
+                {
+                    instructions_.push_back(instr);
+                }
+            }
         }
+
+        void DeleteInstructions::work()
+        {
+            project_->logToken().info(tr("Deleting %1 instruction(s)...", nullptr, static_cast<int>(instructions_.size())).arg(instructions_.size()));
+
+            auto newInstructions = std::make_shared<core::arch::Instructions>(*project_->instructions());
+            foreach(const auto & instruction, instructions_)
+            {
+                newInstructions->remove(instruction.get());
+            }
+
+            project_->setInstructions(newInstructions);
+
+            project_->logToken().info(tr("Deletion completed.", nullptr, static_cast<int>(instructions_.size())));
+        }
+
     }
-}
-
-void DeleteInstructions::work() {
-    project_->logToken().info(tr("Deleting %1 instruction(s)...", nullptr, static_cast<int>(instructions_.size())).arg(instructions_.size()));
-
-    auto newInstructions = std::make_shared<core::arch::Instructions>(*project_->instructions());
-    foreach (const auto &instruction, instructions_) {
-        newInstructions->remove(instruction.get());
-    }
-
-    project_->setInstructions(newInstructions);
-
-    project_->logToken().info(tr("Deletion completed.", nullptr, static_cast<int>(instructions_.size())));
-}
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

@@ -35,49 +35,64 @@
 
 #include "InvalidInstructionException.h"
 
-namespace nc {
-namespace core {
-namespace irgen {
+namespace nc
+{
+    namespace core
+    {
+        namespace irgen
+        {
 
-void InstructionAnalyzer::createStatements(const arch::Instructions *instructions, ir::Program *program,
-                                           const CancellationToken &canceled, const LogToken &log) {
-    assert(instructions);
-    assert(program);
-    doCreateStatements(instructions, program, canceled, log);
-}
+            void InstructionAnalyzer::createStatements(const arch::Instructions* instructions, ir::Program* program,
+                    const CancellationToken & canceled, const LogToken & log)
+            {
+                assert(instructions);
+                assert(program);
+                doCreateStatements(instructions, program, canceled, log);
+            }
 
-void InstructionAnalyzer::doCreateStatements(const arch::Instructions *instructions, ir::Program *program,
-                      const CancellationToken &canceled, const LogToken &log) {
-    foreach (const auto &instr, instructions->all()) {
-        try {
-            createStatements(instr.get(), program);
-        } catch (const InvalidInstructionException &e) {
-            /* Note: this is an AntiIdiom: http://c2.com/cgi/wiki?LoggingDiscussion */
-            log.warning(e.unicodeWhat());
-        }
-        canceled.poll();
-    }
-}
+            void InstructionAnalyzer::doCreateStatements(const arch::Instructions* instructions, ir::Program* program,
+                    const CancellationToken & canceled, const LogToken & log)
+            {
+                foreach(const auto & instr, instructions->all())
+                {
+                    try
+                    {
+                        createStatements(instr.get(), program);
+                    }
+                    catch(const InvalidInstructionException & e)
+                    {
+                        /* Note: this is an AntiIdiom: http://c2.com/cgi/wiki?LoggingDiscussion */
+                        log.warning(e.unicodeWhat());
+                    }
+                    canceled.poll();
+                }
+            }
 
-void InstructionAnalyzer::createStatements(const arch::Instruction *instruction, ir::Program *program) {
-    assert(instruction);
+            void InstructionAnalyzer::createStatements(const arch::Instruction* instruction, ir::Program* program)
+            {
+                assert(instruction);
 
-    try {
-        doCreateStatements(instruction, program);
-    } catch (nc::Exception &e) {
-        if (!boost::get_error_info<ExceptionInstruction>(e)) {
-            e << ExceptionInstruction(instruction);
-        }
-        throw;
-    }
-}
+                try
+                {
+                    doCreateStatements(instruction, program);
+                }
+                catch(nc::Exception & e)
+                {
+                    if(!boost::get_error_info<ExceptionInstruction>(e))
+                    {
+                        e << ExceptionInstruction(instruction);
+                    }
+                    throw;
+                }
+            }
 
-std::unique_ptr<ir::Term> InstructionAnalyzer::createTerm(const arch::Register *reg) {
-    return std::make_unique<ir::MemoryLocationAccess>(reg->memoryLocation());
-}
+            std::unique_ptr<ir::Term> InstructionAnalyzer::createTerm(const arch::Register* reg)
+            {
+                return std::make_unique<ir::MemoryLocationAccess>(reg->memoryLocation());
+            }
 
-} // namespace irgen
-} // namespace core
+        } // namespace irgen
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

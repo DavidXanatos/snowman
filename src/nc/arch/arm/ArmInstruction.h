@@ -7,12 +7,17 @@
 
 #include <nc/core/arch/CapstoneInstruction.h>
 
-namespace nc {
-namespace arch {
-namespace arm {
+namespace nc
+{
+    namespace arch
+    {
+        namespace arm
+        {
 
-typedef core::arch::CapstoneInstruction<CS_ARCH_ARM, 4> ArmInstruction;
+            typedef core::arch::CapstoneInstruction<CS_ARCH_ARM, 4> ArmInstruction;
 
-}}} // namespace nc::arch::arm
+        }
+    }
+} // namespace nc::arch::arm
 
 /* vim:set et sts=4 sw=4: */

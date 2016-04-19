@@ -26,20 +26,23 @@
 
 #include <QCoreApplication>
 
-namespace nc {
+namespace nc
+{
 
-CancellationException::CancellationException():
-    Exception(tr("Cancellation requested"))
-{}
+    CancellationException::CancellationException():
+        Exception(tr("Cancellation requested"))
+    {}
 
 #ifndef NC_USE_THREADS
-bool CancellationToken::cancellationRequested() const {
-    if (qApp) {
-        qApp->processEvents();
-    }
+    bool CancellationToken::cancellationRequested() const
+    {
+        if(qApp)
+        {
+            qApp->processEvents();
+        }
 
-    return *cancellationRequested_;
-}
+        return *cancellationRequested_;
+    }
 #endif
 
 } // namespace nc

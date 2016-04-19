@@ -41,83 +41,92 @@ class QApplication;
 class QWidget;
 QT_END_NAMESPACE
 
-namespace nc { namespace gui {
-    class MainWindow;
-    class Project;
-}}
+namespace nc
+{
+    namespace gui
+    {
+        class MainWindow;
+        class Project;
+    }
+}
 
-namespace nc { namespace ida {
+namespace nc
+{
+    namespace ida
+    {
 
-/**
- * Decompiler IDA plugin.
- */
-class DecompilerPlugin: public QObject, public IdaPlugin {
-    Q_OBJECT
+        /**
+         * Decompiler IDA plugin.
+         */
+        class DecompilerPlugin: public QObject, public IdaPlugin
+        {
+            Q_OBJECT
 
-    Branding branding_; 
+            Branding branding_;
 
-public:
-    DecompilerPlugin();
+        public:
+            DecompilerPlugin();
 
-    virtual ~DecompilerPlugin();
+            virtual ~DecompilerPlugin();
 
-    /**
-     * Decompiles the function under cursor.
-     */
-    void decompileFunction();
+            /**
+             * Decompiles the function under cursor.
+             */
+            void decompileFunction();
 
-    /**
-     * Decompiles the whole program.
-     */
-    void decompileProgram();
+            /**
+             * Decompiles the whole program.
+             */
+            void decompileProgram();
 
-private:
-    std::unique_ptr<QApplication> mApplication;
+        private:
+            std::unique_ptr<QApplication> mApplication;
 
-    /** Mapping from a function's entry address to corresponding main window. */
-    boost::unordered_map<ByteAddr, gui::MainWindow *> function2window_;
+            /** Mapping from a function's entry address to corresponding main window. */
+            boost::unordered_map<ByteAddr, gui::MainWindow*> function2window_;
 
-    /** Mapping from a window to the function's entry address. */
-    boost::unordered_map<gui::MainWindow *, ByteAddr> window2function_;
+            /** Mapping from a window to the function's entry address. */
+            boost::unordered_map<gui::MainWindow*, ByteAddr> window2function_;
 
-    /** Mapping from a main window to the tab QWidget of IDA. */
-    boost::unordered_map<gui::MainWindow *, QWidget *> window2widget_;
+            /** Mapping from a main window to the tab QWidget of IDA. */
+            boost::unordered_map<gui::MainWindow*, QWidget*> window2widget_;
 
-    /** Main window decompiliing the whole program. */
-    gui::MainWindow *programWindow_;
+            /** Main window decompiliing the whole program. */
+            gui::MainWindow* programWindow_;
 
-    /**
-     * Creates a main window inside an IDA tab widget.
-     *
-     * \return Valid pointer to the created main window, owned by IDA.
-     */
-    gui::MainWindow *createWindow();
+            /**
+             * Creates a main window inside an IDA tab widget.
+             *
+             * \return Valid pointer to the created main window, owned by IDA.
+             */
+            gui::MainWindow* createWindow();
 
-    /**
-     * Shows/activates the main window.
-     *
-     * \return window Valid pointer to the main window.
-     */
-    void activateWindow(gui::MainWindow *window);
+            /**
+             * Shows/activates the main window.
+             *
+             * \return window Valid pointer to the main window.
+             */
+            void activateWindow(gui::MainWindow* window);
 
-    private Q_SLOTS:
+        private Q_SLOTS:
 
-    /**
-     * Slot handling destruction of a main window (owned by IDA).
-     *
-     * \param object Valid pointer to the main window object that was destroyed.
-     */
-    void windowDestroyed(QObject *object);
+            /**
+             * Slot handling destruction of a main window (owned by IDA).
+             *
+             * \param object Valid pointer to the main window object that was destroyed.
+             */
+            void windowDestroyed(QObject* object);
 
-    private:
+        private:
 
-    /**
-     * Creates a project for decompiling (a part of) the program opened in IDA.
-     * \return Valid pointer to the project.
-     */
-    std::unique_ptr<gui::Project> createIdaProject() const;
-};
+            /**
+             * Creates a project for decompiling (a part of) the program opened in IDA.
+             * \return Valid pointer to the project.
+             */
+            std::unique_ptr<gui::Project> createIdaProject() const;
+        };
 
-}} // namespace nc::ida
+    }
+} // namespace nc::ida
 
 /* vim:set et sts=4 sw=4: */

@@ -30,96 +30,100 @@
 #include <memory>
 #include <deque>
 
-namespace nc {
-namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-class Command;
+        class Command;
 
-/**
- * Command for executing a sequence of commands.
- */
-class CommandQueue: public QObject {
-    Q_OBJECT
+        /**
+         * Command for executing a sequence of commands.
+         */
+        class CommandQueue: public QObject
+        {
+            Q_OBJECT
 
-    /** Command queue. */
-    std::deque<std::unique_ptr<Command>> queue_;
+            /** Command queue. */
+            std::deque<std::unique_ptr<Command>> queue_;
 
-    /** First element of the queue. */
-    std::shared_ptr<Command> front_;
+            /** First element of the queue. */
+            std::shared_ptr<Command> front_;
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param parent Pointer to the parent widget. Can be nullptr.
-     */
-    CommandQueue(QObject *parent = nullptr);
+            /**
+             * Constructor.
+             *
+             * \param parent Pointer to the parent widget. Can be nullptr.
+             */
+            CommandQueue(QObject* parent = nullptr);
 
-    /**
-     * Destructor.
-     *
-     * Cancels currently executing command.
-     */
-    ~CommandQueue();
+            /**
+             * Destructor.
+             *
+             * Cancels currently executing command.
+             */
+            ~CommandQueue();
 
-    /**
-     * Schedules execution of a given command.
-     *
-     * \param command Valid pointer to a command.
-     */
-    void push(std::unique_ptr<Command> command);
+            /**
+             * Schedules execution of a given command.
+             *
+             * \param command Valid pointer to a command.
+             */
+            void push(std::unique_ptr<Command> command);
 
-    /**
-     * \return Pointer to the first element of the queue. Can be nullptr if the queue is empty.
-     */
-    Command *front() const { return front_.get(); }
+            /**
+             * \return Pointer to the first element of the queue. Can be nullptr if the queue is empty.
+             */
+            Command* front() const { return front_.get(); }
 
-    /**
-     * \return True if the queue is empty, false otherwise.
-     */
-    bool empty() const { return front() == nullptr; }
+            /**
+             * \return True if the queue is empty, false otherwise.
+             */
+            bool empty() const { return front() == nullptr; }
 
-    public Q_SLOTS:
+        public Q_SLOTS:
 
-    /**
-     * Cancels currently executed command.
-     */
-    void cancel();
+            /**
+             * Cancels currently executed command.
+             */
+            void cancel();
 
-    /**
-     * Cancels currently executed command and clears the queue.
-     */
-    void clear();
+            /**
+             * Cancels currently executed command and clears the queue.
+             */
+            void clear();
 
-    Q_SIGNALS:
+        Q_SIGNALS:
 
-    /**
-     * This signal is emitted just before the next command starts being executed.
-     */
-    void nextCommand();
+            /**
+             * This signal is emitted just before the next command starts being executed.
+             */
+            void nextCommand();
 
-    /**
-     * This signal is emitted when the queue queue becomes empty.
-     */
-    void idle();
+            /**
+             * This signal is emitted when the queue queue becomes empty.
+             */
+            void idle();
 
-    private:
+        private:
 
-    /**
-     * Executes the next instruction in the queue.
-     */
-    void executeNext();
+            /**
+             * Executes the next instruction in the queue.
+             */
+            void executeNext();
 
-    private Q_SLOTS:
+        private Q_SLOTS:
 
-    /**
-     * Slot called when an activity is finished.
-     */
-    void commandFinished();
-};
+            /**
+             * Slot called when an activity is finished.
+             */
+            void commandFinished();
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */
 

@@ -30,56 +30,70 @@
 
 #include "Term.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-
-Jump::Jump(std::unique_ptr<Term> condition, JumpTarget thenTarget, JumpTarget elseTarget):
-    Statement(JUMP), condition_(std::move(condition)),
-    thenTarget_(std::move(thenTarget)), elseTarget_(std::move(elseTarget))
+namespace nc
 {
-    assert(condition_ != nullptr && "Jump condition must be not nullptr.");
-    assert(thenTarget_ && "Then target must be valid.");
-    assert(elseTarget_ && "Else target must be valid.");
+    namespace core
+    {
+        namespace ir
+        {
 
-    condition_->setStatement(this);
+            Jump::Jump(std::unique_ptr<Term> condition, JumpTarget thenTarget, JumpTarget elseTarget):
+                Statement(JUMP), condition_(std::move(condition)),
+                thenTarget_(std::move(thenTarget)), elseTarget_(std::move(elseTarget))
+            {
+                assert(condition_ != nullptr && "Jump condition must be not nullptr.");
+                assert(thenTarget_ && "Then target must be valid.");
+                assert(elseTarget_ && "Else target must be valid.");
 
-    if (thenTarget_.address()) {
-        thenTarget_.address()->setStatement(this);
-    }
-    if (elseTarget_.address()) {
-        elseTarget_.address()->setStatement(this);
-    }
-}
+                condition_->setStatement(this);
 
-Jump::Jump(JumpTarget thenTarget):
-    Statement(JUMP), thenTarget_(std::move(thenTarget))
-{
-    assert(thenTarget_ && "Jump target must be valid.");
+                if(thenTarget_.address())
+                {
+                    thenTarget_.address()->setStatement(this);
+                }
+                if(elseTarget_.address())
+                {
+                    elseTarget_.address()->setStatement(this);
+                }
+            }
 
-    if (thenTarget_.address()) {
-        thenTarget_.address()->setStatement(this);
-    }
-}
+            Jump::Jump(JumpTarget thenTarget):
+                Statement(JUMP), thenTarget_(std::move(thenTarget))
+            {
+                assert(thenTarget_ && "Jump target must be valid.");
 
-std::unique_ptr<Statement> Jump::doClone() const {
-    if (isConditional()) {
-        return std::make_unique<Jump>(condition()->clone(), thenTarget(), elseTarget());
-    } else {
-        return std::make_unique<Jump>(thenTarget());
-    }
-}
+                if(thenTarget_.address())
+                {
+                    thenTarget_.address()->setStatement(this);
+                }
+            }
 
-void Jump::print(QTextStream &out) const {
-    if (isConditional()) {
-        out << "if " << *condition() << " goto " << thenTarget() << " else goto " << elseTarget() << endl;
-    } else {
-        out << "goto " << thenTarget() << endl;
-    }
-}
+            std::unique_ptr<Statement> Jump::doClone() const
+            {
+                if(isConditional())
+                {
+                    return std::make_unique<Jump>(condition()->clone(), thenTarget(), elseTarget());
+                }
+                else
+                {
+                    return std::make_unique<Jump>(thenTarget());
+                }
+            }
 
-} // namespace ir
-} // namespace core
+            void Jump::print(QTextStream & out) const
+            {
+                if(isConditional())
+                {
+                    out << "if " << *condition() << " goto " << thenTarget() << " else goto " << elseTarget() << endl;
+                }
+                else
+                {
+                    out << "goto " << thenTarget() << endl;
+                }
+            }
+
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

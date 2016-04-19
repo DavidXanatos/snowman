@@ -34,80 +34,84 @@
 #include "FunctionIdentifier.h"
 #include "FunctionPointerType.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Function declaration.
- */
-class FunctionDeclaration: public Declaration, public Commentable {
-    std::unique_ptr<FunctionPointerType> type_; ///< Type of pointer to this function.
-    std::vector<std::unique_ptr<ArgumentDeclaration> > arguments_; ///< Function arguments.
-    std::unique_ptr<FunctionIdentifier> functionIdentifier_;
+            /**
+             * Function declaration.
+             */
+            class FunctionDeclaration: public Declaration, public Commentable
+            {
+                std::unique_ptr<FunctionPointerType> type_; ///< Type of pointer to this function.
+                std::vector<std::unique_ptr<ArgumentDeclaration>> arguments_; ///< Function arguments.
+                std::unique_ptr<FunctionIdentifier> functionIdentifier_;
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] tree Owning tree.
-     * \param[in] identifier Function name.
-     * \param[in] returnType Function return type.
-     * \param[in] variadic Whether function has variable number of arguments.
-     */
-    FunctionDeclaration(Tree &tree, QString identifier, const Type *returnType, bool variadic = false);
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] tree Owning tree.
+                 * \param[in] identifier Function name.
+                 * \param[in] returnType Function return type.
+                 * \param[in] variadic Whether function has variable number of arguments.
+                 */
+                FunctionDeclaration(Tree & tree, QString identifier, const Type* returnType, bool variadic = false);
 
-protected:
-    /**
-     * Class constructor having declaration kind argument used by FunctionDefinition.
-     *
-     * \param[in] tree Owning tree.
-     * \param[in] declarationKind Declaration kind.
-     * \param[in] identifier Function name.
-     * \param[in] returnType Function return type.
-     * \param[in] variadic Whether function has variable number of arguments.
-     */
-    FunctionDeclaration(Tree &tree, int declarationKind, QString identifier, const Type *returnType, bool variadic = false);
+            protected:
+                /**
+                 * Class constructor having declaration kind argument used by FunctionDefinition.
+                 *
+                 * \param[in] tree Owning tree.
+                 * \param[in] declarationKind Declaration kind.
+                 * \param[in] identifier Function name.
+                 * \param[in] returnType Function return type.
+                 * \param[in] variadic Whether function has variable number of arguments.
+                 */
+                FunctionDeclaration(Tree & tree, int declarationKind, QString identifier, const Type* returnType, bool variadic = false);
 
-public:
-    /**
-     * \return Type of pointer to this function.
-     */
-    const FunctionPointerType *type() const { return type_.get(); }
+            public:
+                /**
+                 * \return Type of pointer to this function.
+                 */
+                const FunctionPointerType* type() const { return type_.get(); }
 
-    /**
-     * \return Valid pointer to the function identifier used in the declaration.
-     */
-    const FunctionIdentifier *functionIdentifier() const { return functionIdentifier_.get(); }
+                /**
+                 * \return Valid pointer to the function identifier used in the declaration.
+                 */
+                const FunctionIdentifier* functionIdentifier() const { return functionIdentifier_.get(); }
 
-    /**
-     * Function arguments.
-     */
-    const std::vector<std::unique_ptr<ArgumentDeclaration>> &arguments() const { return arguments_; }
+                /**
+                 * Function arguments.
+                 */
+                const std::vector<std::unique_ptr<ArgumentDeclaration>> & arguments() const { return arguments_; }
 
-    /**
-     * Adds argument to the function.
-     *
-     * \param argument Valid pointer to the argument declaration.
-     */
-    void addArgument(std::unique_ptr<ArgumentDeclaration> argument);
+                /**
+                 * Adds argument to the function.
+                 *
+                 * \param argument Valid pointer to the argument declaration.
+                 */
+                void addArgument(std::unique_ptr<ArgumentDeclaration> argument);
 
-    /**
-     * \param declaration Valid pointer to the first declaration of the function.
-     */
-    void setFirstDeclaration(FunctionDeclaration *declaration) { functionIdentifier_->setDeclaration(declaration); }
+                /**
+                 * \param declaration Valid pointer to the first declaration of the function.
+                 */
+                void setFirstDeclaration(FunctionDeclaration* declaration) { functionIdentifier_->setDeclaration(declaration); }
 
-    /**
-     * \return Valid pointer to the first declaration of the function.
-     */
-    FunctionDeclaration *getFirstDeclaration() const { return functionIdentifier_->declaration(); }
+                /**
+                 * \return Valid pointer to the first declaration of the function.
+                 */
+                FunctionDeclaration* getFirstDeclaration() const { return functionIdentifier_->declaration(); }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Declaration, nc::core::likec::FunctionDeclaration, nc::core::likec::Declaration::FUNCTION_DECLARATION)

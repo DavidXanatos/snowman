@@ -24,16 +24,20 @@
 
 #include "Goto.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-void Goto::doCallOnChildren(const std::function<void(TreeNode *)> &fun) {
-    fun(destination_.get());
-}
+            void Goto::doCallOnChildren(const std::function<void(TreeNode*)> & fun)
+            {
+                fun(destination_.get());
+            }
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

@@ -8,7 +8,8 @@
 typedef uint32_t cpu_type_t;
 typedef uint32_t cpu_subtype_t;
 
-struct mach_header {
+struct mach_header
+{
     uint32_t magic;
     cpu_type_t cputype;
     cpu_subtype_t cpusubtype;
@@ -18,7 +19,8 @@ struct mach_header {
     uint32_t flags;
 };
 
-struct mach_header_64 {
+struct mach_header_64
+{
     uint32_t magic;
     cpu_type_t cputype;
     cpu_subtype_t cpusubtype;
@@ -37,7 +39,8 @@ static const cpu_type_t CPU_TYPE_X86_64 = CPU_TYPE_I386 | 0x1000000;
 static const cpu_type_t CPU_TYPE_ARM = 12;
 static const cpu_type_t CPU_TYPE_MIPS = 8;
 
-struct load_command {
+struct load_command
+{
     uint32_t cmd;
     uint32_t cmdsize;
 };
@@ -51,7 +54,8 @@ static const uint32_t LC_SEGMENT_64 = 0x19;
 
 typedef uint32_t vm_prot_t;
 
-struct segment_command {
+struct segment_command
+{
     uint32_t cmd;
     uint32_t cmdsize;
     char segname[16];
@@ -65,7 +69,8 @@ struct segment_command {
     uint32_t flags;
 };
 
-struct segment_command_64 {
+struct segment_command_64
+{
     uint32_t cmd;
     uint32_t cmdsize;
     char segname[16];
@@ -83,7 +88,8 @@ vm_prot_t VM_PROT_READ = 0x01;
 vm_prot_t VM_PROT_WRITE = 0x02;
 vm_prot_t VM_PROT_EXECUTE = 0x04;
 
-struct section {
+struct section
+{
     char sectname[16];
     char segname[16];
     uint32_t addr;
@@ -97,7 +103,8 @@ struct section {
     uint32_t reserved2;
 };
 
-struct section_64 {
+struct section_64
+{
     char sectname[16];
     char segname[16];
     uint64_t addr;
@@ -143,7 +150,8 @@ static const uint32_t S_ATTR_PURE_INSTRUCTIONS = 0x80000000;
 static const uint32_t INDIRECT_SYMBOL_LOCAL = 0x80000000;
 static const uint32_t INDIRECT_SYMBOL_ABS = 0x40000000;
 
-struct symtab_command {
+struct symtab_command
+{
     uint32_t cmd;
     uint32_t cmdsize;
     uint32_t symoff;
@@ -152,7 +160,8 @@ struct symtab_command {
     uint32_t strsize;
 };
 
-struct dysymtab_command {
+struct dysymtab_command
+{
     uint32_t cmd;
     uint32_t cmdsize;
     uint32_t ilocalsym;
@@ -175,7 +184,8 @@ struct dysymtab_command {
     uint32_t nlocrel;
 };
 
-struct nlist {
+struct nlist
+{
     uint32_t n_strx;
     uint8_t n_type;
     uint8_t n_sect;
@@ -183,7 +193,8 @@ struct nlist {
     uint32_t n_value;
 };
 
-struct nlist_64 {
+struct nlist_64
+{
     uint32_t n_strx;
     uint8_t n_type;
     uint8_t n_sect;

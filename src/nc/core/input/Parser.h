@@ -32,94 +32,101 @@ QT_BEGIN_NAMESPACE
 class QIODevice;
 QT_END_NAMESPACE
 
-namespace nc {
+namespace nc
+{
 
-class LogToken;
+    class LogToken;
 
-namespace core {
+    namespace core
+    {
 
-class Instructions;
+        class Instructions;
 
-namespace image {
-    class Image;
-}
+        namespace image
+        {
+            class Image;
+        }
 
-namespace input {
+        namespace input
+        {
 
-/**
- * Input parser.
- * 
- * Note that this interface does not define the 'real' parser. 
- * It defines a factory-like object that can be used to:
- * <ul>
- * <li>Create a 'real' parser and parse the given source using it.</li>
- * <li>Check whether the given source seems to be parsable by this parser.</li>
- * </ul>
- * 
- * This design was chosen over the classic abstract factory because there
- * are no practical advantages in separating the 'real' parser into an interface.
- * 
- * Input parser is expected to be stateless and can be accessed by multiple 
- * threads. In general, single instance of a concrete input parser should be
- * enough for the whole application.
- */
-class Parser: public QObject {
-    QString name_; ///< Name of this parser.
+            /**
+             * Input parser.
+             *
+             * Note that this interface does not define the 'real' parser.
+             * It defines a factory-like object that can be used to:
+             * <ul>
+             * <li>Create a 'real' parser and parse the given source using it.</li>
+             * <li>Check whether the given source seems to be parsable by this parser.</li>
+             * </ul>
+             *
+             * This design was chosen over the classic abstract factory because there
+             * are no practical advantages in separating the 'real' parser into an interface.
+             *
+             * Input parser is expected to be stateless and can be accessed by multiple
+             * threads. In general, single instance of a concrete input parser should be
+             * enough for the whole application.
+             */
+            class Parser: public QObject
+            {
+                QString name_; ///< Name of this parser.
 
-public:
-    /**
-     * Constructor.
-     * 
-     * \param[in] name Name of this parser.
-     */
-    Parser(QString name): name_(std::move(name)) {}
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param[in] name Name of this parser.
+                 */
+                Parser(QString name): name_(std::move(name)) {}
 
-    /**
-     * Virtual destructor.
-     */
-    virtual ~Parser() {}
+                /**
+                 * Virtual destructor.
+                 */
+                virtual ~Parser() {}
 
-    /**
-     * \returns Name of this parser.
-     */
-    const QString &name() const { return name_; }
+                /**
+                 * \returns Name of this parser.
+                 */
+                const QString & name() const { return name_; }
 
-    /**
-     * \param[in] source Valid pointer to the data source.
-     *
-     * \returns Whether the data at source looks like
-     *          something that can be parsed with this parser.
-     */
-    bool canParse(QIODevice *source) const;
+                /**
+                 * \param[in] source Valid pointer to the data source.
+                 *
+                 * \returns Whether the data at source looks like
+                 *          something that can be parsed with this parser.
+                 */
+                bool canParse(QIODevice* source) const;
 
-    /**
-     * Parse executable image from the given IO device.
-     *
-     * \param[in] source Valid pointer to the data source.
-     * \param[out] image Valid pointer to the image.
-     * \param[in] log Log token.
-     */
-    void parse(QIODevice *source, image::Image *image, const LogToken &log) const;
+                /**
+                 * Parse executable image from the given IO device.
+                 *
+                 * \param[in] source Valid pointer to the data source.
+                 * \param[out] image Valid pointer to the image.
+                 * \param[in] log Log token.
+                 */
+                void parse(QIODevice* source, image::Image* image, const LogToken & log) const;
 
-protected:
-    /**
-     * \param[in] source Data source.
-     *
-     * \returns Whether the data at source looks like
-     *          something that can be parsed with this parser.
-     */
-    virtual bool doCanParse(QIODevice *source) const = 0;
+            protected:
+                /**
+                 * \param[in] source Data source.
+                 *
+                 * \returns Whether the data at source looks like
+                 *          something that can be parsed with this parser.
+                 */
+                virtual bool doCanParse(QIODevice* source) const = 0;
 
-    /**
-     * Actually parses executable image from the given IO device.
-     *
-     * \param[in] source Data source.
-     * \param[out] image Valid pointer to the image.
-     * \param[in] log Log token.
-     */
-    virtual void doParse(QIODevice *source, image::Image *image, const LogToken &log) const = 0;
-};
+                /**
+                 * Actually parses executable image from the given IO device.
+                 *
+                 * \param[in] source Data source.
+                 * \param[out] image Valid pointer to the image.
+                 * \param[in] log Log token.
+                 */
+                virtual void doParse(QIODevice* source, image::Image* image, const LogToken & log) const = 0;
+            };
 
-}}} // namespace nc::core::input
+        }
+    }
+} // namespace nc::core::input
 
 /* vim:set et sts=4 sw=4: */

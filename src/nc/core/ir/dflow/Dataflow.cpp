@@ -26,36 +26,44 @@
 
 #include "Value.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace dflow {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace dflow
+            {
 
-Dataflow::Dataflow() {}
+                Dataflow::Dataflow() {}
 
-Dataflow::~Dataflow() {}
+                Dataflow::~Dataflow() {}
 
-Value *Dataflow::getValue(const Term *term) {
-    assert(term != nullptr);
+                Value* Dataflow::getValue(const Term* term)
+                {
+                    assert(term != nullptr);
 
-    if (auto source = term->source()) {
-        term = source;
-    }
+                    if(auto source = term->source())
+                    {
+                        term = source;
+                    }
 
-    auto &result = term2value_[term];
-    if (!result) {
-        result.reset(new Value(term->size()));
-    }
-    return result.get();
-}
+                    auto & result = term2value_[term];
+                    if(!result)
+                    {
+                        result.reset(new Value(term->size()));
+                    }
+                    return result.get();
+                }
 
-const Value *Dataflow::getValue(const Term *term) const {
-    return const_cast<Dataflow *>(this)->getValue(term);
-}
+                const Value* Dataflow::getValue(const Term* term) const
+                {
+                    return const_cast<Dataflow*>(this)->getValue(term);
+                }
 
-} // namespace dflow
-} // namespace ir
-} // namespace core
+            } // namespace dflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

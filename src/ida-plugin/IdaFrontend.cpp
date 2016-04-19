@@ -43,195 +43,238 @@
 
 #include "IdaByteSource.h"
 
-namespace nc { namespace ida {
- 
-bool IdaFrontend::jumpToAddress(ByteAddr address) {
-    return ::jumpto(checked_cast<ea_t>(address));
-}
+namespace nc
+{
+    namespace ida
+    {
 
-QString IdaFrontend::functionName(ByteAddr address) {
-    char buffer[MAXSTR];
-    if(::get_func_name(checked_cast<ea_t>(address), buffer, sizeof(buffer)) == NULL)
-        return QString();
-    return QLatin1String(buffer);
-}
-
-QString IdaFrontend::addressName(ByteAddr address) {
-    char buffer[MAXSTR];
-    if(::get_true_name(BADADDR, checked_cast<ea_t>(address), buffer, sizeof(buffer)) == NULL)
-        return QString();
-    return QLatin1String(buffer);
-}
-
-std::vector<std::pair<ByteAddr, QString> > IdaFrontend::importedFunctions() {
-    std::vector<std::pair<ByteAddr, QString> > result;
-
-    for(int i = 0, n = import_node.altval(-1); i < n; i++) {
-        netnode module(import_node.altval(i));
-
-        for(ea_t address = module.sup1st(); address != BADNODE; address = module.supnxt(address)) {
-            char functionName[MAXSTR];
-            ssize_t size = module.supval(address, functionName, sizeof(functionName));
-            if(size != -1)
-                result.push_back(std::make_pair(address, QLatin1String(functionName)));
-        }
-    }
-
-    return result;
-}
-
-QString IdaFrontend::demangle(const QString &mangled) {
-    QString preprocessed = mangled;
-    if(preprocessed.startsWith("j_?"))
-        preprocessed = preprocessed.mid(2); /* Handle thunks. */
-
-    char buffer[MAXSTR];
-    if(::demangle(buffer, sizeof(buffer), preprocessed.toLatin1().data(), 0) > 0)
-        return QLatin1String(buffer);
-
-    return preprocessed;
-}
-
-std::vector<ByteAddr> IdaFrontend::functionStarts() {
-    std::vector<ByteAddr> result;
-
-    for(std::size_t i = 0, n = get_func_qty(); i < n; i++) {
-        func_t *func = getn_func(i);
-        if(func != NULL)
-            result.push_back(func->startEA);
-    }
-
-    return result;
-}
-
-void IdaFrontend::createSections(core::image::Image *image) {
-    for (int i = 0; i < get_segm_qty(); i++) {
-        segment_t *idaSegment = getnseg(i);
-
-        assert(idaSegment != NULL);
-
-        char segName[MAXSTR];
-        ssize_t segNameSize = get_segm_name(idaSegment, segName, sizeof(segName) - 1);
-        if(segNameSize < 0) {
-            segName[0] = '\0';
-        } else if(segNameSize > 0 && segName[0] == '_') {
-            segName[0] = '.';
+        bool IdaFrontend::jumpToAddress(ByteAddr address)
+        {
+            return ::jumpto(checked_cast<ea_t>(address));
         }
 
-        auto section = std::make_unique<core::image::Section>(
-            segName,
-            checked_cast<ByteAddr>(idaSegment->startEA),
-            checked_cast<ByteSize>(idaSegment->size())
-        );
+        QString IdaFrontend::functionName(ByteAddr address)
+        {
+            char buffer[MAXSTR];
+            if(::get_func_name(checked_cast<ea_t>(address), buffer, sizeof(buffer)) == NULL)
+                return QString();
+            return QLatin1String(buffer);
+        }
 
-        section->setReadable(idaSegment->perm & SEGPERM_READ);
-        section->setWritable(idaSegment->perm & SEGPERM_WRITE);
-        section->setExecutable(idaSegment->perm & SEGPERM_EXEC);
-        section->setCode(idaSegment->type == SEG_CODE);
-        section->setData(idaSegment->type == SEG_DATA);
-        section->setBss(idaSegment->type == SEG_BSS);
-        section->setAllocated(section->isCode() || section->isData() || section->isBss());
-        section->setExternalByteSource(std::make_unique<IdaByteSource>());
+        QString IdaFrontend::addressName(ByteAddr address)
+        {
+            char buffer[MAXSTR];
+            if(::get_true_name(BADADDR, checked_cast<ea_t>(address), buffer, sizeof(buffer)) == NULL)
+                return QString();
+            return QLatin1String(buffer);
+        }
 
-        image->addSection(std::move(section));
-    }
-}
+        std::vector<std::pair<ByteAddr, QString>> IdaFrontend::importedFunctions()
+        {
+            std::vector<std::pair<ByteAddr, QString>> result;
 
-QString IdaFrontend::architecture() {
-    if (inf.procName == QLatin1String("ARM")) {
-        return QLatin1String("arm-le");
-    } else if (inf.procName == QLatin1String("ARMB")) {
-        return QLatin1String("arm-be");
-    } else {
-        /* Assume x86 by default. */
-        if (segment_t *segment = get_segm_by_name(".text")) {
-            switch (segment->bitness) {
-                case 0: return QLatin1String("8086");
-                case 1: return QLatin1String("i386");
-                case 2: return QLatin1String("x86-64");
+            for(int i = 0, n = import_node.altval(-1); i < n; i++)
+            {
+                netnode module(import_node.altval(i));
+
+                for(ea_t address = module.sup1st(); address != BADNODE; address = module.supnxt(address))
+                {
+                    char functionName[MAXSTR];
+                    ssize_t size = module.supval(address, functionName, sizeof(functionName));
+                    if(size != -1)
+                        result.push_back(std::make_pair(address, QLatin1String(functionName)));
+                }
+            }
+
+            return result;
+        }
+
+        QString IdaFrontend::demangle(const QString & mangled)
+        {
+            QString preprocessed = mangled;
+            if(preprocessed.startsWith("j_?"))
+                preprocessed = preprocessed.mid(2); /* Handle thunks. */
+
+            char buffer[MAXSTR];
+            if(::demangle(buffer, sizeof(buffer), preprocessed.toLatin1().data(), 0) > 0)
+                return QLatin1String(buffer);
+
+            return preprocessed;
+        }
+
+        std::vector<ByteAddr> IdaFrontend::functionStarts()
+        {
+            std::vector<ByteAddr> result;
+
+            for(std::size_t i = 0, n = get_func_qty(); i < n; i++)
+            {
+                func_t* func = getn_func(i);
+                if(func != NULL)
+                    result.push_back(func->startEA);
+            }
+
+            return result;
+        }
+
+        void IdaFrontend::createSections(core::image::Image* image)
+        {
+            for(int i = 0; i < get_segm_qty(); i++)
+            {
+                segment_t* idaSegment = getnseg(i);
+
+                assert(idaSegment != NULL);
+
+                char segName[MAXSTR];
+                ssize_t segNameSize = get_segm_name(idaSegment, segName, sizeof(segName) - 1);
+                if(segNameSize < 0)
+                {
+                    segName[0] = '\0';
+                }
+                else if(segNameSize > 0 && segName[0] == '_')
+                {
+                    segName[0] = '.';
+                }
+
+                auto section = std::make_unique<core::image::Section>(
+                                   segName,
+                                   checked_cast<ByteAddr>(idaSegment->startEA),
+                                   checked_cast<ByteSize>(idaSegment->size())
+                               );
+
+                section->setReadable(idaSegment->perm & SEGPERM_READ);
+                section->setWritable(idaSegment->perm & SEGPERM_WRITE);
+                section->setExecutable(idaSegment->perm & SEGPERM_EXEC);
+                section->setCode(idaSegment->type == SEG_CODE);
+                section->setData(idaSegment->type == SEG_DATA);
+                section->setBss(idaSegment->type == SEG_BSS);
+                section->setAllocated(section->isCode() || section->isData() || section->isBss());
+                section->setExternalByteSource(std::make_unique<IdaByteSource>());
+
+                image->addSection(std::move(section));
             }
         }
 
-        return QLatin1String("i386");
+        QString IdaFrontend::architecture()
+        {
+            if(inf.procName == QLatin1String("ARM"))
+            {
+                return QLatin1String("arm-le");
+            }
+            else if(inf.procName == QLatin1String("ARMB"))
+            {
+                return QLatin1String("arm-be");
+            }
+            else
+            {
+                /* Assume x86 by default. */
+                if(segment_t* segment = get_segm_by_name(".text"))
+                {
+                    switch(segment->bitness)
+                    {
+                    case 0:
+                        return QLatin1String("8086");
+                    case 1:
+                        return QLatin1String("i386");
+                    case 2:
+                        return QLatin1String("x86-64");
+                    }
+                }
+
+                return QLatin1String("i386");
+            }
+        }
+
+        core::image::Platform::OperatingSystem IdaFrontend::operatingSystem()
+        {
+            if(inf.filetype == f_WIN || inf.filetype == f_COFF || inf.filetype == f_PE)
+            {
+                return core::image::Platform::Windows;
+            }
+            return core::image::Platform::UnknownOS;
+        }
+
+        std::vector<AddressRange> IdaFrontend::functionAddresses(ByteAddr address)
+        {
+            std::vector<AddressRange> result;
+
+            ea_t func_ea = checked_cast<ea_t>(address);
+            func_t* function = ::get_func(func_ea);
+
+            if(!function)
+            {
+                return result;
+            }
+
+            auto startAddr = checked_cast<ByteAddr>(function->startEA);
+            auto endAddr = checked_cast<ByteAddr>(function->endEA);
+            result.push_back(AddressRange(startAddr, endAddr));
+
+            for(int i = 0; i < function->tailqty; ++i)
+            {
+                auto chunkStartAddr = checked_cast<ByteAddr>(function->tails[i].startEA);
+                auto chunkEndAddr = checked_cast<ByteAddr>(function->tails[i].endEA);
+                result.push_back(AddressRange(chunkStartAddr, chunkEndAddr));
+            }
+
+            return result;
+        }
+
+        ByteAddr IdaFrontend::screenAddress()
+        {
+            return checked_cast<ByteAddr>(get_screen_ea());
+        }
+
+        namespace
+        {
+
+            /* Stdcall -> cdecl adaptor. */
+            bool idaapi callbackThunk(void* realCallback)
+            {
+                return reinterpret_cast<bool (*)()>(realCallback)();
+            }
+
+        } // anonymous namespace
+
+        void IdaFrontend::addMenuItem(const QString & menuItem, const QString & name, const QString & hotkey, bool (*callback)())
+        {
+            ::add_menu_item(
+                menuItem.toLocal8Bit().constData(),
+                name.toLocal8Bit().constData(),
+                hotkey.toLocal8Bit().constData(),
+                SETMENU_APP,
+                callbackThunk,
+                reinterpret_cast<void*>(callback));
+        }
+
+        void IdaFrontend::deleteMenuItem(const QString & menuItem)
+        {
+            ::del_menu_item(menuItem.toLocal8Bit().constData());
+        }
+
+        void IdaFrontend::print(const QString & message)
+        {
+            ::msg(message.toLocal8Bit());
+        }
+
+        QWidget* IdaFrontend::createWidget(const QString & caption)
+        {
+            HWND hwnd;
+            TForm* form = create_tform(caption.toLocal8Bit().constData(), &hwnd);
+            open_tform(form, FORM_MDI | FORM_TAB | FORM_MENU | FORM_QWIDGET);
+            return reinterpret_cast<QWidget*>(form);
+        }
+
+        void IdaFrontend::activateWidget(QWidget* widget)
+        {
+            ::switchto_tform(reinterpret_cast<TForm*>(widget), true);
+        }
+
+        void IdaFrontend::closeWidget(QWidget* widget)
+        {
+            ::close_tform(reinterpret_cast<TForm*>(widget), 0);
+        }
+
     }
-}
-
-core::image::Platform::OperatingSystem IdaFrontend::operatingSystem() {
-    if (inf.filetype == f_WIN || inf.filetype == f_COFF || inf.filetype == f_PE) {
-        return core::image::Platform::Windows;
-    }
-    return core::image::Platform::UnknownOS;
-}
-
-std::vector<AddressRange> IdaFrontend::functionAddresses(ByteAddr address) {
-    std::vector<AddressRange> result;
-
-    ea_t func_ea = checked_cast<ea_t>(address);
-    func_t *function = ::get_func(func_ea);
-
-    if (!function) {
-        return result;
-    }
-
-    auto startAddr = checked_cast<ByteAddr>(function->startEA);
-    auto endAddr = checked_cast<ByteAddr>(function->endEA);
-    result.push_back(AddressRange(startAddr, endAddr));
-
-    for (int i = 0; i < function->tailqty; ++i) {
-        auto chunkStartAddr = checked_cast<ByteAddr>(function->tails[i].startEA);
-        auto chunkEndAddr = checked_cast<ByteAddr>(function->tails[i].endEA);
-        result.push_back(AddressRange(chunkStartAddr, chunkEndAddr));
-    }
-    
-    return result;
-}
-
-ByteAddr IdaFrontend::screenAddress() {
-    return checked_cast<ByteAddr>(get_screen_ea());
-}
-
-namespace {
-
-/* Stdcall -> cdecl adaptor. */
-bool idaapi callbackThunk(void *realCallback) {
-    return reinterpret_cast<bool (*)()>(realCallback)();
-}
-
-} // anonymous namespace
-
-void IdaFrontend::addMenuItem(const QString &menuItem, const QString &name, const QString &hotkey, bool (*callback)()) {
-    ::add_menu_item(
-        menuItem.toLocal8Bit().constData(),
-        name.toLocal8Bit().constData(),
-        hotkey.toLocal8Bit().constData(),
-        SETMENU_APP,
-        callbackThunk,
-        reinterpret_cast<void *>(callback));
-}
-
-void IdaFrontend::deleteMenuItem(const QString &menuItem) {
-    ::del_menu_item(menuItem.toLocal8Bit().constData());
-}
-
-void IdaFrontend::print(const QString &message) {
-    ::msg(message.toLocal8Bit());
-}
-
-QWidget *IdaFrontend::createWidget(const QString &caption) {
-    HWND hwnd;
-    TForm *form = create_tform(caption.toLocal8Bit().constData(), &hwnd);
-    open_tform(form, FORM_MDI | FORM_TAB | FORM_MENU | FORM_QWIDGET);
-    return reinterpret_cast<QWidget *>(form);
-}
-
-void IdaFrontend::activateWidget(QWidget *widget) {
-    ::switchto_tform(reinterpret_cast<TForm *>(widget), true);
-}
-
-void IdaFrontend::closeWidget(QWidget *widget) {
-    ::close_tform(reinterpret_cast<TForm *>(widget), 0);
-}
-
-}} // namespace nc::ida
+} // namespace nc::ida
 
 /* vim:set et sts=4 sw=4: */

@@ -29,65 +29,72 @@
 
 #include "TreeNode.h"
 
-namespace nc {
-namespace core {
+namespace nc
+{
+    namespace core
+    {
 
-namespace ir {
-    class Term;
-}
+        namespace ir
+        {
+            class Term;
+        }
 
-namespace likec {
+        namespace likec
+        {
 
-/**
- * Base class for different kinds of expressions.
- */
-class Expression: public TreeNode {
-    NC_BASE_CLASS(Expression, expressionKind)
+            /**
+             * Base class for different kinds of expressions.
+             */
+            class Expression: public TreeNode
+            {
+                NC_BASE_CLASS(Expression, expressionKind)
 
-    const ir::Term *term_; ///< Term this expression was created from.
+                const ir::Term* term_; ///< Term this expression was created from.
 
-public:
-    enum {
-        BINARY_OPERATOR,        ///< Binary operator.
-        CALL_OPERATOR,          ///< Function call.
-        FUNCTION_IDENTIFIER,    ///< Function identifier.
-        INTEGER_CONSTANT,       ///< Integer constant.
-        LABEL_IDENTIFIER,       ///< Identifier of a label.
-        MEMBER_ACCESS_OPERATOR, ///< Member access operator: a.b or a-&gt;b.
-        STRING,                 ///< C string.
-        TYPECAST,               ///< (t)a.
-        UNARY_OPERATOR,         ///< Unary operator.
-        VARIABLE_IDENTIFIER,    ///< Identifier of a variable.
-        UNDECLARED_IDENTIFIER   ///< An identifier never declared.
-    };
+            public:
+                enum
+                {
+                    BINARY_OPERATOR,        ///< Binary operator.
+                    CALL_OPERATOR,          ///< Function call.
+                    FUNCTION_IDENTIFIER,    ///< Function identifier.
+                    INTEGER_CONSTANT,       ///< Integer constant.
+                    LABEL_IDENTIFIER,       ///< Identifier of a label.
+                    MEMBER_ACCESS_OPERATOR, ///< Member access operator: a.b or a-&gt;b.
+                    STRING,                 ///< C string.
+                    TYPECAST,               ///< (t)a.
+                    UNARY_OPERATOR,         ///< Unary operator.
+                    VARIABLE_IDENTIFIER,    ///< Identifier of a variable.
+                    UNDECLARED_IDENTIFIER   ///< An identifier never declared.
+                };
 
-    /**
-     * Class constructor.
-     *
-     * \param[in] expressionKind Kind of expression.
-     */
-    explicit Expression(int expressionKind):
-        TreeNode(EXPRESSION), expressionKind_(expressionKind), term_(nullptr)
-    {}
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] expressionKind Kind of expression.
+                 */
+                explicit Expression(int expressionKind):
+                    TreeNode(EXPRESSION), expressionKind_(expressionKind), term_(nullptr)
+                {}
 
-    /**
-     * \return Term this expression was created from.
-     */
-    const ir::Term *term() const { return term_; }
+                /**
+                 * \return Term this expression was created from.
+                 */
+                const ir::Term* term() const { return term_; }
 
-    /**
-     * \param[in] term Term this expression was created from.
-     */
-    void setTerm(const ir::Term *term) {
-        assert(term != nullptr);
-        assert(term_ == nullptr); /* Must be used for initialization only. */
+                /**
+                 * \param[in] term Term this expression was created from.
+                 */
+                void setTerm(const ir::Term* term)
+                {
+                    assert(term != nullptr);
+                    assert(term_ == nullptr); /* Must be used for initialization only. */
 
-        term_ = term;
-    }
-};
+                    term_ = term;
+                }
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::TreeNode, nc::core::likec::Expression, nc::core::likec::TreeNode::EXPRESSION)

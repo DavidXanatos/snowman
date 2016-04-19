@@ -32,40 +32,51 @@
 #include <nc/core/ir/BasicBlock.h>
 #include <nc/core/ir/Jump.h>
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace cflow {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace cflow
+            {
 
-void BasicNode::print(QTextStream &out) const {
-    assert(basicBlock());
+                void BasicNode::print(QTextStream & out) const
+                {
+                    assert(basicBlock());
 
-    QString label;
-    QTextStream ls(&label);
+                    QString label;
+                    QTextStream ls(&label);
 
-    if (basicBlock()->address()) {
-        ls << QString("address %1").arg(*basicBlock()->address(), 0, 16) << endl;
-    }
-    ls << QString("basic block %1").arg(reinterpret_cast<uintptr_t>(basicBlock()), 0, 16) << endl;
+                    if(basicBlock()->address())
+                    {
+                        ls << QString("address %1").arg(*basicBlock()->address(), 0, 16) << endl;
+                    }
+                    ls << QString("basic block %1").arg(reinterpret_cast<uintptr_t>(basicBlock()), 0, 16) << endl;
 
-    foreach (const Statement *statement, basicBlock()->statements()) {
-        ls << *statement;
-    }
+                    foreach(const Statement * statement, basicBlock()->statements())
+                    {
+                        ls << *statement;
+                    }
 
-    out << "node" << this << " [shape=box,label=\"" << escapeDotString(label) << "\"]" << endl;
-}
+                    out << "node" << this << " [shape=box,label=\"" << escapeDotString(label) << "\"]" << endl;
+                }
 
-bool BasicNode::isCondition() const {
-    if (const Jump *jump = basicBlock()->getJump()) {
-        return jump->isConditional() && jump->thenTarget().basicBlock() && jump->elseTarget().basicBlock();
-    } else {
-        return false;
-    }
-}
+                bool BasicNode::isCondition() const
+                {
+                    if(const Jump* jump = basicBlock()->getJump())
+                    {
+                        return jump->isConditional() && jump->thenTarget().basicBlock() && jump->elseTarget().basicBlock();
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

@@ -29,61 +29,69 @@
 #include <QString>
 #include <nc/core/ir/MemoryLocation.h>
 
-namespace nc { namespace core { namespace arch {
-
-/**
- * Register.
- * 
- * Registers are immutable.
- */
-class Register: public boost::noncopyable {
-public:
-    /**
-     * Constructor.
-     *
-     * \param[in] number               Register number.
-     * \param[in] name                 Register name.
-     * \param[in] memoryLocation       Corresponding abstract memory location of the register.
-     */
-    Register(int number, const QString &name, const ir::MemoryLocation &memoryLocation):
-        number_(number),
-        lowercaseName_(name.toLower()),
-        uppercaseName_(name.toUpper()),
-        memoryLocation_(memoryLocation)
+namespace nc
+{
+    namespace core
     {
-        assert(number >= 0);
+        namespace arch
+        {
+
+            /**
+             * Register.
+             *
+             * Registers are immutable.
+             */
+            class Register: public boost::noncopyable
+            {
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param[in] number               Register number.
+                 * \param[in] name                 Register name.
+                 * \param[in] memoryLocation       Corresponding abstract memory location of the register.
+                 */
+                Register(int number, const QString & name, const ir::MemoryLocation & memoryLocation):
+                    number_(number),
+                    lowercaseName_(name.toLower()),
+                    uppercaseName_(name.toUpper()),
+                    memoryLocation_(memoryLocation)
+                {
+                    assert(number >= 0);
+                }
+
+                /**
+                 * \returns                        Register number.
+                 */
+                int number() const { return number_; }
+
+                /**
+                 * \return                         Register lowercase name.
+                 */
+                const QString & lowercaseName() const { return lowercaseName_; }
+
+                /**
+                 * \return                         Register uppercase name.
+                 */
+                const QString & uppercaseName() const { return uppercaseName_; }
+
+                /**
+                 * \return                         Corresponding abstract memory location of the register.
+                 */
+                const ir::MemoryLocation & memoryLocation() const { return memoryLocation_; }
+
+                /**
+                 * \return Register size in bits.
+                 */
+                SmallBitSize size() const { return memoryLocation().size<SmallBitSize>(); }
+
+            private:
+                int number_; ///< Register number.
+                QString lowercaseName_; ///< Lowercase register name.
+                QString uppercaseName_; ///< Uppercase register name.
+                ir::MemoryLocation memoryLocation_; ///< Corresponding abstract memory location of the register.
+            };
+
+        }
     }
-    
-    /**
-     * \returns                        Register number.
-     */
-    int number() const { return number_; }
-
-    /**
-     * \return                         Register lowercase name.
-     */
-    const QString &lowercaseName() const { return lowercaseName_; }
-
-    /**
-     * \return                         Register uppercase name.
-     */
-    const QString &uppercaseName() const { return uppercaseName_; }
-
-    /**
-     * \return                         Corresponding abstract memory location of the register.
-     */
-    const ir::MemoryLocation &memoryLocation() const { return memoryLocation_; }
-
-    /**
-     * \return Register size in bits.
-     */
-    SmallBitSize size() const { return memoryLocation().size<SmallBitSize>(); }
-
-private:
-    int number_; ///< Register number.
-    QString lowercaseName_; ///< Lowercase register name.
-    QString uppercaseName_; ///< Uppercase register name.
-    ir::MemoryLocation memoryLocation_; ///< Corresponding abstract memory location of the register.
-};
-
-}}} // namespace nc::core::arch
+} // namespace nc::core::arch

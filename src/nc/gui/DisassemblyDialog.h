@@ -38,93 +38,99 @@ class QComboBox;
 class QLineEdit;
 QT_END_NAMESPACE
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    namespace image {
-        class Section;
-        class Image;
+    namespace core
+    {
+        namespace image
+        {
+            class Section;
+            class Image;
+        }
     }
-}
 
-namespace gui {
+    namespace gui
+    {
 
-/**
- * Dialog letting to choose a section and a range of addresses to disassemble.
- */
-class DisassemblyDialog: public QDialog {
-    Q_OBJECT
+        /**
+         * Dialog letting to choose a section and a range of addresses to disassemble.
+         */
+        class DisassemblyDialog: public QDialog
+        {
+            Q_OBJECT
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param parent Parent widget.
-     */
-    DisassemblyDialog(QWidget *parent = nullptr);
+        public:
+            /**
+             * Constructor.
+             *
+             * \param parent Parent widget.
+             */
+            DisassemblyDialog(QWidget* parent = nullptr);
 
-    /**
-     * Sets the associated executable image.
-     *
-     * \param image Pointer to the image. Can be nullptr.
-     */
-    void setImage(const std::shared_ptr<const core::image::Image> &image = std::shared_ptr<const core::image::Image>());
+            /**
+             * Sets the associated executable image.
+             *
+             * \param image Pointer to the image. Can be nullptr.
+             */
+            void setImage(const std::shared_ptr<const core::image::Image> & image = std::shared_ptr<const core::image::Image>());
 
-    /**
-     * \return Pointer to the executable image. Can be nullptr.
-     */
-    const std::shared_ptr<const core::image::Image> &image() const { return image_; }
+            /**
+             * \return Pointer to the executable image. Can be nullptr.
+             */
+            const std::shared_ptr<const core::image::Image> & image() const { return image_; }
 
-    /**
-     * \return Pointer to the currently selected section. Can be nullptr.
-     */
-    const core::image::Section *selectedSection() const;
+            /**
+             * \return Pointer to the currently selected section. Can be nullptr.
+             */
+            const core::image::Section* selectedSection() const;
 
-    /**
-     * Selects given section.
-     *
-     * \param section Valid pointer to a section.
-     */
-    void selectSection(const core::image::Section *section);
+            /**
+             * Selects given section.
+             *
+             * \param section Valid pointer to a section.
+             */
+            void selectSection(const core::image::Section* section);
 
-    /**
-     * \return Chosen start address, or boost::none, if not specified.
-     */
-    boost::optional<ByteAddr> startAddress() const;
+            /**
+             * \return Chosen start address, or boost::none, if not specified.
+             */
+            boost::optional<ByteAddr> startAddress() const;
 
-    /**
-     * \return Chosen end address, or boost::none, if not specified.
-     */
-    boost::optional<ByteAddr> endAddress() const;
+            /**
+             * \return Chosen end address, or boost::none, if not specified.
+             */
+            boost::optional<ByteAddr> endAddress() const;
 
-    public Q_SLOTS:
+        public Q_SLOTS:
 
-    /**
-     * Updates the list of sections to choose from.
-     */
-    void updateSectionsList();
+            /**
+             * Updates the list of sections to choose from.
+             */
+            void updateSectionsList();
 
-    /**
-     * Fills in start and end addresses depending on selected section.
-     */
-    void updateAddresses();
+            /**
+             * Fills in start and end addresses depending on selected section.
+             */
+            void updateAddresses();
 
-    void accept() override;
+            void accept() override;
 
-private:
-    /** Associated executable image. */
-    std::shared_ptr<const core::image::Image> image_;
+        private:
+            /** Associated executable image. */
+            std::shared_ptr<const core::image::Image> image_;
 
-    /** Combo box for choosing the section. */
-    QComboBox *sectionComboBox_;
+            /** Combo box for choosing the section. */
+            QComboBox* sectionComboBox_;
 
-    /** Input for the start address. */
-    QLineEdit *startLineEdit_;
+            /** Input for the start address. */
+            QLineEdit* startLineEdit_;
 
-    /** Input for the end address. */
-    QLineEdit *endLineEdit_;
-};
+            /** Input for the end address. */
+            QLineEdit* endLineEdit_;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

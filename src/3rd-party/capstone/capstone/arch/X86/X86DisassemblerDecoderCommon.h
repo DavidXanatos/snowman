@@ -62,9 +62,10 @@
   ENUM_ENTRY(ATTR_EVEXB,  (0x1 << 13))
 
 #define ENUM_ENTRY(n, v) n = v,
-enum attributeBits {
-	ATTRIBUTE_BITS
-	ATTR_max
+enum attributeBits
+{
+    ATTRIBUTE_BITS
+    ATTR_max
 };
 #undef ENUM_ENTRY
 
@@ -76,38 +77,38 @@ enum attributeBits {
 
 /*           Class name           Rank  Rationale for rank assignment         */
 #define INSTRUCTION_CONTEXTS                                                   \
-	ENUM_ENTRY(IC,                    0,  "says nothing about the instruction")  \
+    ENUM_ENTRY(IC,                    0,  "says nothing about the instruction")  \
 ENUM_ENTRY(IC_64BIT,              1,  "says the instruction applies in "     \
-		"64-bit mode but no more")             \
+        "64-bit mode but no more")             \
 ENUM_ENTRY(IC_OPSIZE,             3,  "requires an OPSIZE prefix, so "       \
-		"operands change width")               \
+        "operands change width")               \
 ENUM_ENTRY(IC_ADSIZE,             3,  "requires an ADSIZE prefix, so "       \
-		"operands change width")               \
+        "operands change width")               \
 ENUM_ENTRY(IC_OF,                 2,  "requires 0x0F prefix")                 \
 ENUM_ENTRY(IC_XD,                 2,  "may say something about the opcode "  \
-		"but not the operands")                \
+        "but not the operands")                \
 ENUM_ENTRY(IC_XS,                 2,  "may say something about the opcode "  \
-		"but not the operands")                \
+        "but not the operands")                \
 ENUM_ENTRY(IC_XD_OPSIZE,          3,  "requires an OPSIZE prefix, so "       \
-		"operands change width")               \
+        "operands change width")               \
 ENUM_ENTRY(IC_XS_OPSIZE,          3,  "requires an OPSIZE prefix, so "       \
-		"operands change width")               \
+        "operands change width")               \
 ENUM_ENTRY(IC_64BIT_REXW,         4,  "requires a REX.W prefix, so operands "\
-		"change width; overrides IC_OPSIZE")   \
+        "change width; overrides IC_OPSIZE")   \
 ENUM_ENTRY(IC_64BIT_OPSIZE,       3,  "Just as meaningful as IC_OPSIZE")     \
 ENUM_ENTRY(IC_64BIT_ADSIZE,       3,  "Just as meaningful as IC_ADSIZE")     \
 ENUM_ENTRY(IC_64BIT_XD,           5,  "XD instructions are SSE; REX.W is "   \
-		"secondary")                           \
+        "secondary")                           \
 ENUM_ENTRY(IC_64BIT_XS,           5,  "Just as meaningful as IC_64BIT_XD")   \
 ENUM_ENTRY(IC_64BIT_XD_OPSIZE,    3,  "Just as meaningful as IC_XD_OPSIZE")  \
 ENUM_ENTRY(IC_64BIT_XS_OPSIZE,    3,  "Just as meaningful as IC_XS_OPSIZE")  \
 ENUM_ENTRY(IC_64BIT_REXW_XS,      6,  "OPSIZE could mean a different "       \
-		"opcode")                              \
+        "opcode")                              \
 ENUM_ENTRY(IC_64BIT_REXW_XD,      6,  "Just as meaningful as "               \
-		"IC_64BIT_REXW_XS")                    \
+        "IC_64BIT_REXW_XS")                    \
 ENUM_ENTRY(IC_64BIT_REXW_OPSIZE,  7,  "The Dynamic Duo!  Prefer over all "   \
-		"else because this changes most "      \
-		"operands' meaning")                   \
+        "else because this changes most "      \
+        "operands' meaning")                   \
 ENUM_ENTRY(IC_VEX,                1,  "requires a VEX prefix")               \
 ENUM_ENTRY(IC_VEX_XS,             2,  "requires VEX and the XS prefix")      \
 ENUM_ENTRY(IC_VEX_XD,             2,  "requires VEX and the XD prefix")      \
@@ -267,12 +268,13 @@ ENUM_ENTRY(IC_EVEX_L2_OPSIZE_KZ,   4,  "requires EVEX_KZ, L2, and OpSize")      
 ENUM_ENTRY(IC_EVEX_L2_W_KZ,        3,  "requires EVEX_KZ, L2 and W")               \
 ENUM_ENTRY(IC_EVEX_L2_W_XS_KZ,     4,  "requires EVEX_KZ, L2, W and XS prefix")    \
 ENUM_ENTRY(IC_EVEX_L2_W_XD_KZ,     4,  "requires EVEX_KZ, L2, W and XD prefix")    \
-ENUM_ENTRY(IC_EVEX_L2_W_OPSIZE_KZ, 4,  "requires EVEX_KZ, L2, W and OpSize")     
+ENUM_ENTRY(IC_EVEX_L2_W_OPSIZE_KZ, 4,  "requires EVEX_KZ, L2, W and OpSize")
 
 #define ENUM_ENTRY(n, r, d) n,
-typedef enum {
-	INSTRUCTION_CONTEXTS
-	IC_max
+typedef enum
+{
+    INSTRUCTION_CONTEXTS
+    IC_max
 } InstructionContext;
 #undef ENUM_ENTRY
 
@@ -280,15 +282,16 @@ typedef enum {
  * Opcode types, which determine which decode table to use, both in the Intel
  * manual and also for the decoder.
  */
-typedef enum {
-	ONEBYTE       = 0,
-	TWOBYTE       = 1,
-	THREEBYTE_38  = 2,
-	THREEBYTE_3A  = 3,
-	XOP8_MAP      = 4,
-	XOP9_MAP      = 5,
-	XOPA_MAP      = 6,
-	T3DNOW_MAP    = 7
+typedef enum
+{
+    ONEBYTE       = 0,
+    TWOBYTE       = 1,
+    THREEBYTE_38  = 2,
+    THREEBYTE_3A  = 3,
+    XOP8_MAP      = 4,
+    XOP9_MAP      = 5,
+    XOPA_MAP      = 6,
+    T3DNOW_MAP    = 7
 } OpcodeType;
 
 /*
@@ -323,16 +326,17 @@ typedef uint16_t InstrUID;
  */
 
 #define MODRMTYPES            \
-	ENUM_ENTRY(MODRM_ONEENTRY)  \
+    ENUM_ENTRY(MODRM_ONEENTRY)  \
 ENUM_ENTRY(MODRM_SPLITRM)   \
 ENUM_ENTRY(MODRM_SPLITMISC)  \
 ENUM_ENTRY(MODRM_SPLITREG)  \
 ENUM_ENTRY(MODRM_FULL)
 
 #define ENUM_ENTRY(n) n,
-typedef enum {
-	MODRMTYPES
-	MODRM_max
+typedef enum
+{
+    MODRMTYPES
+    MODRM_max
 } ModRMDecisionType;
 #undef ENUM_ENTRY
 
@@ -344,7 +348,7 @@ typedef enum {
     case ENCODING_RM_CD16:   \
     case ENCODING_RM_CD32:   \
     case ENCODING_RM_CD64
- 
+
 // Physical encodings of instruction operands.
 
 #define ENCODINGS                                                            \
@@ -386,9 +390,10 @@ ENUM_ENTRY(ENCODING_SI,     "Source index; encoded in OpSize/Adsize prefix") \
 ENUM_ENTRY(ENCODING_DI,     "Destination index; encoded in prefixes")
 
 #define ENUM_ENTRY(n, d) n,
-typedef enum {
-	ENCODINGS
-	ENCODING_max
+typedef enum
+{
+    ENCODINGS
+    ENCODING_max
 } OperandEncoding;
 #undef ENUM_ENTRY
 
@@ -448,12 +453,12 @@ ENUM_ENTRY(TYPE_MOFFS16,    "2-byte")                                        \
 ENUM_ENTRY(TYPE_MOFFS32,    "4-byte")                                        \
 ENUM_ENTRY(TYPE_MOFFS64,    "8-byte")                                        \
 ENUM_ENTRY(TYPE_SREG,       "Byte with single bit set: 0 = ES, 1 = CS, "     \
-		"2 = SS, 3 = DS, 4 = FS, 5 = GS")                \
+        "2 = SS, 3 = DS, 4 = FS, 5 = GS")                \
 ENUM_ENTRY(TYPE_M32FP,      "32-bit IEE754 memory floating-point operand")   \
 ENUM_ENTRY(TYPE_M64FP,      "64-bit")                                        \
 ENUM_ENTRY(TYPE_M80FP,      "80-bit extended")                               \
 ENUM_ENTRY(TYPE_M16INT,     "2-byte memory integer operand for use in "      \
-		"floating-point instructions")                   \
+        "floating-point instructions")                   \
 ENUM_ENTRY(TYPE_M32INT,     "4-byte")                                        \
 ENUM_ENTRY(TYPE_M64INT,     "8-byte")                                        \
 ENUM_ENTRY(TYPE_ST,         "Position on the floating-point stack")          \
@@ -490,9 +495,10 @@ ENUM_ENTRY(TYPE_DUP4,       "operand 4")                                     \
 ENUM_ENTRY(TYPE_M512,       "512-bit FPU/MMX/XMM/MXCSR state")
 
 #define ENUM_ENTRY(n, d) n,
-typedef enum {
-	TYPES
-	TYPE_max
+typedef enum
+{
+    TYPES
+    TYPE_max
 } OperandType;
 #undef ENUM_ENTRY
 
@@ -500,9 +506,10 @@ typedef enum {
  * OperandSpecifier - The specification for how to extract and interpret one
  *   operand.
  */
-typedef struct OperandSpecifier {
-	uint8_t encoding;
-	uint8_t type;
+typedef struct OperandSpecifier
+{
+    uint8_t encoding;
+    uint8_t type;
 } OperandSpecifier;
 
 /*
@@ -511,12 +518,13 @@ typedef struct OperandSpecifier {
  */
 
 #define MODIFIER_TYPES        \
-	ENUM_ENTRY(MODIFIER_NONE)
+    ENUM_ENTRY(MODIFIER_NONE)
 
 #define ENUM_ENTRY(n) n,
-typedef enum {
-	MODIFIER_TYPES
-	MODIFIER_max
+typedef enum
+{
+    MODIFIER_TYPES
+    MODIFIER_max
 } ModifierType;
 #undef ENUM_ENTRY
 
@@ -527,10 +535,11 @@ typedef enum {
  * are supported, and represent real mode, IA-32e, and IA-32e in 64-bit mode,
  * respectively.
  */
-typedef enum {
-	MODE_16BIT,
-	MODE_32BIT,
-	MODE_64BIT
+typedef enum
+{
+    MODE_16BIT,
+    MODE_32BIT,
+    MODE_64BIT
 } DisassemblerMode;
 
 #endif

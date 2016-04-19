@@ -32,59 +32,63 @@
 #include "FunctionDeclaration.h"
 #include "LabelDeclaration.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Function definition = function declaration + function body (block).
- */
-class FunctionDefinition: public FunctionDeclaration {
-    std::unique_ptr<Block> block_; ///< Block of the function.
-    std::vector<std::unique_ptr<LabelDeclaration>> labels_; ///< Label declarations.
+            /**
+             * Function definition = function declaration + function body (block).
+             */
+            class FunctionDefinition: public FunctionDeclaration
+            {
+                std::unique_ptr<Block> block_; ///< Block of the function.
+                std::vector<std::unique_ptr<LabelDeclaration>> labels_; ///< Label declarations.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] tree Owning tree.
-     * \param[in] identifier Function name.
-     * \param[in] returnType Function return type.
-     * \param[in] variadic Whether function has variable number of arguments.
-     */
-    FunctionDefinition(Tree &tree, QString identifier, const Type *returnType, bool variadic = false):
-        FunctionDeclaration(tree, FUNCTION_DEFINITION, std::move(identifier), returnType, variadic),
-        block_(new Block())
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] tree Owning tree.
+                 * \param[in] identifier Function name.
+                 * \param[in] returnType Function return type.
+                 * \param[in] variadic Whether function has variable number of arguments.
+                 */
+                FunctionDefinition(Tree & tree, QString identifier, const Type* returnType, bool variadic = false):
+                    FunctionDeclaration(tree, FUNCTION_DEFINITION, std::move(identifier), returnType, variadic),
+                    block_(new Block())
+                {}
 
-    /**
-     * \return Block of the function.
-     */
-    std::unique_ptr<Block> &block() { return block_; }
+                /**
+                 * \return Block of the function.
+                 */
+                std::unique_ptr<Block> & block() { return block_; }
 
-    /**
-     * \return Block of the function.
-     */
-    const Block *block() const { return block_.get(); }
+                /**
+                 * \return Block of the function.
+                 */
+                const Block* block() const { return block_.get(); }
 
-    /**
-     * \return Labels of the function.
-     */
-    std::vector<std::unique_ptr<LabelDeclaration>> &labels() { return labels_; };
+                /**
+                 * \return Labels of the function.
+                 */
+                std::vector<std::unique_ptr<LabelDeclaration>> & labels() { return labels_; };
 
-    /**
-     * Adds invisible label declaration to the function.
-     *
-     * \param[in] label Valid pointer to the label declaration.
-     */
-    void addLabel(std::unique_ptr<LabelDeclaration> label) { labels_.push_back(std::move(label)); }
+                /**
+                 * Adds invisible label declaration to the function.
+                 *
+                 * \param[in] label Valid pointer to the label declaration.
+                 */
+                void addLabel(std::unique_ptr<LabelDeclaration> label) { labels_.push_back(std::move(label)); }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Declaration, nc::core::likec::FunctionDefinition, nc::core::likec::Declaration::FUNCTION_DEFINITION)

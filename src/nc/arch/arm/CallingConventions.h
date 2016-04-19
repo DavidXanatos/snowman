@@ -7,17 +7,23 @@
 
 #include <nc/core/ir/calling/Convention.h>
 
-namespace nc {
-namespace arch {
-namespace arm {
+namespace nc
+{
+    namespace arch
+    {
+        namespace arm
+        {
 
-class ArmArchitecture;
+            class ArmArchitecture;
 
-class DefaultCallingConvention: public core::ir::calling::Convention {
-public:
-    DefaultCallingConvention();
-};
+            class DefaultCallingConvention: public core::ir::calling::Convention
+            {
+            public:
+                DefaultCallingConvention();
+            };
 
-}}} // namespace nc::arch::arm
+        }
+    }
+} // namespace nc::arch::arm
 
 /* vim:set et sts=4 sw=4: */

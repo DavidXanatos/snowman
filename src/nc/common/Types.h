@@ -27,21 +27,22 @@
 
 #include <boost/cstdint.hpp>
 
-namespace nc {
+namespace nc
+{
 
-typedef boost::int64_t ByteAddr; ///< Signed integer for representing addresses in bytes.
-typedef boost::int64_t ByteSize; ///< Signed integer for representing sizes in bytes.
+    typedef boost::int64_t ByteAddr; ///< Signed integer for representing addresses in bytes.
+    typedef boost::int64_t ByteSize; ///< Signed integer for representing sizes in bytes.
 
-typedef boost::int64_t BitAddr; ///< Signed integer for representing addresses in bits.
-typedef boost::int64_t BitSize; ///< Signed integer for representing sizes in bits.
+    typedef boost::int64_t BitAddr; ///< Signed integer for representing addresses in bits.
+    typedef boost::int64_t BitSize; ///< Signed integer for representing sizes in bits.
 
-typedef int SmallByteSize; ///< Signed integer for representing small sizes in bytes (e.g. sizes of instructions).
+    typedef int SmallByteSize; ///< Signed integer for representing small sizes in bytes (e.g. sizes of instructions).
 
-typedef int SmallBitSize; ///< Signed integer for representing small sizes in bits (e.g. sizes of registers).
+    typedef int SmallBitSize; ///< Signed integer for representing small sizes in bits (e.g. sizes of registers).
 
-/* Note, that overflows of signed integers are undefined behaviour in C, C++. */
-typedef boost::uint64_t ConstantValue; ///< Unsigned integer for representing constant values.
-typedef boost::int64_t  SignedConstantValue; ///< Signed integer for representing constant values.
+    /* Note, that overflows of signed integers are undefined behaviour in C, C++. */
+    typedef boost::uint64_t ConstantValue; ///< Unsigned integer for representing constant values.
+    typedef boost::int64_t  SignedConstantValue; ///< Signed integer for representing constant values.
 
 } // namespace nc
 

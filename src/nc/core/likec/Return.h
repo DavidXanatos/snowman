@@ -29,43 +29,47 @@
 
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-class Expression;
+            class Expression;
 
-/**
- * Return statement with optional returned value.
- */
-class Return: public Statement {
-    std::unique_ptr<Expression> returnValue_; ///< Returned value.
+            /**
+             * Return statement with optional returned value.
+             */
+            class Return: public Statement
+            {
+                std::unique_ptr<Expression> returnValue_; ///< Returned value.
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param[in] returnValue Returned value. Can be nullptr.
-     */
-    explicit Return(std::unique_ptr<Expression> returnValue = nullptr):
-        Statement(RETURN), returnValue_(std::move(returnValue)) {}
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param[in] returnValue Returned value. Can be nullptr.
+                 */
+                explicit Return(std::unique_ptr<Expression> returnValue = nullptr):
+                    Statement(RETURN), returnValue_(std::move(returnValue)) {}
 
-    /**
-     * \return Returned value. Can be nullptr.
-     */
-    std::unique_ptr<Expression> &returnValue() { return returnValue_; }
+                /**
+                 * \return Returned value. Can be nullptr.
+                 */
+                std::unique_ptr<Expression> & returnValue() { return returnValue_; }
 
-    /**
-     * \return Returned value. Can be nullptr.
-     */
-    const Expression *returnValue() const { return returnValue_.get(); }
+                /**
+                 * \return Returned value. Can be nullptr.
+                 */
+                const Expression* returnValue() const { return returnValue_.get(); }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::Return, nc::core::likec::Statement::RETURN)

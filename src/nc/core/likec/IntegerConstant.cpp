@@ -24,27 +24,31 @@
 
 #include "IntegerConstant.h"
 
-namespace nc {
-namespace core {
-namespace likec {
-
-IntegerConstant::IntegerConstant(const SizedValue &value, const IntegerType *type):
-    Expression(INTEGER_CONSTANT), value_(value), type_(type)
+namespace nc
 {
-    assert(value.size() == type->size());
-}
+    namespace core
+    {
+        namespace likec
+        {
 
-IntegerConstant::IntegerConstant(ConstantValue value, const IntegerType *type):
-    Expression(INTEGER_CONSTANT), value_(SizedValue(type->size(), value)), type_(type)
-{}
+            IntegerConstant::IntegerConstant(const SizedValue & value, const IntegerType* type):
+                Expression(INTEGER_CONSTANT), value_(value), type_(type)
+            {
+                assert(value.size() == type->size());
+            }
 
-void IntegerConstant::setValue(const SizedValue &value) {
-    assert(value.size() == type_->size());
-    value_ = value;
-}
+            IntegerConstant::IntegerConstant(ConstantValue value, const IntegerType* type):
+                Expression(INTEGER_CONSTANT), value_(SizedValue(type->size(), value)), type_(type)
+            {}
 
-} // namespace likec
-} // namespace core
+            void IntegerConstant::setValue(const SizedValue & value)
+            {
+                assert(value.size() == type_->size());
+                value_ = value;
+            }
+
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

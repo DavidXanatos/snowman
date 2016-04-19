@@ -24,20 +24,25 @@
 
 #include "VariableDeclaration.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-void VariableDeclaration::doCallOnChildren(const std::function<void(TreeNode *)> &fun) {
-    fun(variableIdentifier_.get());
+            void VariableDeclaration::doCallOnChildren(const std::function<void(TreeNode*)> & fun)
+            {
+                fun(variableIdentifier_.get());
 
-    if (initialValue_) {
-        fun(initialValue_.get());
-    }
-}
+                if(initialValue_)
+                {
+                    fun(initialValue_.get());
+                }
+            }
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

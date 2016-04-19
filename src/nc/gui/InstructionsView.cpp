@@ -30,62 +30,77 @@
 
 #include "InstructionsModel.h"
 
-namespace nc { namespace gui {
-
-InstructionsView::InstructionsView(QWidget *parent):
-    TreeView(tr("Instructions"), parent),
-    model_(nullptr)
+namespace nc
 {
-    treeView()->setHeaderHidden(true);
-    treeView()->setItemsExpandable(false);
-    treeView()->setRootIsDecorated(false);
-    treeView()->setSelectionBehavior(QAbstractItemView::SelectRows);
-    treeView()->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    treeView()->setUniformRowHeights(true);
-    this->setDocumentFont(QFont("Consolas", 8));
-}
+    namespace gui
+    {
 
-void InstructionsView::setModel(InstructionsModel *model) {
-    if (model != model_) {
-        model_ = model;
-        treeView()->setModel(model);
+        InstructionsView::InstructionsView(QWidget* parent):
+            TreeView(tr("Instructions"), parent),
+            model_(nullptr)
+        {
+            treeView()->setHeaderHidden(true);
+            treeView()->setItemsExpandable(false);
+            treeView()->setRootIsDecorated(false);
+            treeView()->setSelectionBehavior(QAbstractItemView::SelectRows);
+            treeView()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+            treeView()->setUniformRowHeights(true);
+            this->setDocumentFont(QFont("Consolas", 8));
+        }
 
-        connect(treeView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-                this, SLOT(updateSelection()));
-        updateSelection();
-    }
-}
+        void InstructionsView::setModel(InstructionsModel* model)
+        {
+            if(model != model_)
+            {
+                model_ = model;
+                treeView()->setModel(model);
 
-void InstructionsView::updateSelection() {
-    std::vector<const core::arch::Instruction *> instructions;
+                connect(treeView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+                        this, SLOT(updateSelection()));
+                updateSelection();
+            }
+        }
 
-    if (model()) {
-        foreach (const QModelIndex &index, treeView()->selectionModel()->selectedIndexes()) {
-            /* Process every row only once. */
-            if (index.column() == 0) {
-                if (const core::arch::Instruction *instruction = model()->getInstruction(index)) {
-                    instructions.push_back(instruction);
+        void InstructionsView::updateSelection()
+        {
+            std::vector<const core::arch::Instruction*> instructions;
+
+            if(model())
+            {
+                foreach(const QModelIndex & index, treeView()->selectionModel()->selectedIndexes())
+                {
+                    /* Process every row only once. */
+                    if(index.column() == 0)
+                    {
+                        if(const core::arch::Instruction* instruction = model()->getInstruction(index))
+                        {
+                            instructions.push_back(instruction);
+                        }
+                    }
+                }
+            }
+
+            if(selectedInstructions_ != instructions)
+            {
+                selectedInstructions_.swap(instructions);
+                Q_EMIT instructionSelectionChanged();
+            }
+        }
+
+        void InstructionsView::highlightInstructions(const std::vector<const core::arch::Instruction*> & instructions, bool ensureVisible)
+        {
+            if(model())
+            {
+                model()->setHighlightedInstructions(instructions);
+
+                if(ensureVisible && !instructions.empty())
+                {
+                    treeView()->scrollTo(model()->getIndex(instructions.back()));
                 }
             }
         }
+
     }
-
-    if (selectedInstructions_ != instructions) {
-        selectedInstructions_.swap(instructions);
-        Q_EMIT instructionSelectionChanged();
-    }
-}
-
-void InstructionsView::highlightInstructions(const std::vector<const core::arch::Instruction *> &instructions, bool ensureVisible) {
-    if (model()) {
-        model()->setHighlightedInstructions(instructions);
-
-        if (ensureVisible && !instructions.empty()) {
-            treeView()->scrollTo(model()->getIndex(instructions.back()));
-        }
-    }
-}
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

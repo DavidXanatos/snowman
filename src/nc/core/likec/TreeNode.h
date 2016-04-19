@@ -30,81 +30,88 @@
 #include <nc/common/Printable.h>
 #include <nc/common/Subclass.h>
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-class Tree;
+            class Tree;
 
-/**
- * Base class for tree nodes.
- */
-class TreeNode: public PrintableBase<TreeNode> {
-    NC_BASE_CLASS(TreeNode, nodeKind)
+            /**
+             * Base class for tree nodes.
+             */
+            class TreeNode: public PrintableBase<TreeNode>
+            {
+                NC_BASE_CLASS(TreeNode, nodeKind)
 
-public:
-    /**
-     * Node kind.
-     */
-    enum {
-        COMPILATION_UNIT, ///< Compilation unit.
-        DECLARATION,      ///< Declaration.
-        EXPRESSION,       ///< Expression.
-        STATEMENT,        ///< Statement.
-    };
+            public:
+                /**
+                 * Node kind.
+                 */
+                enum
+                {
+                    COMPILATION_UNIT, ///< Compilation unit.
+                    DECLARATION,      ///< Declaration.
+                    EXPRESSION,       ///< Expression.
+                    STATEMENT,        ///< Statement.
+                };
 
-    /**
-     * Class constructor.
-     *
-     * \param[in] nodeKind Node kind.
-     */
-    explicit TreeNode(int nodeKind): nodeKind_(nodeKind) {}
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] nodeKind Node kind.
+                 */
+                explicit TreeNode(int nodeKind): nodeKind_(nodeKind) {}
 
-    /**
-     * Virtual destructor.
-     */
-    virtual ~TreeNode();
+                /**
+                 * Virtual destructor.
+                 */
+                virtual ~TreeNode();
 
-    /**
-     * Calls a given function on all the children of this node.
-     *
-     * \param fun Valid function.
-     */
-    void callOnChildren(const std::function<void(const TreeNode *)> &fun) const {
-        assert(fun);
-        const_cast<TreeNode *>(this)->doCallOnChildren(fun);
-    }
+                /**
+                 * Calls a given function on all the children of this node.
+                 *
+                 * \param fun Valid function.
+                 */
+                void callOnChildren(const std::function<void(const TreeNode*)> & fun) const
+                {
+                    assert(fun);
+                    const_cast<TreeNode*>(this)->doCallOnChildren(fun);
+                }
 
-    /**
-     * Calls a given function on all the children of this node.
-     *
-     * \param fun Valid function.
-     */
-    void callOnChildren(const std::function<void(TreeNode *)> &fun) {
-        assert(fun);
-        doCallOnChildren(fun);
-    }
+                /**
+                 * Calls a given function on all the children of this node.
+                 *
+                 * \param fun Valid function.
+                 */
+                void callOnChildren(const std::function<void(TreeNode*)> & fun)
+                {
+                    assert(fun);
+                    doCallOnChildren(fun);
+                }
 
-    /**
-     * Prints the node into a stream.
-     *
-     * \param out Output stream.
-     */
-    void print(QTextStream &out) const;
+                /**
+                 * Prints the node into a stream.
+                 *
+                 * \param out Output stream.
+                 */
+                void print(QTextStream & out) const;
 
-protected:
-    /**
-     * Calls a given function on all the children of this node.
-     * Default implementation does nothing. Subclasses having
-     * children must override this method.
-     *
-     * \param fun Valid function.
-     */
-    virtual void doCallOnChildren(const std::function<void(TreeNode *)> &fun);
-};
+            protected:
+                /**
+                 * Calls a given function on all the children of this node.
+                 * Default implementation does nothing. Subclasses having
+                 * children must override this method.
+                 *
+                 * \param fun Valid function.
+                 */
+                virtual void doCallOnChildren(const std::function<void(TreeNode*)> & fun);
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

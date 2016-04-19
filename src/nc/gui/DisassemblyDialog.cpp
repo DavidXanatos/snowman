@@ -36,120 +36,141 @@
 #include <nc/core/image/Image.h>
 #include <nc/core/image/Section.h>
 
-Q_DECLARE_METATYPE(const nc::core::image::Section *)
+Q_DECLARE_METATYPE(const nc::core::image::Section*)
 
-namespace nc {
-namespace gui {
-
-DisassemblyDialog::DisassemblyDialog(QWidget *parent):
-    QDialog(parent, Qt::Dialog)
+namespace nc
 {
+    namespace gui
+    {
+
+        DisassemblyDialog::DisassemblyDialog(QWidget* parent):
+            QDialog(parent, Qt::Dialog)
+        {
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-    setWindowFlags(Qt::Dialog | Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::MSWindowsFixedSizeDialogHint);
+            setWindowFlags(Qt::Dialog | Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::MSWindowsFixedSizeDialogHint);
 #endif
 
-    setWindowTitle(tr("Disassemble"));
+            setWindowTitle(tr("Disassemble"));
 
-    sectionComboBox_ = new QComboBox(this);
+            sectionComboBox_ = new QComboBox(this);
 
-    QRegExpValidator *hexValidator = new QRegExpValidator(QRegExp("[0123456789abcdef]+"), this);
+            QRegExpValidator* hexValidator = new QRegExpValidator(QRegExp("[0123456789abcdef]+"), this);
 
-    startLineEdit_ = new QLineEdit(this);
-    startLineEdit_->setValidator(hexValidator);
+            startLineEdit_ = new QLineEdit(this);
+            startLineEdit_->setValidator(hexValidator);
 
-    endLineEdit_ = new QLineEdit(this);
-    endLineEdit_->setValidator(hexValidator);
+            endLineEdit_ = new QLineEdit(this);
+            endLineEdit_->setValidator(hexValidator);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
-    buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+            QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
+            buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+            connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+            connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
-    QFormLayout *layout = new QFormLayout(this);
-    layout->addRow(tr("Section:"), sectionComboBox_);
-    layout->addRow(tr("Start address:"), startLineEdit_);
-    layout->addRow(tr("End address:"), endLineEdit_);
-    layout->addRow(buttonBox);
-    setLayout(layout);
+            QFormLayout* layout = new QFormLayout(this);
+            layout->addRow(tr("Section:"), sectionComboBox_);
+            layout->addRow(tr("Start address:"), startLineEdit_);
+            layout->addRow(tr("End address:"), endLineEdit_);
+            layout->addRow(buttonBox);
+            setLayout(layout);
 
-    connect(sectionComboBox_, SIGNAL(activated(int)), this, SLOT(updateAddresses()));
+            connect(sectionComboBox_, SIGNAL(activated(int)), this, SLOT(updateAddresses()));
 
-    updateSectionsList();
-}
-
-void DisassemblyDialog::setImage(const std::shared_ptr<const core::image::Image> &image) {
-    if (image != image_) {
-        image_ = image;
-        updateSectionsList();
-        updateAddresses();
-    }
-}
-
-void DisassemblyDialog::updateSectionsList() {
-    sectionComboBox_->clear();
-
-    if (image()) {
-        foreach (auto section, image()->sections()) {
-            sectionComboBox_->addItem(section->name(), QVariant::fromValue(section));
+            updateSectionsList();
         }
+
+        void DisassemblyDialog::setImage(const std::shared_ptr<const core::image::Image> & image)
+        {
+            if(image != image_)
+            {
+                image_ = image;
+                updateSectionsList();
+                updateAddresses();
+            }
+        }
+
+        void DisassemblyDialog::updateSectionsList()
+        {
+            sectionComboBox_->clear();
+
+            if(image())
+            {
+                foreach(auto section, image()->sections())
+                {
+                    sectionComboBox_->addItem(section->name(), QVariant::fromValue(section));
+                }
+            }
+        }
+
+        void DisassemblyDialog::updateAddresses()
+        {
+            if(const core::image::Section* section = selectedSection())
+            {
+                startLineEdit_->setText(QString("%1").arg(section->addr(), 0, 16));
+                endLineEdit_->setText(QString("%1").arg(section->endAddr(), 0, 16));
+            }
+            else
+            {
+                startLineEdit_->clear();
+                endLineEdit_->clear();
+            }
+        }
+
+        const core::image::Section* DisassemblyDialog::selectedSection() const
+        {
+            return sectionComboBox_->itemData(sectionComboBox_->currentIndex()).value<const core::image::Section*>();
+        }
+
+        void DisassemblyDialog::selectSection(const core::image::Section* section)
+        {
+            sectionComboBox_->setCurrentIndex(sectionComboBox_->findData(QVariant::fromValue(section)));
+            updateAddresses();
+        }
+
+        boost::optional<ByteAddr> DisassemblyDialog::startAddress() const
+        {
+            return stringToInt<ByteAddr>(startLineEdit_->text(), 16);
+        }
+
+        boost::optional<ByteAddr> DisassemblyDialog::endAddress() const
+        {
+            return stringToInt<ByteAddr>(endLineEdit_->text(), 16);
+        }
+
+        void DisassemblyDialog::accept()
+        {
+            auto section = selectedSection();
+            if(!section)
+            {
+                QMessageBox::critical(this, tr("Error"), tr("Please, select a section."));
+                return;
+            }
+
+            auto startAddr = startAddress();
+            if(!startAddr || *startAddr < section->addr() || *startAddr > section->endAddr())
+            {
+                QMessageBox::critical(this, tr("Error"), tr("Please, specify the start address within the section's address range."));
+                return;
+            }
+
+            auto endAddr = endAddress();
+            if(!endAddr || *endAddr < section->addr() || *endAddr > section->endAddr())
+            {
+                QMessageBox::critical(this, tr("Error"), tr("Please, specify the end address within the section's address range."));
+                return;
+            }
+
+            if(*startAddr >= *endAddr)
+            {
+                QMessageBox::critical(this, tr("Error"), tr("Please, specify a non-empty range of addresses."));
+                return;
+            }
+
+            QDialog::accept();
+        }
+
     }
-}
-
-void DisassemblyDialog::updateAddresses() {
-    if (const core::image::Section *section = selectedSection()) {
-        startLineEdit_->setText(QString("%1").arg(section->addr(), 0, 16));
-        endLineEdit_->setText(QString("%1").arg(section->endAddr(), 0, 16));
-    } else {
-        startLineEdit_->clear();
-        endLineEdit_->clear();
-    }
-}
-
-const core::image::Section *DisassemblyDialog::selectedSection() const {
-    return sectionComboBox_->itemData(sectionComboBox_->currentIndex()).value<const core::image::Section *>();
-}
-
-void DisassemblyDialog::selectSection(const core::image::Section *section) {
-    sectionComboBox_->setCurrentIndex(sectionComboBox_->findData(QVariant::fromValue(section)));
-    updateAddresses();
-}
-
-boost::optional<ByteAddr> DisassemblyDialog::startAddress() const {
-    return stringToInt<ByteAddr>(startLineEdit_->text(), 16);
-}
-
-boost::optional<ByteAddr> DisassemblyDialog::endAddress() const {
-    return stringToInt<ByteAddr>(endLineEdit_->text(), 16);
-}
-
-void DisassemblyDialog::accept() {
-    auto section = selectedSection();
-    if (!section) {
-        QMessageBox::critical(this, tr("Error"), tr("Please, select a section."));
-        return;
-    }
-
-    auto startAddr = startAddress();
-    if (!startAddr || *startAddr < section->addr() || *startAddr > section->endAddr()) {
-        QMessageBox::critical(this, tr("Error"), tr("Please, specify the start address within the section's address range."));
-        return;
-    }
-
-    auto endAddr = endAddress();
-    if (!endAddr || *endAddr < section->addr() || *endAddr > section->endAddr()) {
-        QMessageBox::critical(this, tr("Error"), tr("Please, specify the end address within the section's address range."));
-        return;
-    }
-
-    if (*startAddr >= *endAddr) {
-        QMessageBox::critical(this, tr("Error"), tr("Please, specify a non-empty range of addresses."));
-        return;
-    }
-
-    QDialog::accept();
-}
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

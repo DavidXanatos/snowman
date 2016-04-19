@@ -21,7 +21,7 @@
  * along with SmartDec decompiler.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once 
+#pragma once
 
 #include <nc/config.h>
 #include <nc/common/Foreach.h>
@@ -34,116 +34,136 @@
 
 #include "Register.h"
 
-namespace nc { namespace core { namespace arch {
+namespace nc
+{
+    namespace core
+    {
+        namespace arch
+        {
 
-class Register;
+            class Register;
 
-/**
- * Register container.
- */
-class Registers {
-public:
-    enum {
-        /** Invalid register. */
-        INVALID = -1
-    };
+            /**
+             * Register container.
+             */
+            class Registers
+            {
+            public:
+                enum
+                {
+                    /** Invalid register. */
+                    INVALID = -1
+                };
 
-    /**
-     * Virtual destructor.
-     */
-    virtual ~Registers() {
-        foreach(const core::arch::Register *regizter, mRegisters)
-            delete regizter;
-    }
+                /**
+                 * Virtual destructor.
+                 */
+                virtual ~Registers()
+                {
+                    foreach(const core::arch::Register * regizter, mRegisters)
+                    delete regizter;
+                }
 
-    /**
-     * \returns                        All registers.
-     */
-    const std::vector<const Register *> &registers() const {
-        return mRegisters;
-    }
+                /**
+                 * \returns                        All registers.
+                 */
+                const std::vector<const Register*> & registers() const
+                {
+                    return mRegisters;
+                }
 
-    /**
-     * \param number                   Register number.
-     * \returns                        Register for the given number, or nullptr if
-     *                                 no such register exists.
-     */
-    const Register *getRegister(int number) const {
-        if(number < 0 || static_cast<std::size_t>(number) >= mRegisterByNumber.size())
-            return nullptr;
+                /**
+                 * \param number                   Register number.
+                 * \returns                        Register for the given number, or nullptr if
+                 *                                 no such register exists.
+                 */
+                const Register* getRegister(int number) const
+                {
+                    if(number < 0 || static_cast<std::size_t>(number) >= mRegisterByNumber.size())
+                        return nullptr;
 
-        return mRegisterByNumber[number];
-    }
+                    return mRegisterByNumber[number];
+                }
 
-    /**
-     * \param location                 Register's memory location.
-     * \returns                        Register for the given memory location,
-     *                                 or nullptr if there is no such register.
-     */
-    const Register *getRegister(const ir::MemoryLocation &location) const {
-        return mRegisterByLocation.value(location, nullptr);
-    }
+                /**
+                 * \param location                 Register's memory location.
+                 * \returns                        Register for the given memory location,
+                 *                                 or nullptr if there is no such register.
+                 */
+                const Register* getRegister(const ir::MemoryLocation & location) const
+                {
+                    return mRegisterByLocation.value(location, nullptr);
+                }
 
-protected:
-    /**
-     * Registers the given register. This register container takes ownership of
-     * the given register.
-     * 
-     * \param[in] reg   Valid pointer to a register.
-     */
-    void registerRegister(Register *reg) {
-        assert(reg != nullptr);
-        assert(getRegister(reg->number()) == nullptr); /* Re-registration not allowed. */
+            protected:
+                /**
+                 * Registers the given register. This register container takes ownership of
+                 * the given register.
+                 *
+                 * \param[in] reg   Valid pointer to a register.
+                 */
+                void registerRegister(Register* reg)
+                {
+                    assert(reg != nullptr);
+                    assert(getRegister(reg->number()) == nullptr); /* Re-registration not allowed. */
 
-        mRegisters.push_back(reg);
+                    mRegisters.push_back(reg);
 
-        if (static_cast<std::size_t>(reg->number()) >= mRegisterByNumber.size()) {
-            mRegisterByNumber.resize((reg->number() + 1) * 2);
+                    if(static_cast<std::size_t>(reg->number()) >= mRegisterByNumber.size())
+                    {
+                        mRegisterByNumber.resize((reg->number() + 1) * 2);
+                    }
+                    mRegisterByNumber[reg->number()] = reg;
+
+                    mRegisterByLocation[reg->memoryLocation()] = reg;
+                }
+
+            private:
+                /** All registers. */
+                std::vector<const Register*> mRegisters;
+
+                /** Register number to register map. */
+                std::vector<Register*> mRegisterByNumber;
+
+                /** Map from memory location to register. */
+                QHash<ir::MemoryLocation, Register*> mRegisterByLocation;
+            };
+
+
+            /**
+             * Base class for static register containers.
+             */
+            template<class Derived>
+            class StaticRegisters: public Registers
+            {
+            public:
+                static const std::vector<const Register*> & registers()
+                {
+                    return instance()->Registers::registers();
+                }
+
+                static const Register* getRegister(int number)
+                {
+                    return instance()->Registers::getRegister(number);
+                }
+
+                static const Register* getRegister(const ir::MemoryLocation & location)
+                {
+                    return instance()->Registers::getRegister(location);
+                }
+
+                static Derived* instance()
+                {
+                    return &sInstance;
+                }
+
+            private:
+                static Derived sInstance;
+            };
+
+            template<class Derived>
+            Derived StaticRegisters<Derived>::sInstance;
+
         }
-        mRegisterByNumber[reg->number()] = reg;
-
-        mRegisterByLocation[reg->memoryLocation()] = reg;
     }
-
-private:
-    /** All registers. */
-    std::vector<const Register *> mRegisters;
-
-    /** Register number to register map. */
-    std::vector<Register *> mRegisterByNumber;
-
-    /** Map from memory location to register. */
-    QHash<ir::MemoryLocation, Register *> mRegisterByLocation;
-};
-
-
-/**
- * Base class for static register containers.
- */
-template<class Derived>
-class StaticRegisters: public Registers {
-public:
-    static const std::vector<const Register *> &registers() {
-        return instance()->Registers::registers();
-    }
-
-    static const Register *getRegister(int number) {
-        return instance()->Registers::getRegister(number);
-    }
-
-    static const Register *getRegister(const ir::MemoryLocation &location) {
-        return instance()->Registers::getRegister(location);
-    }
-
-    static Derived *instance() {
-        return &sInstance;
-    }
-
-private:
-    static Derived sInstance;
-};
-
-template<class Derived>
-Derived StaticRegisters<Derived>::sInstance;
-
-}}} // namespace nc::core::arch
+} // namespace nc::core::arch

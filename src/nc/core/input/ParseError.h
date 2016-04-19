@@ -29,37 +29,45 @@
 
 #include <QCoreApplication>
 
-namespace nc { namespace core { namespace input {
+namespace nc
+{
+    namespace core
+    {
+        namespace input
+        {
 
-/** Error info structure for error line.  */
-typedef boost::error_info<struct LineTag, int> ErrorLine;
-/** Error info structure for error column.  */
-typedef boost::error_info<struct ColumnTag, int> ErrorColumn;
-/** Error info structure for error offset. */
-typedef boost::error_info<struct PositionTag, ByteSize> ErrorOffset;
+            /** Error info structure for error line.  */
+            typedef boost::error_info<struct LineTag, int> ErrorLine;
+            /** Error info structure for error column.  */
+            typedef boost::error_info<struct ColumnTag, int> ErrorColumn;
+            /** Error info structure for error offset. */
+            typedef boost::error_info<struct PositionTag, ByteSize> ErrorOffset;
 
-/**
- * Parse error.
- */
-class ParseError: public Exception {
-    Q_DECLARE_TR_FUNCTIONS(ParseError)
-public:
-    /**
-     * Constructor.
-     */
-    ParseError() {}
+            /**
+             * Parse error.
+             */
+            class ParseError: public Exception
+            {
+                Q_DECLARE_TR_FUNCTIONS(ParseError)
+            public:
+                /**
+                 * Constructor.
+                 */
+                ParseError() {}
 
-    /**
-     * Constructor.
-     *
-     * \param[in] message              Description of what has happened.
-     */
-    explicit
-    ParseError(const QString &message): Exception(message) {}
+                /**
+                 * Constructor.
+                 *
+                 * \param[in] message              Description of what has happened.
+                 */
+                explicit
+                ParseError(const QString & message): Exception(message) {}
 
-    virtual QString unicodeWhat() const noexcept;
-};
+                virtual QString unicodeWhat() const noexcept;
+            };
 
-}}} // namespace nc::core::input
+        }
+    }
+} // namespace nc::core::input
 
 /* vim:set et sts=4 sw=4: */

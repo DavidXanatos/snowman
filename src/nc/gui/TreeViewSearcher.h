@@ -34,53 +34,58 @@ QT_BEGIN_NAMESPACE
 class QTreeView;
 QT_END_NAMESPACE
 
-namespace nc { namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-/**
- * Search controller for QTreeView.
- */
-class TreeViewSearcher: public QObject, public Searcher {
-    Q_OBJECT
+        /**
+         * Search controller for QTreeView.
+         */
+        class TreeViewSearcher: public QObject, public Searcher
+        {
+            Q_OBJECT
 
-    /** Controlled widget. */
-    QTreeView *treeView_;
+            /** Controlled widget. */
+            QTreeView* treeView_;
 
-    /** Remembered current index. */
-    QModelIndex currentIndex_;
+            /** Remembered current index. */
+            QModelIndex currentIndex_;
 
-    /** Remembered selection. */
-    QModelIndexList selectedIndexes_;
+            /** Remembered selection. */
+            QModelIndexList selectedIndexes_;
 
-    /** Remembered horizontal scrollbar position. */
-    int hvalue_;
+            /** Remembered horizontal scrollbar position. */
+            int hvalue_;
 
-    /** Remembered vertical scrollbar position. */
-    int vvalue_;
+            /** Remembered vertical scrollbar position. */
+            int vvalue_;
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param treeView Valid pointer to the controlled widget.
-     */
-    TreeViewSearcher(QTreeView *treeView);
+            /**
+             * Constructor.
+             *
+             * \param treeView Valid pointer to the controlled widget.
+             */
+            TreeViewSearcher(QTreeView* treeView);
 
-    public Q_SLOTS:
+        public Q_SLOTS:
 
-    virtual void rememberViewport() override;
-    virtual void restoreViewport() override;
+            virtual void rememberViewport() override;
+            virtual void restoreViewport() override;
 
-    public:
+        public:
 
-    virtual void startTrackingViewport() override;
-    virtual void stopTrackingViewport() override;
+            virtual void startTrackingViewport() override;
+            virtual void stopTrackingViewport() override;
 
-    virtual FindFlags supportedFlags() const override;
-    virtual bool find(const QString &string, int flags) override;
-};
+            virtual FindFlags supportedFlags() const override;
+            virtual bool find(const QString & string, int flags) override;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */
 

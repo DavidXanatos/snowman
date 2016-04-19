@@ -33,89 +33,94 @@
 #include <nc/common/Printable.h>
 #include <nc/common/ilist.h>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class BasicBlock;
+            class BasicBlock;
 
-/**
- * Intermediate representation of a function.
- */
-class Function: public PrintableBase<Function>, public nc::ilist_item, boost::noncopyable {
-public:
-    typedef nc::ilist<BasicBlock> BasicBlocks;
+            /**
+             * Intermediate representation of a function.
+             */
+            class Function: public PrintableBase<Function>, public nc::ilist_item, boost::noncopyable
+            {
+            public:
+                typedef nc::ilist<BasicBlock> BasicBlocks;
 
-private:
-    BasicBlock *entry_; ///< Entry basic block.
-    BasicBlocks basicBlocks_; ///< All basic blocks of the function.
+            private:
+                BasicBlock* entry_; ///< Entry basic block.
+                BasicBlocks basicBlocks_; ///< All basic blocks of the function.
 
-public:
-    /**
-     * Constructor.
-     */
-    Function();
+            public:
+                /**
+                 * Constructor.
+                 */
+                Function();
 
-    /**
-     * Destructor.
-     */
-    ~Function();
+                /**
+                 * Destructor.
+                 */
+                ~Function();
 
-    /**
-     * \return Pointer to the entry basic block. Can be nullptr.
-     */
-    BasicBlock *entry() { return entry_; }
+                /**
+                 * \return Pointer to the entry basic block. Can be nullptr.
+                 */
+                BasicBlock* entry() { return entry_; }
 
-    /**
-     * \return Pointer to the entry basic block. Can be nullptr.
-     */
-    const BasicBlock *entry() const { return entry_; }
+                /**
+                 * \return Pointer to the entry basic block. Can be nullptr.
+                 */
+                const BasicBlock* entry() const { return entry_; }
 
-    /**
-     * Sets the function's entry.
-     *
-     * \param entry Valid pointer to the new entry basic block.
-     */
-    void setEntry(BasicBlock *entry) {
-        assert(entry != nullptr && "Function's entry must be not nullptr.");
-        entry_ = entry;
-    }
+                /**
+                 * Sets the function's entry.
+                 *
+                 * \param entry Valid pointer to the new entry basic block.
+                 */
+                void setEntry(BasicBlock* entry)
+                {
+                    assert(entry != nullptr && "Function's entry must be not nullptr.");
+                    entry_ = entry;
+                }
 
-    /**
-     * \return All basic blocks of the function.
-     *
-     * \warning Do not insert basic blocks into the container directly.
-     *          Use methods of Function class instead.
-     */
-    BasicBlocks &basicBlocks() { return basicBlocks_; }
+                /**
+                 * \return All basic blocks of the function.
+                 *
+                 * \warning Do not insert basic blocks into the container directly.
+                 *          Use methods of Function class instead.
+                 */
+                BasicBlocks & basicBlocks() { return basicBlocks_; }
 
-    /**
-     * \return All basic blocks of the function.
-     */
-    const BasicBlocks &basicBlocks() const { return basicBlocks_; }
+                /**
+                 * \return All basic blocks of the function.
+                 */
+                const BasicBlocks & basicBlocks() const { return basicBlocks_; }
 
-    /**
-     * Adds basic block to the function. The function doesn't have ownership of basic blocks.
-     *
-     * \param basicBlock Basic block.
-     */
-    void addBasicBlock(std::unique_ptr<BasicBlock> basicBlock);
+                /**
+                 * Adds basic block to the function. The function doesn't have ownership of basic blocks.
+                 *
+                 * \param basicBlock Basic block.
+                 */
+                void addBasicBlock(std::unique_ptr<BasicBlock> basicBlock);
 
-    /**
-     * \return True iff this function has no statements in its basic blocks.
-     */
-    bool isEmpty() const;
+                /**
+                 * \return True iff this function has no statements in its basic blocks.
+                 */
+                bool isEmpty() const;
 
-    /**
-     * Prints the representation of the function in DOT format into a stream.
-     *
-     * \param[in] out Output stream.
-     */
-    void print(QTextStream &out) const;
-};
+                /**
+                 * Prints the representation of the function in DOT format into a stream.
+                 *
+                 * \param[in] out Output stream.
+                 */
+                void print(QTextStream & out) const;
+            };
 
-} // namespace ir
-} // namespace core
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

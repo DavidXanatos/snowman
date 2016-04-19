@@ -30,71 +30,75 @@
 #include "Expression.h"
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Conditional statement (if-then-?else?).
- */
-class If: public Statement {
-    std::unique_ptr<Expression> condition_; ///< Condition.
-    std::unique_ptr<Statement> thenStatement_; ///< Then-statement.
-    std::unique_ptr<Statement> elseStatement_; ///< Else-statement.
+            /**
+             * Conditional statement (if-then-?else?).
+             */
+            class If: public Statement
+            {
+                std::unique_ptr<Expression> condition_; ///< Condition.
+                std::unique_ptr<Statement> thenStatement_; ///< Then-statement.
+                std::unique_ptr<Statement> elseStatement_; ///< Else-statement.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] condition Condition.
-     * \param[in] thenStatement Statement of "then" branch.
-     * \param[in] elseStatement Statement of "else" branch.
-     */
-    If(std::unique_ptr<Expression> condition,
-       std::unique_ptr<Statement> thenStatement,
-       std::unique_ptr<Statement> elseStatement = nullptr)
-    :  Statement(IF),
-       condition_(std::move(condition)),
-       thenStatement_(std::move(thenStatement)),
-       elseStatement_(std::move(elseStatement))
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] condition Condition.
+                 * \param[in] thenStatement Statement of "then" branch.
+                 * \param[in] elseStatement Statement of "else" branch.
+                 */
+                If(std::unique_ptr<Expression> condition,
+                   std::unique_ptr<Statement> thenStatement,
+                   std::unique_ptr<Statement> elseStatement = nullptr)
+                    :  Statement(IF),
+                       condition_(std::move(condition)),
+                       thenStatement_(std::move(thenStatement)),
+                       elseStatement_(std::move(elseStatement))
+                {}
 
-    /**
-     * \return Condition.
-     */
-    std::unique_ptr<Expression> &condition() { return condition_; }
+                /**
+                 * \return Condition.
+                 */
+                std::unique_ptr<Expression> & condition() { return condition_; }
 
-    /**
-     * \return Condition.
-     */
-    const Expression *condition() const { return condition_.get(); }
+                /**
+                 * \return Condition.
+                 */
+                const Expression* condition() const { return condition_.get(); }
 
-    /**
-     * \return Then-statement.
-     */
-    std::unique_ptr<Statement> &thenStatement() { return thenStatement_; }
+                /**
+                 * \return Then-statement.
+                 */
+                std::unique_ptr<Statement> & thenStatement() { return thenStatement_; }
 
-    /**
-     * \return Then-statement.
-     */
-    const Statement *thenStatement() const { return thenStatement_.get(); }
+                /**
+                 * \return Then-statement.
+                 */
+                const Statement* thenStatement() const { return thenStatement_.get(); }
 
-    /**
-     * \return Else-statement.
-     */
-    std::unique_ptr<Statement> &elseStatement() { return elseStatement_; }
+                /**
+                 * \return Else-statement.
+                 */
+                std::unique_ptr<Statement> & elseStatement() { return elseStatement_; }
 
-    /**
-     * \return Else-statement.
-     */
-    const Statement *elseStatement() const { return elseStatement_.get(); }
+                /**
+                 * \return Else-statement.
+                 */
+                const Statement* elseStatement() const { return elseStatement_.get(); }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::If, nc::core::likec::Statement::IF)

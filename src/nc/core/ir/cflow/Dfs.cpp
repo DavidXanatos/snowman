@@ -31,57 +31,67 @@
 #include "Edge.h"
 #include "Region.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace cflow {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace cflow
+            {
 
-Dfs::Dfs(const cflow::Region *region) {
-    assert(region != nullptr);
+                Dfs::Dfs(const cflow::Region* region)
+                {
+                    assert(region != nullptr);
 
-    preordering_.reserve(region->nodes().size());
-    postordering_.reserve(region->nodes().size());
+                    preordering_.reserve(region->nodes().size());
+                    postordering_.reserve(region->nodes().size());
 
-    visit(region->entry());
+                    visit(region->entry());
 
-    foreach (cflow::Node *node, region->nodes()) {
-        if (find(node2color_, node) == WHITE) {
-            visit(node);
-        }
-    }
-}
+                    foreach(cflow::Node * node, region->nodes())
+                    {
+                        if(find(node2color_, node) == WHITE)
+                        {
+                            visit(node);
+                        }
+                    }
+                }
 
-void Dfs::visit(cflow::Node *node) {
-    assert(node != nullptr);
-    assert(find(node2color_, node) == WHITE);
+                void Dfs::visit(cflow::Node* node)
+                {
+                    assert(node != nullptr);
+                    assert(find(node2color_, node) == WHITE);
 
-    node2color_[node] = GRAY;
-    preordering_.push_back(node);
+                    node2color_[node] = GRAY;
+                    preordering_.push_back(node);
 
-    foreach (cflow::Edge *edge, node->outEdges()) {
-        switch (find(node2color_, edge->head())) {
-        case WHITE:
-            edge2type_[edge] = FORWARD;
-            visit(edge->head());
-            break;
-        case GRAY:
-            edge2type_[edge] = BACK;
-            break;
-        case BLACK:
-            edge2type_[edge] = CROSS;
-            break;
-        default:
-            unreachable();
-        }
-    }
+                    foreach(cflow::Edge * edge, node->outEdges())
+                    {
+                        switch(find(node2color_, edge->head()))
+                        {
+                        case WHITE:
+                            edge2type_[edge] = FORWARD;
+                            visit(edge->head());
+                            break;
+                        case GRAY:
+                            edge2type_[edge] = BACK;
+                            break;
+                        case BLACK:
+                            edge2type_[edge] = CROSS;
+                            break;
+                        default:
+                            unreachable();
+                        }
+                    }
 
-    node2color_[node] = BLACK;
-    postordering_.push_back(node);
-}
+                    node2color_[node] = BLACK;
+                    postordering_.push_back(node);
+                }
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

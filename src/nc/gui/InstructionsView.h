@@ -33,87 +33,93 @@ QT_BEGIN_NAMESPACE
 class QTreeView;
 QT_END_NAMESPACE
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    namespace arch {
-        class Instruction;
+    namespace core
+    {
+        namespace arch
+        {
+            class Instruction;
+        }
     }
-}
 
-namespace gui {
+    namespace gui
+    {
 
-class InstructionsModel;
+        class InstructionsModel;
 
-/**
- * Dock widget for showing lists of instructions.
- */
-class InstructionsView: public TreeView {
-    Q_OBJECT
+        /**
+         * Dock widget for showing lists of instructions.
+         */
+        class InstructionsView: public TreeView
+        {
+            Q_OBJECT
 
-    /** The model being shown. */
-    InstructionsModel *model_;
+            /** The model being shown. */
+            InstructionsModel* model_;
 
-    /** Instructions currently selected in text. */
-    std::vector<const core::arch::Instruction *> selectedInstructions_;
+            /** Instructions currently selected in text. */
+            std::vector<const core::arch::Instruction*> selectedInstructions_;
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param parent Pointer to the parent widget. Can be nullptr.
-     */
-    InstructionsView(QWidget *parent = 0);
+        public:
+            /**
+             * Constructor.
+             *
+             * \param parent Pointer to the parent widget. Can be nullptr.
+             */
+            InstructionsView(QWidget* parent = 0);
 
-    /**
-     * \return Pointer to the assembler document being viewed. Can be nullptr.
-     */
-    InstructionsModel *model() const { return model_; }
+            /**
+             * \return Pointer to the assembler document being viewed. Can be nullptr.
+             */
+            InstructionsModel* model() const { return model_; }
 
-    /**
-     * Sets the model being viewed.
-     *
-     * \param model Pointer to the new model. Can be nullptr.
-     */
-    void setModel(InstructionsModel *model);
+            /**
+             * Sets the model being viewed.
+             *
+             * \param model Pointer to the new model. Can be nullptr.
+             */
+            void setModel(InstructionsModel* model);
 
-    /**
-     * \return Instructions currently selected in text.
-     */
-    const std::vector<const core::arch::Instruction *> &selectedInstructions() const { return selectedInstructions_; }
+            /**
+             * \return Instructions currently selected in text.
+             */
+            const std::vector<const core::arch::Instruction*> & selectedInstructions() const { return selectedInstructions_; }
 
-public Q_SLOTS:
-    /**
-     * Highlights given instructions.
-     *
-     * \param instructions  Instructions to be highlighted.
-     * \param ensureVisible Ensure that changes in highlighting are visible.
-     */
-    void highlightInstructions(const std::vector<const core::arch::Instruction *> &instructions, bool ensureVisible = true);
+        public Q_SLOTS:
+            /**
+             * Highlights given instructions.
+             *
+             * \param instructions  Instructions to be highlighted.
+             * \param ensureVisible Ensure that changes in highlighting are visible.
+             */
+            void highlightInstructions(const std::vector<const core::arch::Instruction*> & instructions, bool ensureVisible = true);
 
-Q_SIGNALS:
-    /**
-     * Signal emitted when the set of currently selected instructions is changed.
-     */
-    void instructionSelectionChanged();
+        Q_SIGNALS:
+            /**
+             * Signal emitted when the set of currently selected instructions is changed.
+             */
+            void instructionSelectionChanged();
 
-    /**
-     * Signal emitted when deletion of selected instructions is requested.
-     */
-    void deleteSelectedInstructions();
+            /**
+             * Signal emitted when deletion of selected instructions is requested.
+             */
+            void deleteSelectedInstructions();
 
-    /**
-     * Signal emitted when decompilation of selected instructions is requested.
-     */
-    void decompileSelectedInstructions();
+            /**
+             * Signal emitted when decompilation of selected instructions is requested.
+             */
+            void decompileSelectedInstructions();
 
-private Q_SLOTS:
-    /**
-     * Updates information about current selections.
-     */
-    void updateSelection();
-};
+        private Q_SLOTS:
+            /**
+             * Updates information about current selections.
+             */
+            void updateSelection();
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

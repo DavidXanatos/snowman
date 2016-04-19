@@ -31,42 +31,48 @@
 #include <boost/function.hpp>
 #include <boost/functional/factory.hpp>
 
-namespace nc { namespace ida {
+namespace nc
+{
+    namespace ida
+    {
 
-/**
- * Base class for ida plugins.
- */
-class IdaPlugin: public boost::noncopyable {
-public:
-    /**
-     * Main plugin function. Will be called upon plugin invocation from IDA.
-     */
-    virtual void operator()() {}
+        /**
+         * Base class for ida plugins.
+         */
+        class IdaPlugin: public boost::noncopyable
+        {
+        public:
+            /**
+             * Main plugin function. Will be called upon plugin invocation from IDA.
+             */
+            virtual void operator()() {}
 
-    virtual ~IdaPlugin() {}
-};
-
-
-namespace detail {
-
-class IdaPluginRegistrator {
-public:
-    typedef boost::function<IdaPlugin *()> PluginFactory;
-
-    static bool registerPlugin(const PluginFactory &pluginFactory);
-};
-
-} // namespace detail
+            virtual ~IdaPlugin() {}
+        };
 
 
-/**
- * This macro registers the given type as an ida plugin. 
- *
- * It will be constructed upon ida initialization and destructed upon ida
- * deinitialization.
- *
- * \param plugin_class                 Ida plugin class to register.
- */
+        namespace detail
+        {
+
+            class IdaPluginRegistrator
+            {
+            public:
+                typedef boost::function<IdaPlugin *()> PluginFactory;
+
+                static bool registerPlugin(const PluginFactory & pluginFactory);
+            };
+
+        } // namespace detail
+
+
+        /**
+         * This macro registers the given type as an ida plugin.
+         *
+         * It will be constructed upon ida initialization and destructed upon ida
+         * deinitialization.
+         *
+         * \param plugin_class                 Ida plugin class to register.
+         */
 #define NC_IDA_REGISTER_PLUGIN(plugin_class)                                    \
 static_assert(                                                                  \
     boost::is_base_of< ::nc::ida::IdaPlugin, plugin_class>::value,              \
@@ -74,7 +80,8 @@ static_assert(                                                                  
 );                                                                              \
 static bool BOOST_PP_CAT(registered_, __LINE__) =                               \
     ::nc::ida::detail::IdaPluginRegistrator::registerPlugin(boost::factory<plugin_class *>()); \
-
-}} // namespace nc::ida
+ 
+    }
+} // namespace nc::ida
 
 /* vim:set et sts=4 sw=4: */

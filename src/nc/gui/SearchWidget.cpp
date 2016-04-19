@@ -39,189 +39,219 @@
 
 #include "Searcher.h"
 
-namespace nc { namespace gui {
-
-SearchWidget::SearchWidget(std::unique_ptr<Searcher> searcher, QWidget *parent):
-    QWidget(parent), searcher_(std::move(searcher))
+namespace nc
 {
-    assert(searcher_ != nullptr);
+    namespace gui
+    {
 
-    auto supportedFlags = searcher_->supportedFlags();
+        SearchWidget::SearchWidget(std::unique_ptr<Searcher> searcher, QWidget* parent):
+            QWidget(parent), searcher_(std::move(searcher))
+        {
+            assert(searcher_ != nullptr);
 
-    QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->setContentsMargins(4, 0, 4, 4);
+            auto supportedFlags = searcher_->supportedFlags();
 
-    QLabel *findLabel = new QLabel(tr("Find:"), this);
-    layout->addWidget(findLabel);
+            QHBoxLayout* layout = new QHBoxLayout(this);
+            layout->setContentsMargins(4, 0, 4, 4);
 
-    completionModel_ = new QStringListModel(this);
+            QLabel* findLabel = new QLabel(tr("Find:"), this);
+            layout->addWidget(findLabel);
 
-    lineEdit_ = new QLineEdit(this);
-    lineEdit_->setCompleter(new QCompleter(completionModel_, this));
-    lineEdit_->completer()->setCaseSensitivity(Qt::CaseInsensitive);
-    lineEdit_->setMinimumWidth(lineEdit_->fontMetrics().boundingRect("X").width() * 8);
-    layout->addWidget(lineEdit_);
+            completionModel_ = new QStringListModel(this);
 
-    connect(lineEdit_, SIGNAL(textChanged(const QString &)), this, SLOT(scheduleIncrementalSearch()));
-    connect(lineEdit_, SIGNAL(returnPressed()), this, SLOT(findNext()));
-    connect(lineEdit_, SIGNAL(returnPressed()), this, SLOT(rememberCompletion()));
+            lineEdit_ = new QLineEdit(this);
+            lineEdit_->setCompleter(new QCompleter(completionModel_, this));
+            lineEdit_->completer()->setCaseSensitivity(Qt::CaseInsensitive);
+            lineEdit_->setMinimumWidth(lineEdit_->fontMetrics().boundingRect("X").width() * 8);
+            layout->addWidget(lineEdit_);
 
-    QPushButton *nextButton = new QPushButton(tr("&Next"), this);
-    layout->addWidget(nextButton);
+            connect(lineEdit_, SIGNAL(textChanged(const QString &)), this, SLOT(scheduleIncrementalSearch()));
+            connect(lineEdit_, SIGNAL(returnPressed()), this, SLOT(findNext()));
+            connect(lineEdit_, SIGNAL(returnPressed()), this, SLOT(rememberCompletion()));
 
-    connect(nextButton, SIGNAL(clicked()), this, SLOT(findNext()));
-    connect(nextButton, SIGNAL(clicked()), this, SLOT(rememberCompletion()));
+            QPushButton* nextButton = new QPushButton(tr("&Next"), this);
+            layout->addWidget(nextButton);
 
-    if (supportedFlags & Searcher::FindBackward) {
-        QPushButton *previousButton = new QPushButton(tr("&Previous"), this);
-        layout->addWidget(previousButton);
+            connect(nextButton, SIGNAL(clicked()), this, SLOT(findNext()));
+            connect(nextButton, SIGNAL(clicked()), this, SLOT(rememberCompletion()));
 
-        connect(previousButton, SIGNAL(clicked()), this, SLOT(findPrevious()));
-        connect(previousButton, SIGNAL(clicked()), this, SLOT(rememberCompletion()));
+            if(supportedFlags & Searcher::FindBackward)
+            {
+                QPushButton* previousButton = new QPushButton(tr("&Previous"), this);
+                layout->addWidget(previousButton);
+
+                connect(previousButton, SIGNAL(clicked()), this, SLOT(findPrevious()));
+                connect(previousButton, SIGNAL(clicked()), this, SLOT(rememberCompletion()));
+            }
+
+            incrementalSearchAction_ = new QAction(tr("&Incremental Search"), this);
+            incrementalSearchAction_->setCheckable(true);
+            incrementalSearchAction_->setChecked(true);
+
+            caseSensitiveAction_ = new QAction(tr("&Case Sensitive"), this);
+            caseSensitiveAction_->setCheckable(true);
+
+            wholeWordsAction_ = new QAction(tr("&Whole Words"), this);
+            wholeWordsAction_->setCheckable(true);
+
+            regexpAction_ = new QAction(tr("&Regular Expression"), this);
+            regexpAction_->setCheckable(true);
+
+            QMenu* optionsMenu = new QMenu(this);
+            optionsMenu->addAction(incrementalSearchAction_);
+
+            if(supportedFlags & Searcher::FindCaseSensitive)
+            {
+                optionsMenu->addAction(caseSensitiveAction_);
+            }
+            if(supportedFlags & Searcher::FindWholeWords)
+            {
+                optionsMenu->addAction(wholeWordsAction_);
+            }
+            if(supportedFlags & Searcher::FindRegexp)
+            {
+                regexpAction_->setChecked(true);
+                optionsMenu->addAction(regexpAction_);
+            }
+
+            QPushButton* optionsButton = new QPushButton(tr("&Options"), this);
+            optionsButton->setMenu(optionsMenu);
+            layout->addWidget(optionsButton);
+
+            normalPalette_  = lineEdit_->palette();
+            failurePalette_ = lineEdit_->palette();
+            failurePalette_.setColor(QPalette::Base, QColor(255, 192, 192));
+
+            incrementalSearchTimer_ = new QTimer(this);
+            incrementalSearchTimer_->setInterval(250);
+            incrementalSearchTimer_->setSingleShot(true);
+
+            connect(incrementalSearchTimer_, SIGNAL(timeout()), this, SLOT(performIncrementalSearch()));
+        }
+
+        SearchWidget::~SearchWidget() {}
+
+        void SearchWidget::activate()
+        {
+            show();
+
+            lineEdit_->selectAll();
+            lineEdit_->setFocus();
+
+            searcher()->startTrackingViewport();
+            searcher()->rememberViewport();
+        }
+
+        void SearchWidget::deactivate()
+        {
+            if(!isVisible())
+            {
+                return;
+            }
+
+            searcher()->stopTrackingViewport();
+            searcher()->restoreViewport();
+
+            incrementalSearchTimer_->stop();
+
+            hide();
+        }
+
+        void SearchWidget::findNext()
+        {
+            searcher()->stopTrackingViewport();
+            searcher()->restoreViewport();
+
+            if(searcher()->find(lineEdit_->text(), searchFlags()))
+            {
+                searcher()->rememberViewport();
+                indicateSuccess();
+            }
+            else
+            {
+                searcher()->restoreViewport();
+                indicateFailure();
+            }
+
+            searcher()->startTrackingViewport();
+        }
+
+        void SearchWidget::findPrevious()
+        {
+            searcher()->stopTrackingViewport();
+            searcher()->restoreViewport();
+
+            if(searcher()->find(lineEdit_->text(), searchFlags() | Searcher::FindBackward))
+            {
+                searcher()->rememberViewport();
+                indicateSuccess();
+            }
+            else
+            {
+                searcher()->restoreViewport();
+                indicateFailure();
+            }
+
+            searcher()->startTrackingViewport();
+        }
+
+        void SearchWidget::scheduleIncrementalSearch()
+        {
+            if(!incrementalSearchAction_->isChecked())
+            {
+                indicateSuccess();
+                return;
+            }
+
+            incrementalSearchTimer_->start();
+        }
+
+        void SearchWidget::performIncrementalSearch()
+        {
+            searcher()->stopTrackingViewport();
+            searcher()->restoreViewport();
+
+            if(searcher()->find(lineEdit_->text(), searchFlags()))
+            {
+                indicateSuccess();
+            }
+            else
+            {
+                searcher()->restoreViewport();
+                indicateFailure();
+            }
+
+            searcher()->startTrackingViewport();
+        }
+
+        int SearchWidget::searchFlags() const
+        {
+            return (caseSensitiveAction_->isChecked() ? Searcher::FindCaseSensitive : 0) |
+                   (wholeWordsAction_->isChecked() ? Searcher::FindWholeWords : 0) |
+                   (regexpAction_->isChecked() ? Searcher::FindRegexp : 0);
+        }
+
+        void SearchWidget::indicateSuccess()
+        {
+            lineEdit_->setPalette(normalPalette_);
+        }
+
+        void SearchWidget::indicateFailure()
+        {
+            lineEdit_->setPalette(failurePalette_);
+        }
+
+        void SearchWidget::rememberCompletion()
+        {
+            QStringList list = completionModel_->stringList();
+            if(!list.contains(lineEdit_->text(), lineEdit_->completer()->caseSensitivity()))
+            {
+                list.append(lineEdit_->text());
+                completionModel_->setStringList(list);
+            }
+        }
+
     }
-
-    incrementalSearchAction_ = new QAction(tr("&Incremental Search"), this);
-    incrementalSearchAction_->setCheckable(true);
-    incrementalSearchAction_->setChecked(true);
-
-    caseSensitiveAction_ = new QAction(tr("&Case Sensitive"), this);
-    caseSensitiveAction_->setCheckable(true);
-
-    wholeWordsAction_ = new QAction(tr("&Whole Words"), this);
-    wholeWordsAction_->setCheckable(true);
-
-    regexpAction_ = new QAction(tr("&Regular Expression"), this);
-    regexpAction_->setCheckable(true);
-
-    QMenu *optionsMenu = new QMenu(this);
-    optionsMenu->addAction(incrementalSearchAction_);
-
-    if (supportedFlags & Searcher::FindCaseSensitive) {
-        optionsMenu->addAction(caseSensitiveAction_);
-    }
-    if (supportedFlags & Searcher::FindWholeWords) {
-        optionsMenu->addAction(wholeWordsAction_);
-    }
-    if (supportedFlags & Searcher::FindRegexp) {
-        regexpAction_->setChecked(true);
-        optionsMenu->addAction(regexpAction_);
-    }
-
-    QPushButton *optionsButton = new QPushButton(tr("&Options"), this);
-    optionsButton->setMenu(optionsMenu);
-    layout->addWidget(optionsButton);
-
-    normalPalette_  = lineEdit_->palette();
-    failurePalette_ = lineEdit_->palette();
-    failurePalette_.setColor(QPalette::Base, QColor(255, 192, 192));
-
-    incrementalSearchTimer_ = new QTimer(this);
-    incrementalSearchTimer_->setInterval(250);
-    incrementalSearchTimer_->setSingleShot(true);
-
-    connect(incrementalSearchTimer_, SIGNAL(timeout()), this, SLOT(performIncrementalSearch()));
-}
-
-SearchWidget::~SearchWidget() {}
-
-void SearchWidget::activate() {
-    show();
-
-    lineEdit_->selectAll();
-    lineEdit_->setFocus();
-
-    searcher()->startTrackingViewport();
-    searcher()->rememberViewport();
-}
-
-void SearchWidget::deactivate() {
-    if (!isVisible()) {
-        return;
-    }
-
-    searcher()->stopTrackingViewport();
-    searcher()->restoreViewport();
-
-    incrementalSearchTimer_->stop();
-
-    hide();
-}
-
-void SearchWidget::findNext() {
-    searcher()->stopTrackingViewport();
-    searcher()->restoreViewport();
-
-    if (searcher()->find(lineEdit_->text(), searchFlags())) {
-        searcher()->rememberViewport();
-        indicateSuccess();
-    } else {
-        searcher()->restoreViewport();
-        indicateFailure();
-    }
-
-    searcher()->startTrackingViewport();
-}
-
-void SearchWidget::findPrevious() {
-    searcher()->stopTrackingViewport();
-    searcher()->restoreViewport();
-
-    if (searcher()->find(lineEdit_->text(), searchFlags() | Searcher::FindBackward)) {
-        searcher()->rememberViewport();
-        indicateSuccess();
-    } else {
-        searcher()->restoreViewport();
-        indicateFailure();
-    }
-
-    searcher()->startTrackingViewport();
-}
-
-void SearchWidget::scheduleIncrementalSearch() {
-    if (!incrementalSearchAction_->isChecked()) {
-        indicateSuccess();
-        return;
-    }
-
-    incrementalSearchTimer_->start();
-}
-
-void SearchWidget::performIncrementalSearch() {
-    searcher()->stopTrackingViewport();
-    searcher()->restoreViewport();
-
-    if (searcher()->find(lineEdit_->text(), searchFlags())) {
-        indicateSuccess();
-    } else {
-        searcher()->restoreViewport();
-        indicateFailure();
-    }
-
-    searcher()->startTrackingViewport();
-}
-
-int SearchWidget::searchFlags() const {
-    return (caseSensitiveAction_->isChecked() ? Searcher::FindCaseSensitive : 0) |
-           (wholeWordsAction_->isChecked() ? Searcher::FindWholeWords : 0) |
-           (regexpAction_->isChecked() ? Searcher::FindRegexp : 0);
-}
-
-void SearchWidget::indicateSuccess() {
-    lineEdit_->setPalette(normalPalette_);
-}
-
-void SearchWidget::indicateFailure() {
-    lineEdit_->setPalette(failurePalette_);
-}
-
-void SearchWidget::rememberCompletion() {
-    QStringList list = completionModel_->stringList();
-    if (!list.contains(lineEdit_->text(), lineEdit_->completer()->caseSensitivity())) {
-        list.append(lineEdit_->text());
-        completionModel_->setStringList(list);
-    }
-}
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

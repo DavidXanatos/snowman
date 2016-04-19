@@ -9,22 +9,26 @@
 
 #include "Graph.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Function;
+            class Function;
 
-namespace cflow {
+            namespace cflow
+            {
 
-/**
- * Mapping from a function to its structural graph.
- */
-class Graphs: public boost::unordered_map<const Function *, std::unique_ptr<const Graph>> {};
+                /**
+                 * Mapping from a function to its structural graph.
+                 */
+                class Graphs: public boost::unordered_map<const Function*, std::unique_ptr<const Graph>> {};
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

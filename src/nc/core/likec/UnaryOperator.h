@@ -29,64 +29,69 @@
 
 #include "Expression.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Base class for unary operators.
- */
-class UnaryOperator: public Expression {
-    NC_BASE_CLASS(UnaryOperator, operatorKind)
-    std::unique_ptr<Expression> operand_; ///< Operand.
+            /**
+             * Base class for unary operators.
+             */
+            class UnaryOperator: public Expression
+            {
+                NC_BASE_CLASS(UnaryOperator, operatorKind)
+                std::unique_ptr<Expression> operand_; ///< Operand.
 
-public:
-    /**
-     * Operator id.
-     */
-    enum Kind {
-        DEREFERENCE,            ///< *a
-        REFERENCE,              ///< &a
-        BITWISE_NOT,            ///< ~a
-        LOGICAL_NOT,            ///< !a
-        NEGATION,               ///< -a
-        PREFIX_INCREMENT,       ///< ++a
-        PREFIX_DECREMENT,       ///< --a
-        USER_OPERATOR = 1000    ///< Base value for user-defined operators.
-    };
+            public:
+                /**
+                 * Operator id.
+                 */
+                enum Kind
+                {
+                    DEREFERENCE,            ///< *a
+                    REFERENCE,              ///< &a
+                    BITWISE_NOT,            ///< ~a
+                    LOGICAL_NOT,            ///< !a
+                    NEGATION,               ///< -a
+                    PREFIX_INCREMENT,       ///< ++a
+                    PREFIX_DECREMENT,       ///< --a
+                    USER_OPERATOR = 1000    ///< Base value for user-defined operators.
+                };
 
-    /**
-     * Class constructor.
-     *
-     * \param[in] operatorKind Operator's kind.
-     * \param[in] operand Operand.
-     */
-    UnaryOperator(int operatorKind, std::unique_ptr<Expression> operand):
-        Expression(UNARY_OPERATOR), operatorKind_(operatorKind), operand_(std::move(operand)) {}
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] operatorKind Operator's kind.
+                 * \param[in] operand Operand.
+                 */
+                UnaryOperator(int operatorKind, std::unique_ptr<Expression> operand):
+                    Expression(UNARY_OPERATOR), operatorKind_(operatorKind), operand_(std::move(operand)) {}
 
-    /**
-     * Sets operator's kind.
-     *
-     * \param operatorKind New kind.
-     */
-    void setOperatorKind(int operatorKind) { operatorKind_ = operatorKind; }
+                /**
+                 * Sets operator's kind.
+                 *
+                 * \param operatorKind New kind.
+                 */
+                void setOperatorKind(int operatorKind) { operatorKind_ = operatorKind; }
 
-    /**
-     * \return Operand.
-     */
-    std::unique_ptr<Expression> &operand() { return operand_; }
+                /**
+                 * \return Operand.
+                 */
+                std::unique_ptr<Expression> & operand() { return operand_; }
 
-    /**
-     * \return Operand.
-     */
-    const Expression *operand() const { return operand_.get(); }
+                /**
+                 * \return Operand.
+                 */
+                const Expression* operand() const { return operand_.get(); }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Expression, nc::core::likec::UnaryOperator, nc::core::likec::Expression::UNARY_OPERATOR)

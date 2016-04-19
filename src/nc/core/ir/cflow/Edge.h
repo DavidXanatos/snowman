@@ -25,62 +25,67 @@
 
 #include <nc/config.h>
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace cflow {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace cflow
+            {
 
-class Node;
+                class Node;
 
-class Edge {
-    public:
+                class Edge
+                {
+                public:
 
-    private:
+                private:
 
-    Node *tail_; ///< Edge tail.
-    Node *head_; ///< Edge head.
+                    Node* tail_; ///< Edge tail.
+                    Node* head_; ///< Edge head.
 
-    public:
+                public:
 
-    /**
-     * Class constructor.
-     *
-     * \param[in] tail Edge tail.
-     * \param[in] head Edge head.
-     */
-    Edge(Node *tail, Node *head);
+                    /**
+                     * Class constructor.
+                     *
+                     * \param[in] tail Edge tail.
+                     * \param[in] head Edge head.
+                     */
+                    Edge(Node* tail, Node* head);
 
-    /**
-     * \return Pointer to the edge's tail. Can be nullptr.
-     */
-    Node *tail() const { return tail_; }
+                    /**
+                     * \return Pointer to the edge's tail. Can be nullptr.
+                     */
+                    Node* tail() const { return tail_; }
 
-    /**
-     * Sets edge tail.
-     * Removes the edge from the list of outgoing edges of the previous tail and adds to the one of new tail.
-     *
-     * \param[in] tail Pointer to the edge's tail. Can be nullptr.
-     */
-    void setTail(Node *tail);
+                    /**
+                     * Sets edge tail.
+                     * Removes the edge from the list of outgoing edges of the previous tail and adds to the one of new tail.
+                     *
+                     * \param[in] tail Pointer to the edge's tail. Can be nullptr.
+                     */
+                    void setTail(Node* tail);
 
-    /**
-     * \return Pointer to the edge's head. Can be nullptr.
-     */
-    Node *head() const { return head_; }
+                    /**
+                     * \return Pointer to the edge's head. Can be nullptr.
+                     */
+                    Node* head() const { return head_; }
 
-    /**
-     * Sets edge head.
-     *
-     * Removes the edge from the list of incoming edges of the previous head and adds to the one of new head.
-     *
-     * \param[in] head Pointer to the edge's head. Can be nullptr.
-     */
-    void setHead(Node *head);
-};
+                    /**
+                     * Sets edge head.
+                     *
+                     * Removes the edge from the list of incoming edges of the previous head and adds to the one of new head.
+                     *
+                     * \param[in] head Pointer to the edge's head. Can be nullptr.
+                     */
+                    void setHead(Node* head);
+                };
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

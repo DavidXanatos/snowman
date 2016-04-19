@@ -24,17 +24,18 @@
 // a 5 operand sequence in the form:
 //   [BaseReg, ScaleAmt, IndexReg, Disp, Segment]
 // These enums help decode this.
-enum {
-	X86_AddrBaseReg = 0,
-	X86_AddrScaleAmt = 1,
-	X86_AddrIndexReg = 2,
-	X86_AddrDisp = 3,
+enum
+{
+    X86_AddrBaseReg = 0,
+    X86_AddrScaleAmt = 1,
+    X86_AddrIndexReg = 2,
+    X86_AddrDisp = 3,
 
-	/// AddrSegmentReg - The operand # of the segment in the memory operand.
-	X86_AddrSegmentReg = 4,
+    /// AddrSegmentReg - The operand # of the segment in the memory operand.
+    X86_AddrSegmentReg = 4,
 
-	/// AddrNumOperands - Total number of operands in a memory reference.
-	X86_AddrNumOperands = 5
+    /// AddrNumOperands - Total number of operands in a memory reference.
+    X86_AddrNumOperands = 5
 };
 
 #endif

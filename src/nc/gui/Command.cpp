@@ -30,54 +30,62 @@
 
 #include "Activity.h"
 
-namespace nc {
-namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-Command::Command():
+        Command::Command():
 #ifdef NC_USE_THREADS
-    threadPool_(QThreadPool::globalInstance()),
+            threadPool_(QThreadPool::globalInstance()),
 #endif
-    activityCount_(0),
-    isBackground_(false)
-{}
+            activityCount_(0),
+            isBackground_(false)
+        {}
 
-Command::~Command() {
-    cancel();
-}
+        Command::~Command()
+        {
+            cancel();
+        }
 
-void Command::execute() {
-    assert(!executing());
+        void Command::execute()
+        {
+            assert(!executing());
 
-    cancellationToken_ = CancellationToken();
+            cancellationToken_ = CancellationToken();
 
-    ++activityCount_;
-    work();
-    activityFinished();
-}
+            ++activityCount_;
+            work();
+            activityFinished();
+        }
 
-void Command::delegate(std::unique_ptr<Activity> activity) {
-    assert(activity);
+        void Command::delegate(std::unique_ptr<Activity> activity)
+        {
+            assert(activity);
 
-    connect(activity.get(), SIGNAL(finished()), this, SLOT(activityFinished()), Qt::QueuedConnection);
+            connect(activity.get(), SIGNAL(finished()), this, SLOT(activityFinished()), Qt::QueuedConnection);
 
-    ++activityCount_;
+            ++activityCount_;
 
 #ifdef NC_USE_THREADS
-    activity->setAutoDelete(true);
-    threadPool()->start(activity.release());
+            activity->setAutoDelete(true);
+            threadPool()->start(activity.release());
 #else
-    activity->run();
+            activity->run();
 #endif
-}
+        }
 
-void Command::activityFinished() {
-    assert(activityCount_ > 0);
+        void Command::activityFinished()
+        {
+            assert(activityCount_ > 0);
 
-    if (--activityCount_ == 0) {
-        Q_EMIT finished();
+            if(--activityCount_ == 0)
+            {
+                Q_EMIT finished();
+            }
+        }
+
     }
-}
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

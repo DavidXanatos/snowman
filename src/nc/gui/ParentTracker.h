@@ -31,46 +31,50 @@
 
 #include <nc/core/likec/TreeNode.h>
 
-namespace nc {
-namespace gui {
-
-/**
- * Visitor of LikeC nodes for computing parent mapping.
- */
-class ParentTracker {
-    /** Mapping from a node to its parent. */
-    boost::unordered_map<const core::likec::TreeNode *, const core::likec::TreeNode *> &map_;
-
-    /** Ancestors of the currently visited node. */
-    std::vector<core::likec::TreeNode *> stack_;
-
-public:
-    /**
-     * Constructor.
-     *
-     * \param[out] map  Mapping from a node to its parent.
-     */
-    ParentTracker(boost::unordered_map<const core::likec::TreeNode *, const core::likec::TreeNode *> &map):
-        map_(map)
+namespace nc
+{
+    namespace gui
     {
-        stack_.push_back(nullptr);
-    }
 
-    /**
-     * Visits LikeC node, remembers its parent, and descends to its children.
-     *
-     * \param node Valid pointer to a LikeC node.
-     */
-    void operator()(core::likec::TreeNode *node) {
-        map_[node] = stack_.back();
+        /**
+         * Visitor of LikeC nodes for computing parent mapping.
+         */
+        class ParentTracker
+        {
+            /** Mapping from a node to its parent. */
+            boost::unordered_map<const core::likec::TreeNode*, const core::likec::TreeNode*> & map_;
 
-        stack_.push_back(node);
-        node->callOnChildren(*this);
-        stack_.pop_back();
-    }
-};
+            /** Ancestors of the currently visited node. */
+            std::vector<core::likec::TreeNode*> stack_;
 
-} // namespace gui
+        public:
+            /**
+             * Constructor.
+             *
+             * \param[out] map  Mapping from a node to its parent.
+             */
+            ParentTracker(boost::unordered_map<const core::likec::TreeNode*, const core::likec::TreeNode*> & map):
+                map_(map)
+            {
+                stack_.push_back(nullptr);
+            }
+
+            /**
+             * Visits LikeC node, remembers its parent, and descends to its children.
+             *
+             * \param node Valid pointer to a LikeC node.
+             */
+            void operator()(core::likec::TreeNode* node)
+            {
+                map_[node] = stack_.back();
+
+                stack_.push_back(node);
+                node->callOnChildren(*this);
+                stack_.pop_back();
+            }
+        };
+
+    } // namespace gui
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

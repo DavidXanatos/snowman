@@ -26,17 +26,21 @@
 
 #include "Expression.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-void Switch::doCallOnChildren(const std::function<void(TreeNode *)> &fun) {
-    fun(body_.get());
-    fun(expression_.get());
-}
+            void Switch::doCallOnChildren(const std::function<void(TreeNode*)> & fun)
+            {
+                fun(body_.get());
+                fun(expression_.get());
+            }
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

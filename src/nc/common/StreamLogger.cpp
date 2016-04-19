@@ -5,11 +5,13 @@
 
 #include <QObject>
 
-namespace nc {
+namespace nc
+{
 
-void StreamLogger::log(LogLevel level, const QString &text) {
-    stream_ << tr("[%1] %2").arg(level.getName()).arg(text) << endl;
-}
+    void StreamLogger::log(LogLevel level, const QString & text)
+    {
+        stream_ << tr("[%1] %2").arg(level.getName()).arg(text) << endl;
+    }
 
 } // namespace nc
 

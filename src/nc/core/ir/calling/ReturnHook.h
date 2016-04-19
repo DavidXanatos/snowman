@@ -34,75 +34,81 @@
 
 #include "Patch.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Term;
+            class Term;
 
-namespace calling {
+            namespace calling
+            {
 
-class Convention;
-class FunctionSignature;
+                class Convention;
+                class FunctionSignature;
 
-/**
- * Hook installed at a return site.
- */
-class ReturnHook {
-    /** Mapping of terms where return values may be kept to their clones. */
-    boost::unordered_map<const Term *, const Term *> returnValueTerms_;
+                /**
+                 * Hook installed at a return site.
+                 */
+                class ReturnHook
+                {
+                    /** Mapping of terms where return values may be kept to their clones. */
+                    boost::unordered_map<const Term*, const Term*> returnValueTerms_;
 
-    /** Mapping from memory locations that can be used for returning values to terms. */
-    std::vector<std::pair<MemoryLocation, const Term *>> speculativeReturnValueTerms_;
+                    /** Mapping from memory locations that can be used for returning values to terms. */
+                    std::vector<std::pair<MemoryLocation, const Term*>> speculativeReturnValueTerms_;
 
-    Patch patch_;
+                    Patch patch_;
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] convention Valid pointer to the calling convention.
-     * \param[in] signature Pointer to the function's signature. Can be nullptr.
-     */
-    ReturnHook(const Convention *convention, const FunctionSignature *signature);
+                public:
+                    /**
+                     * Class constructor.
+                     *
+                     * \param[in] convention Valid pointer to the calling convention.
+                     * \param[in] signature Pointer to the function's signature. Can be nullptr.
+                     */
+                    ReturnHook(const Convention* convention, const FunctionSignature* signature);
 
-    /**
-     * Destructor.
-     */
-    ~ReturnHook();
+                    /**
+                     * Destructor.
+                     */
+                    ~ReturnHook();
 
-    /**
-     * \return Patch to be inserted at the return site.
-     */
-    Patch &patch() { return patch_; }
+                    /**
+                     * \return Patch to be inserted at the return site.
+                     */
+                    Patch & patch() { return patch_; }
 
-    /**
-     * \param term Valid pointer to a term representing the return value
-     *             in the signature.
-     *
-     * \return Pointer to the term representing the return value in the hook.
-     *         Will be nullptr, if the signature does not include such an argument.
-     */
-    const Term *getReturnValueTerm(const Term *term) const {
-        assert(term != nullptr);
-        return nc::find(returnValueTerms_, term);
-    }
+                    /**
+                     * \param term Valid pointer to a term representing the return value
+                     *             in the signature.
+                     *
+                     * \return Pointer to the term representing the return value in the hook.
+                     *         Will be nullptr, if the signature does not include such an argument.
+                     */
+                    const Term* getReturnValueTerm(const Term* term) const
+                    {
+                        assert(term != nullptr);
+                        return nc::find(returnValueTerms_, term);
+                    }
 
-    /**
-     * \return Mapping from return value terms to their clones.
-     */
-    const boost::unordered_map<const Term *, const Term *> &returnValueTerms() const { return returnValueTerms_; }
+                    /**
+                     * \return Mapping from return value terms to their clones.
+                     */
+                    const boost::unordered_map<const Term*, const Term*> & returnValueTerms() const { return returnValueTerms_; }
 
-    /**
-     * \return Mapping of the memory locations that can contain return values
-     *         to terms representing writes to these locations.
-     */
-    const std::vector<std::pair<MemoryLocation, const Term *>> &speculativeReturnValueTerms() const { return speculativeReturnValueTerms_; }
-};
+                    /**
+                     * \return Mapping of the memory locations that can contain return values
+                     *         to terms representing writes to these locations.
+                     */
+                    const std::vector<std::pair<MemoryLocation, const Term*>> & speculativeReturnValueTerms() const { return speculativeReturnValueTerms_; }
+                };
 
-} // namespace calling
-} // namespace ir
-} // namespace core
+            } // namespace calling
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et ts=4 sw=4: */

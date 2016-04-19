@@ -26,28 +26,36 @@
 
 #include <nc/common/Foreach.h>
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-void FunctionPointerType::print(QTextStream &out) const {
-    out << *returnType() << "(*)(";
+            void FunctionPointerType::print(QTextStream & out) const
+            {
+                out << *returnType() << "(*)(";
 
-    bool comma = false;
-    foreach (const Type *type, argumentTypes_) {
-        if (comma) {
-            out << ", ";
-        } else {
-            comma = true;
-        }
-        out << *type;
-    }
-    
-    out << ")";
-}
+                bool comma = false;
+                foreach(const Type * type, argumentTypes_)
+                {
+                    if(comma)
+                    {
+                        out << ", ";
+                    }
+                    else
+                    {
+                        comma = true;
+                    }
+                    out << *type;
+                }
 
-} // namespace likec
-} // namespace core
+                out << ")";
+            }
+
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

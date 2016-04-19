@@ -25,92 +25,104 @@
 
 #include <nc/config.h>
 
-namespace nc {
+namespace nc
+{
 
-/**
- * Template class implementing disjoint set using weighted union and path compression heuristics.
- *
- * It can be used like this:
- *
- * \code
- * class Node;
- *
- * class Node: public DisjointSet<Node> { ... }
- * \endcode
- *
- * \tparam T Type of disjoint set element.
- */
-template<class T>
-class DisjointSet {
-    mutable DisjointSet<T> *parent_; ///< Disjoint set parent.
-    int rank_; ///< Disjoint set rank.
+    /**
+     * Template class implementing disjoint set using weighted union and path compression heuristics.
+     *
+     * It can be used like this:
+     *
+     * \code
+     * class Node;
+     *
+     * class Node: public DisjointSet<Node> { ... }
+     * \endcode
+     *
+     * \tparam T Type of disjoint set element.
+     */
+    template<class T>
+    class DisjointSet
+    {
+        mutable DisjointSet<T>* parent_; ///< Disjoint set parent.
+        int rank_; ///< Disjoint set rank.
 
     public:
 
-    /**
-     * Class constructor.
-     */
-    DisjointSet(): parent_(this), rank_(0) {}
+        /**
+         * Class constructor.
+         */
+        DisjointSet(): parent_(this), rank_(0) {}
 
-    /**
-     * Creates a singleton.
-     */
-    void makeSet() {
-        parent_ = this;
-        rank_ = 0;
-    }
+        /**
+         * Creates a singleton.
+         */
+        void makeSet()
+        {
+            parent_ = this;
+            rank_ = 0;
+        }
 
-    /**
-     * Finds a representative of the set.
-     *
-     * \return The representative.
-     */
-    T *findSet() {
-        return static_cast<T *>(findSetImpl());
-    }
+        /**
+         * Finds a representative of the set.
+         *
+         * \return The representative.
+         */
+        T* findSet()
+        {
+            return static_cast<T*>(findSetImpl());
+        }
 
-    /**
-     * Finds a representative of the set.
-     *
-     * \return The representative.
-     */
-    const T *findSet() const {
-        return static_cast<const T *>(findSetImpl());
-    }
+        /**
+         * Finds a representative of the set.
+         *
+         * \return The representative.
+         */
+        const T* findSet() const
+        {
+            return static_cast<const T*>(findSetImpl());
+        }
 
-    /**
-     * Unions this set with the given one using weighted union algorithm.
-     *
-     * \param[in] that The set to merge with this one.
-     */
-    void unionSet(DisjointSet<T> *that) {
-        DisjointSet<T> *x = this->findSet();
-        DisjointSet<T> *y = that->findSet();
+        /**
+         * Unions this set with the given one using weighted union algorithm.
+         *
+         * \param[in] that The set to merge with this one.
+         */
+        void unionSet(DisjointSet<T>* that)
+        {
+            DisjointSet<T>* x = this->findSet();
+            DisjointSet<T>* y = that->findSet();
 
-        if (x->rank_ < y->rank_) {
-            x->parent_ = y;
-        } else if (x != y) {
-            y->parent_ = x;
-            if (x->rank_ == y->rank_) {
-                ++x->rank_;
+            if(x->rank_ < y->rank_)
+            {
+                x->parent_ = y;
+            }
+            else if(x != y)
+            {
+                y->parent_ = x;
+                if(x->rank_ == y->rank_)
+                {
+                    ++x->rank_;
+                }
             }
         }
-    }
 
     private:
 
-    /**
-     * Finds a representative of the set using path compression.
-     *
-     * \return The representative.
-     */
-    DisjointSet<T> *findSetImpl() const {
-        if (parent_ != this) {
-            parent_ = parent_->findSetImpl();
+        /**
+         * Finds a representative of the set using path compression.
+         *
+         * \return The representative.
+         */
+        DisjointSet<T>* findSetImpl() const
+        {
+            if(parent_ != this)
+            {
+                parent_ = parent_->findSetImpl();
+            }
+            return parent_;
         }
-        return parent_;
-    }
-};
+    };
 
 } // namespace nc
 

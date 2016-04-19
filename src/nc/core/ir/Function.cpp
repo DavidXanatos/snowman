@@ -33,36 +33,44 @@
 #include "Statements.h"
 #include "Term.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-Function::Function(): entry_(nullptr) {}
+            Function::Function(): entry_(nullptr) {}
 
-Function::~Function() {}
+            Function::~Function() {}
 
-void Function::addBasicBlock(std::unique_ptr<BasicBlock> basicBlock) {
-    basicBlock->setFunction(this);
-    basicBlocks_.push_back(std::move(basicBlock));
-}
+            void Function::addBasicBlock(std::unique_ptr<BasicBlock> basicBlock)
+            {
+                basicBlock->setFunction(this);
+                basicBlocks_.push_back(std::move(basicBlock));
+            }
 
-bool Function::isEmpty() const {
-    foreach (auto basicBlock, basicBlocks()) {
-        if (!basicBlock->statements().empty()) {
-            return false;
-        }
-    }
-    return true;
-}
+            bool Function::isEmpty() const
+            {
+                foreach(auto basicBlock, basicBlocks())
+                {
+                    if(!basicBlock->statements().empty())
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
 
-void Function::print(QTextStream &out) const {
-    out << "subgraph cluster" << this << " {" << endl;
-    out << CFG(basicBlocks());
-    out << '}' << endl;
-}
+            void Function::print(QTextStream & out) const
+            {
+                out << "subgraph cluster" << this << " {" << endl;
+                out << CFG(basicBlocks());
+                out << '}' << endl;
+            }
 
-} // namespace ir
-} // namespace core
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

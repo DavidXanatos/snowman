@@ -34,80 +34,104 @@
 #include "Relocation.h"
 #include "Section.h"
 
-namespace nc { namespace core { namespace image {
+namespace nc
+{
+    namespace core
+    {
+        namespace image
+        {
 
-Image::Image():
-    demangler_(new mangling::DefaultDemangler())
-{}
+            Image::Image():
+                demangler_(new mangling::DefaultDemangler())
+            {}
 
-Image::~Image() {}
+            Image::~Image() {}
 
-void Image::addSection(std::unique_ptr<Section> section) {
-    assert(section != nullptr);
-    sections_.push_back(std::move(section));
-}
+            void Image::addSection(std::unique_ptr<Section> section)
+            {
+                assert(section != nullptr);
+                sections_.push_back(std::move(section));
+            }
 
-const Section *Image::getSectionContainingAddress(ByteAddr addr) const {
-    foreach (auto section, sections()) {
-        if (section->isAllocated() && section->containsAddress(addr)) {
-            return section;
+            const Section* Image::getSectionContainingAddress(ByteAddr addr) const
+            {
+                foreach(auto section, sections())
+                {
+                    if(section->isAllocated() && section->containsAddress(addr))
+                    {
+                        return section;
+                    }
+                }
+                return nullptr;
+            }
+
+            const Section* Image::getSectionByName(const QString & name) const
+            {
+                foreach(auto section, sections())
+                {
+                    if(section->name() == name)
+                    {
+                        return section;
+                    }
+                }
+                return nullptr;
+            }
+
+            ByteSize Image::readBytes(ByteAddr addr, void* buf, ByteSize size) const
+            {
+                if(const Section* section = getSectionContainingAddress(addr))
+                {
+                    return section->readBytes(addr, buf, size);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            const Symbol* Image::addSymbol(std::unique_ptr<Symbol> symbol)
+            {
+                auto result = symbol.get();
+
+                symbols_.push_back(std::move(symbol));
+
+                if(result->value())
+                {
+                    value2symbol_[*result->value()] = result;
+                }
+
+                return result;
+            }
+
+            const Symbol* Image::getSymbol(ConstantValue value) const
+            {
+                return nc::find(value2symbol_, value);
+            }
+
+            const Relocation* Image::addRelocation(std::unique_ptr<Relocation> relocation)
+            {
+                auto result = relocation.get();
+
+                relocations_.push_back(std::move(relocation));
+                address2relocation_[result->address()] = result;
+
+                return result;
+            }
+
+            const Relocation* Image::getRelocation(ByteAddr address) const
+            {
+                return nc::find(address2relocation_, address);
+            }
+
+            void Image::setDemangler(std::unique_ptr<mangling::Demangler> demangler)
+            {
+                assert(demangler != nullptr);
+
+                demangler_ = std::move(demangler);
+            }
+
         }
     }
-    return nullptr;
-}
-
-const Section *Image::getSectionByName(const QString &name) const {
-    foreach (auto section, sections()) {
-        if (section->name() == name) {
-            return section;
-        }
-    }
-    return nullptr;
-}
-
-ByteSize Image::readBytes(ByteAddr addr, void *buf, ByteSize size) const {
-    if (const Section *section = getSectionContainingAddress(addr)) {
-        return section->readBytes(addr, buf, size);
-    } else {
-        return 0;
-    }
-}
-
-const Symbol *Image::addSymbol(std::unique_ptr<Symbol> symbol) {
-    auto result = symbol.get();
-
-    symbols_.push_back(std::move(symbol));
-
-    if (result->value()) {
-        value2symbol_[*result->value()] = result;
-    }
-
-    return result;
-}
-
-const Symbol *Image::getSymbol(ConstantValue value) const {
-    return nc::find(value2symbol_, value);
-}
-
-const Relocation *Image::addRelocation(std::unique_ptr<Relocation> relocation) {
-    auto result = relocation.get();
-
-    relocations_.push_back(std::move(relocation));
-    address2relocation_[result->address()] = result;
-
-    return result;
-}
-
-const Relocation *Image::getRelocation(ByteAddr address) const {
-    return nc::find(address2relocation_, address);
-}
-
-void Image::setDemangler(std::unique_ptr<mangling::Demangler> demangler) {
-    assert(demangler != nullptr);
-
-    demangler_ = std::move(demangler);
-}
-
-}}} // namespace nc::core::image
+} // namespace nc::core::image
 
 /* vim:set et sts=4 sw=4: */

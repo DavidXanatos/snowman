@@ -31,60 +31,65 @@
 
 #include "Exception.h"
 
-namespace nc {
-
-/**
- * Exception thrown when cancellation was requested.
- */
-class CancellationException: public nc::Exception {
-    Q_DECLARE_TR_FUNCTIONS(CancellationException)
-
-public:
-    /**
-     * Default constructor.
-     */
-    CancellationException();
-};
-
-/**
- * Class for propagating cancellation notifications.
- */
-class CancellationToken {
-    /** Flag whether the cancellation is requested. */
-    std::shared_ptr<volatile bool> cancellationRequested_;
-
-public:
-    /**
-     * Creates a not canceled token.
-     */
-    CancellationToken():
-        cancellationRequested_(std::make_shared<bool>(false))
-    {}
+namespace nc
+{
 
     /**
-     * Sets the cancellation flag for the token and all its copies.
+     * Exception thrown when cancellation was requested.
      */
-    void cancel() { *cancellationRequested_ = true; }
+    class CancellationException: public nc::Exception
+    {
+        Q_DECLARE_TR_FUNCTIONS(CancellationException)
+
+    public:
+        /**
+         * Default constructor.
+         */
+        CancellationException();
+    };
 
     /**
-     * \return True if the cancellation flag is set and false otherwise.
+     * Class for propagating cancellation notifications.
      */
-    bool cancellationRequested() const
+    class CancellationToken
+    {
+        /** Flag whether the cancellation is requested. */
+        std::shared_ptr<volatile bool> cancellationRequested_;
+
+    public:
+        /**
+         * Creates a not canceled token.
+         */
+        CancellationToken():
+            cancellationRequested_(std::make_shared<bool>(false))
+        {}
+
+        /**
+         * Sets the cancellation flag for the token and all its copies.
+         */
+        void cancel() { *cancellationRequested_ = true; }
+
+        /**
+         * \return True if the cancellation flag is set and false otherwise.
+         */
+        bool cancellationRequested() const
 #ifdef NC_USE_THREADS
-    { return *cancellationRequested_; }
+        { return *cancellationRequested_; }
 #else
-    ;
+        ;
 #endif
 
-    /**
-     * Throws CancellationException if cancellation flag is set.
-     */
-    void poll() const {
-        if (cancellationRequested()) {
-            throw CancellationException();
+        /**
+         * Throws CancellationException if cancellation flag is set.
+         */
+        void poll() const
+        {
+            if(cancellationRequested())
+            {
+                throw CancellationException();
+            }
         }
-    }
-};
+    };
 
 } // namespace nc
 

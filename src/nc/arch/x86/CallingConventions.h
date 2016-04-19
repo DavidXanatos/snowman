@@ -27,71 +27,79 @@
 
 #include <nc/core/ir/calling/Convention.h>
 
-namespace nc {
-namespace arch {
-namespace x86 {
+namespace nc
+{
+    namespace arch
+    {
+        namespace x86
+        {
 
-class X86Architecture;
+            class X86Architecture;
 
-/**
- * AMD64 calling convention.
- */
-class AMD64CallingConvention: public core::ir::calling::Convention {
-public:
-    /**
-     * Class constructor.
-     */
-    AMD64CallingConvention(const X86Architecture *architecture);
-};
+            /**
+             * AMD64 calling convention.
+             */
+            class AMD64CallingConvention: public core::ir::calling::Convention
+            {
+            public:
+                /**
+                 * Class constructor.
+                 */
+                AMD64CallingConvention(const X86Architecture* architecture);
+            };
 
-/**
- * Microsoft x64 calling convention.
- */
-class Microsoft64CallingConvention: public core::ir::calling::Convention {
-public:
-    /**
-     * Class constructor.
-     */
-    Microsoft64CallingConvention(const X86Architecture *architecture);
-};
+            /**
+             * Microsoft x64 calling convention.
+             */
+            class Microsoft64CallingConvention: public core::ir::calling::Convention
+            {
+            public:
+                /**
+                 * Class constructor.
+                 */
+                Microsoft64CallingConvention(const X86Architecture* architecture);
+            };
 
-/**
- * 32-bit cdecl calling convention.
- * Tweaked to allow passing one argument via ecx (like in thiscall).
- */
-class Cdecl32CallingConvention: public core::ir::calling::Convention {
-public:
-    /**
-     * Class constructor.
-     */
-    Cdecl32CallingConvention(const X86Architecture *architecture);
-};
+            /**
+             * 32-bit cdecl calling convention.
+             * Tweaked to allow passing one argument via ecx (like in thiscall).
+             */
+            class Cdecl32CallingConvention: public core::ir::calling::Convention
+            {
+            public:
+                /**
+                 * Class constructor.
+                 */
+                Cdecl32CallingConvention(const X86Architecture* architecture);
+            };
 
-/**
- * 16-bit cdecl calling convention.
- */
-class Cdecl16CallingConvention: public core::ir::calling::Convention {
-public:
-    /**
-     * Class constructor.
-     */
-    Cdecl16CallingConvention(const X86Architecture *architecture);
-};
+            /**
+             * 16-bit cdecl calling convention.
+             */
+            class Cdecl16CallingConvention: public core::ir::calling::Convention
+            {
+            public:
+                /**
+                 * Class constructor.
+                 */
+                Cdecl16CallingConvention(const X86Architecture* architecture);
+            };
 
-/**
- * 32-bit stdcall calling convention.
- * Tweaked to allow passing one argument via ecx (like in thiscall).
- */
-class Stdcall32CallingConvention: public core::ir::calling::Convention {
-public:
-    /**
-     * Class constructor.
-     */
-    Stdcall32CallingConvention(const X86Architecture *architecture);
-};
+            /**
+             * 32-bit stdcall calling convention.
+             * Tweaked to allow passing one argument via ecx (like in thiscall).
+             */
+            class Stdcall32CallingConvention: public core::ir::calling::Convention
+            {
+            public:
+                /**
+                 * Class constructor.
+                 */
+                Stdcall32CallingConvention(const X86Architecture* architecture);
+            };
 
-} // namespace x86
-} // namespace arch
+        } // namespace x86
+    } // namespace arch
 } // namespace nc
 
 /* vim:set et ts=4 sw=4: */

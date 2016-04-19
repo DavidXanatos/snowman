@@ -31,7 +31,7 @@
  * templates. Therefore, we fallback to std::map when keys are tuples.
  */
 #include <functional>
-#include <map> 
+#include <map>
 #include <tuple>
 #include <vector>
 
@@ -42,228 +42,235 @@
 
 #include "CalleeId.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Call;
-class Function;
-class Jump;
-class Statement;
+            class Call;
+            class Function;
+            class Jump;
+            class Statement;
 
-namespace dflow {
-    class Dataflow;
-}
+            namespace dflow
+            {
+                class Dataflow;
+            }
 
-namespace calling {
+            namespace calling
+            {
 
-class CallHook;
-class CallSignature;
-class Convention;
-class Conventions;
-class EntryHook;
-class FunctionSignature;
-class ReturnHook;
-class Signature;
-class Signatures;
+                class CallHook;
+                class CallSignature;
+                class Convention;
+                class Conventions;
+                class EntryHook;
+                class FunctionSignature;
+                class ReturnHook;
+                class Signature;
+                class Signatures;
 
-/**
- * Hooks manager: it is responsible for instrumenting functions
- * with special hooks that take care of handling calling-convention-specific
- * stuff.
- */
-class Hooks {
-    /** Assigned calling conventions. */
-    const Conventions &conventions_;
+                /**
+                 * Hooks manager: it is responsible for instrumenting functions
+                 * with special hooks that take care of handling calling-convention-specific
+                 * stuff.
+                 */
+                class Hooks
+                {
+                    /** Assigned calling conventions. */
+                    const Conventions & conventions_;
 
-    /** Signatures of functions. */
-    const Signatures &signatures_;
+                    /** Signatures of functions. */
+                    const Signatures & signatures_;
 
-public:
-    /** Type for the calling convention detector callback. */
-    typedef std::function<void(const CalleeId &)> ConventionDetector;
+                public:
+                    /** Type for the calling convention detector callback. */
+                    typedef std::function<void(const CalleeId &)> ConventionDetector;
 
-private:
-    /** Calling convention detector. */
-    ConventionDetector conventionDetector_;
+                private:
+                    /** Calling convention detector. */
+                    ConventionDetector conventionDetector_;
 
-    /** Mapping from a function to the callback inserted into its entry. */
-    boost::unordered_map<Function *, Statement *> function2callback_;
+                    /** Mapping from a function to the callback inserted into its entry. */
+                    boost::unordered_map<Function*, Statement*> function2callback_;
 
-    /** Mapping from a call to the callback inserted after the call. */
-    boost::unordered_map<Call *, Statement *> call2callback_;
+                    /** Mapping from a call to the callback inserted after the call. */
+                    boost::unordered_map<Call*, Statement*> call2callback_;
 
-    /** Mapping from a jump to the callback inserted before the call. */
-    boost::unordered_map<Jump *, Statement *> jump2callback_;
+                    /** Mapping from a jump to the callback inserted before the call. */
+                    boost::unordered_map<Jump*, Statement*> jump2callback_;
 
-    /** All entry hooks ever created. */
-    std::map<std::tuple<const Function *, const Convention *, const FunctionSignature *>, std::unique_ptr<EntryHook>> entryHooks_;
+                    /** All entry hooks ever created. */
+                    std::map<std::tuple<const Function*, const Convention*, const FunctionSignature*>, std::unique_ptr<EntryHook>> entryHooks_;
 
-    /** Mapping from a function to the last entry hook used for instrumenting it. */
-    boost::unordered_map<const Function *, EntryHook *> lastEntryHooks_;
+                    /** Mapping from a function to the last entry hook used for instrumenting it. */
+                    boost::unordered_map<const Function*, EntryHook*> lastEntryHooks_;
 
-    /** All call hooks ever created. */
-    std::map<std::tuple<const Call *, const Convention *, const CallSignature *, boost::optional<ByteSize>>, std::unique_ptr<CallHook>> callHooks_;
+                    /** All call hooks ever created. */
+                    std::map<std::tuple<const Call*, const Convention*, const CallSignature*, boost::optional<ByteSize>>, std::unique_ptr<CallHook>> callHooks_;
 
-    /** Mapping from a call to the last call hook used for instrumenting it. */
-    boost::unordered_map<const Call *, CallHook *> lastCallHooks_;
+                    /** Mapping from a call to the last call hook used for instrumenting it. */
+                    boost::unordered_map<const Call*, CallHook*> lastCallHooks_;
 
-    /** All return hooks ever created. */
-    std::map<std::tuple<const Jump *, const Convention *, const FunctionSignature *>, std::unique_ptr<ReturnHook>> returnHooks_;
+                    /** All return hooks ever created. */
+                    std::map<std::tuple<const Jump*, const Convention*, const FunctionSignature*>, std::unique_ptr<ReturnHook>> returnHooks_;
 
-    /** Mapping from a return jump to the last return hook used for instrumenting it. */
-    boost::unordered_map<const Jump *, ReturnHook *> lastReturnHooks_;
+                    /** Mapping from a return jump to the last return hook used for instrumenting it. */
+                    boost::unordered_map<const Jump*, ReturnHook*> lastReturnHooks_;
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param conventions Assigned calling conventions.
-     * \param signatures Known signatures of functions.
-     */
-    Hooks(const Conventions &conventions, const Signatures &signatures);
+                public:
+                    /**
+                     * Constructor.
+                     *
+                     * \param conventions Assigned calling conventions.
+                     * \param signatures Known signatures of functions.
+                     */
+                    Hooks(const Conventions & conventions, const Signatures & signatures);
 
-    /**
-     * Destructor.
-     */
-    ~Hooks();
+                    /**
+                     * Destructor.
+                     */
+                    ~Hooks();
 
-    /**
-     * \return Assigned calling conventions.
-     */
-    const Conventions &conventions() const { return conventions_; }
+                    /**
+                     * \return Assigned calling conventions.
+                     */
+                    const Conventions & conventions() const { return conventions_; }
 
-    /**
-     * Sets the function being called when a calling convention for a particular
-     * callee is requested, but currently unknown. It is assumed that this function
-     * will detect this convention and modify Conventions object passed to the
-     * constructor of this Hooks object.
-     *
-     * \param detector Calling convention detector.
-     */
-    void setConventionDetector(ConventionDetector detector) {
-        conventionDetector_ = std::move(detector);
-    }
+                    /**
+                     * Sets the function being called when a calling convention for a particular
+                     * callee is requested, but currently unknown. It is assumed that this function
+                     * will detect this convention and modify Conventions object passed to the
+                     * constructor of this Hooks object.
+                     *
+                     * \param detector Calling convention detector.
+                     */
+                    void setConventionDetector(ConventionDetector detector)
+                    {
+                        conventionDetector_ = std::move(detector);
+                    }
 
-    /**
-     * \param calleeId Callee id.
-     *
-     * \return Pointer to the calling convention used for calls to given address. Can be nullptr.
-     */
-    const Convention *getConvention(const CalleeId &calleeId) const;
+                    /**
+                     * \param calleeId Callee id.
+                     *
+                     * \return Pointer to the calling convention used for calls to given address. Can be nullptr.
+                     */
+                    const Convention* getConvention(const CalleeId & calleeId) const;
 
-    /**
-     * \param function Valid pointer to a function.
-     *
-     * \return Pointer to the last EntryHook used for instrumenting this function.
-     *         Can be nullptr.
-     */
-    const EntryHook *getEntryHook(const Function *function) const;
+                    /**
+                     * \param function Valid pointer to a function.
+                     *
+                     * \return Pointer to the last EntryHook used for instrumenting this function.
+                     *         Can be nullptr.
+                     */
+                    const EntryHook* getEntryHook(const Function* function) const;
 
-    /**
-     * \param call Valid pointer to a call statement.
-     *
-     * \return Pointer to the last CallHook used for instrumenting this call.
-     *         Can be nullptr.
-     */
-    const CallHook *getCallHook(const Call *call) const;
+                    /**
+                     * \param call Valid pointer to a call statement.
+                     *
+                     * \return Pointer to the last CallHook used for instrumenting this call.
+                     *         Can be nullptr.
+                     */
+                    const CallHook* getCallHook(const Call* call) const;
 
-    /**
-     * \param jump Valid pointer to a return jump.
-     *
-     * \return Pointer to the last ReturnHook used for instrumenting this jump.
-     *         Can be nullptr.
-     */
-    const ReturnHook *getReturnHook(const Jump *jump) const;
+                    /**
+                     * \param jump Valid pointer to a return jump.
+                     *
+                     * \return Pointer to the last ReturnHook used for instrumenting this jump.
+                     *         Can be nullptr.
+                     */
+                    const ReturnHook* getReturnHook(const Jump* jump) const;
 
-    /**
-     * Inserts callback statements into the function. When executed by
-     * the dataflow analyzer, these callback statements will insert
-     * calling-convention-specific code in the function's entry, and
-     * at call and return sites.
-     *
-     * \param function Valid pointer to a function.
-     * \param dataflow Valid pointer to the dataflow information to be used
-     *                 to discover the called address when instrumenting calls.
-     */
-    void instrument(Function *function, const dflow::Dataflow *dataflow);
+                    /**
+                     * Inserts callback statements into the function. When executed by
+                     * the dataflow analyzer, these callback statements will insert
+                     * calling-convention-specific code in the function's entry, and
+                     * at call and return sites.
+                     *
+                     * \param function Valid pointer to a function.
+                     * \param dataflow Valid pointer to the dataflow information to be used
+                     *                 to discover the called address when instrumenting calls.
+                     */
+                    void instrument(Function* function, const dflow::Dataflow* dataflow);
 
-    /**
-     * Undoes instrumentation of a function.
-     *
-     * \param function Valid pointer to a function.
-     */
-    void deinstrument(Function *function);
+                    /**
+                     * Undoes instrumentation of a function.
+                     *
+                     * \param function Valid pointer to a function.
+                     */
+                    void deinstrument(Function* function);
 
-private:
-    /**
-     * Creates an EntryHook (if not done yet) and instruments the function with it.
-     * If the function was previously instrumented, deinstruments it.
-     *
-     * \param function Valid pointer to a function.
-     */
-    void instrumentEntry(Function *function);
+                private:
+                    /**
+                     * Creates an EntryHook (if not done yet) and instruments the function with it.
+                     * If the function was previously instrumented, deinstruments it.
+                     *
+                     * \param function Valid pointer to a function.
+                     */
+                    void instrumentEntry(Function* function);
 
-    /**
-     * Undoes the instrumentation of a function's entry, if performed before.
-     * Otherwise, does nothing.
-     *
-     * \param function Valid pointer to a function.
-     */
-    void deinstrumentEntry(Function *function);
+                    /**
+                     * Undoes the instrumentation of a function's entry, if performed before.
+                     * Otherwise, does nothing.
+                     *
+                     * \param function Valid pointer to a function.
+                     */
+                    void deinstrumentEntry(Function* function);
 
-    /**
-     * Creates a CallHook (if not done yet) and instruments the call with it.
-     * If the call was previously instrumented, deinstruments it.
-     *
-     * \param call Valid pointer to a call.
-     * \param dataflow Dataflow information for the function to which the call belongs.
-     */
-    void instrumentCall(Call *call, const dflow::Dataflow &dataflow);
+                    /**
+                     * Creates a CallHook (if not done yet) and instruments the call with it.
+                     * If the call was previously instrumented, deinstruments it.
+                     *
+                     * \param call Valid pointer to a call.
+                     * \param dataflow Dataflow information for the function to which the call belongs.
+                     */
+                    void instrumentCall(Call* call, const dflow::Dataflow & dataflow);
 
-    /**
-     * Undoes the instrumentation of a call, if performed before.
-     * Otherwise, does nothing.
-     *
-     * \param call Valid pointer to a call.
-     */
-    void deinstrumentCall(Call *call);
+                    /**
+                     * Undoes the instrumentation of a call, if performed before.
+                     * Otherwise, does nothing.
+                     *
+                     * \param call Valid pointer to a call.
+                     */
+                    void deinstrumentCall(Call* call);
 
-    /**
-     * Creates a ReturnHook (if not done yet) and instruments the given return jump with it.
-     * If the jump was previously instrumented, deinstruments it.
-     *
-     * \param jump Valid pointer to a return jump.
-     */
-    void instrumentReturn(Jump *jump);
+                    /**
+                     * Creates a ReturnHook (if not done yet) and instruments the given return jump with it.
+                     * If the jump was previously instrumented, deinstruments it.
+                     *
+                     * \param jump Valid pointer to a return jump.
+                     */
+                    void instrumentReturn(Jump* jump);
 
-    /**
-     * Undoes the instrumentation of a return jump, if performed before.
-     * Otherwise, does nothing.
-     *
-     * \param jump Valid pointer to a return jump.
-     */
-    void deinstrumentReturn(Jump *jump);
-};
+                    /**
+                     * Undoes the instrumentation of a return jump, if performed before.
+                     * Otherwise, does nothing.
+                     *
+                     * \param jump Valid pointer to a return jump.
+                     */
+                    void deinstrumentReturn(Jump* jump);
+                };
 
-/**
- * \param function Valid pointer to a function.
- *
- * \return Callee id for the given function.
- */
-CalleeId getCalleeId(const Function *function);
+                /**
+                 * \param function Valid pointer to a function.
+                 *
+                 * \return Callee id for the given function.
+                 */
+                CalleeId getCalleeId(const Function* function);
 
-/**
- * \param call Valid pointer to a call.
- * \param dataflow Dataflow information for the function to which the call belongs.
- *
- * \return Callee id for the given call.
- */
-CalleeId getCalleeId(const Call *call, const dflow::Dataflow &dataflow);
+                /**
+                 * \param call Valid pointer to a call.
+                 * \param dataflow Dataflow information for the function to which the call belongs.
+                 *
+                 * \return Callee id for the given call.
+                 */
+                CalleeId getCalleeId(const Call* call, const dflow::Dataflow & dataflow);
 
-} // namespace calling
-} // namespace ir
-} // namespace core
+            } // namespace calling
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

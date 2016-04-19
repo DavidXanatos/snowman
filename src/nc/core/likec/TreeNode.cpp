@@ -26,20 +26,24 @@
 
 #include "TreePrinter.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-TreeNode::~TreeNode() {}
+            TreeNode::~TreeNode() {}
 
-void TreeNode::print(QTextStream &out) const {
-    TreePrinter(out, nullptr).print(this);
-}
+            void TreeNode::print(QTextStream & out) const
+            {
+                TreePrinter(out, nullptr).print(this);
+            }
 
-void TreeNode::doCallOnChildren(const std::function<void(TreeNode *)> &) {}
+            void TreeNode::doCallOnChildren(const std::function<void(TreeNode*)> &) {}
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

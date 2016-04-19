@@ -30,124 +30,165 @@
 #include "TreePrinter.h"
 #include "Types.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-void Tree::rewriteRoot() {
-    if (root_) {
-        root_ = Simplifier(*this).simplify(std::move(root_));
-    }
-}
+            void Tree::rewriteRoot()
+            {
+                if(root_)
+                {
+                    root_ = Simplifier(*this).simplify(std::move(root_));
+                }
+            }
 
-void Tree::print(QTextStream &out, PrintCallback<const TreeNode *> *callback) const {
-    TreePrinter(out, callback).print(root());
-}
+            void Tree::print(QTextStream & out, PrintCallback<const TreeNode*>* callback) const
+            {
+                TreePrinter(out, callback).print(root());
+            }
 
-const VoidType *Tree::makeVoidType() {
-    return &voidType_;
-}
+            const VoidType* Tree::makeVoidType()
+            {
+                return &voidType_;
+            }
 
-const IntegerType *Tree::makeIntegerType(SmallBitSize size, bool isUnsigned) {
-    foreach (const auto &type, integerTypes_) {
-        if (type->size() == size && type->isUnsigned() == isUnsigned) {
-            return type.get();
-        }
-    }
+            const IntegerType* Tree::makeIntegerType(SmallBitSize size, bool isUnsigned)
+            {
+                foreach(const auto & type, integerTypes_)
+                {
+                    if(type->size() == size && type->isUnsigned() == isUnsigned)
+                    {
+                        return type.get();
+                    }
+                }
 
-    IntegerType *type = new IntegerType(size, isUnsigned);
-    integerTypes_.push_back(std::unique_ptr<IntegerType>(type));
+                IntegerType* type = new IntegerType(size, isUnsigned);
+                integerTypes_.push_back(std::unique_ptr<IntegerType>(type));
 
-    return type;
-}
+                return type;
+            }
 
-const FloatType *Tree::makeFloatType(SmallBitSize size) {
-    foreach (const auto &type, floatTypes_) {
-        if (type->size() == size) {
-            return type.get();
-        }
-    }
+            const FloatType* Tree::makeFloatType(SmallBitSize size)
+            {
+                foreach(const auto & type, floatTypes_)
+                {
+                    if(type->size() == size)
+                    {
+                        return type.get();
+                    }
+                }
 
-    FloatType *type = new FloatType(size);
-    floatTypes_.push_back(std::unique_ptr<FloatType>(type));
+                FloatType* type = new FloatType(size);
+                floatTypes_.push_back(std::unique_ptr<FloatType>(type));
 
-    return type;
-}
+                return type;
+            }
 
-const PointerType *Tree::makePointerType(SmallBitSize size, const Type *pointee) {
-    auto range = pointerTypes_.equal_range(pointee);
-    for (auto i = range.first; i != range.second; ++i) {
-        if (i->second->size() == size) {
-            return i->second.get();
-        }
-    }
+            const PointerType* Tree::makePointerType(SmallBitSize size, const Type* pointee)
+            {
+                auto range = pointerTypes_.equal_range(pointee);
+                for(auto i = range.first; i != range.second; ++i)
+                {
+                    if(i->second->size() == size)
+                    {
+                        return i->second.get();
+                    }
+                }
 
-    PointerType *type = new PointerType(size, pointee);
-    pointerTypes_.insert(std::make_pair(pointee, std::unique_ptr<PointerType>(type)));
-    return type;
-}
+                PointerType* type = new PointerType(size, pointee);
+                pointerTypes_.insert(std::make_pair(pointee, std::unique_ptr<PointerType>(type)));
+                return type;
+            }
 
-const ArrayType *Tree::makeArrayType(SmallBitSize size, const Type *elementType, std::size_t length) {
-    auto range = arrayTypes_.equal_range(elementType);
-    for (auto i = range.first; i != range.second; ++i) {
-        if (i->second->length() == length && i->second->size() == size) {
-            return i->second.get();
-        }
-    }
+            const ArrayType* Tree::makeArrayType(SmallBitSize size, const Type* elementType, std::size_t length)
+            {
+                auto range = arrayTypes_.equal_range(elementType);
+                for(auto i = range.first; i != range.second; ++i)
+                {
+                    if(i->second->length() == length && i->second->size() == size)
+                    {
+                        return i->second.get();
+                    }
+                }
 
-    ArrayType *type = new ArrayType(size, elementType, length);
-    arrayTypes_.insert(std::make_pair(elementType, std::unique_ptr<ArrayType>(type)));
-    return type;
-}
+                ArrayType* type = new ArrayType(size, elementType, length);
+                arrayTypes_.insert(std::make_pair(elementType, std::unique_ptr<ArrayType>(type)));
+                return type;
+            }
 
-const ErroneousType *Tree::makeErroneousType() {
-    return &erroneousType_;
-}
+            const ErroneousType* Tree::makeErroneousType()
+            {
+                return &erroneousType_;
+            }
 
-const IntegerType *Tree::integerPromotion(const IntegerType *integerType) {
-    if (integerType->size() < intSize()) {
-        return makeIntegerType(intSize(), integerType->isUnsigned());
-    } else {
-        return integerType;
-    }
-}
+            const IntegerType* Tree::integerPromotion(const IntegerType* integerType)
+            {
+                if(integerType->size() < intSize())
+                {
+                    return makeIntegerType(intSize(), integerType->isUnsigned());
+                }
+                else
+                {
+                    return integerType;
+                }
+            }
 
-const Type *Tree::integerPromotion(const Type *type) {
-    if (const IntegerType *integerType = type->as<IntegerType>()) {
-        return integerPromotion(integerType);
-    } else {
-        return type;
-    }
-}
+            const Type* Tree::integerPromotion(const Type* type)
+            {
+                if(const IntegerType* integerType = type->as<IntegerType>())
+                {
+                    return integerPromotion(integerType);
+                }
+                else
+                {
+                    return type;
+                }
+            }
 
-const Type *Tree::usualArithmeticConversion(const Type *leftType, const Type *rightType) {
-    leftType = integerPromotion(leftType);
-    rightType = integerPromotion(rightType);
+            const Type* Tree::usualArithmeticConversion(const Type* leftType, const Type* rightType)
+            {
+                leftType = integerPromotion(leftType);
+                rightType = integerPromotion(rightType);
 
-    if (leftType->isFloat() && rightType->isFloat()) {
-        return makeFloatType(std::max(leftType->size(), rightType->size()));
-    } else if (leftType->isFloat() && rightType->isInteger()) {
-        return leftType;
-    } else if (leftType->isInteger() && rightType->isFloat()) {
-        return rightType;
-    } else if (leftType->isInteger() && rightType->isInteger()) {
-        if (leftType->size() < rightType->size()) {
-            return rightType;
-        } else if (leftType->size() > rightType->size()) {
-            return leftType;
-        } else {
-            const IntegerType *leftIntegerType = leftType->as<IntegerType>();
-            const IntegerType *rightIntegerType = rightType->as<IntegerType>();
+                if(leftType->isFloat() && rightType->isFloat())
+                {
+                    return makeFloatType(std::max(leftType->size(), rightType->size()));
+                }
+                else if(leftType->isFloat() && rightType->isInteger())
+                {
+                    return leftType;
+                }
+                else if(leftType->isInteger() && rightType->isFloat())
+                {
+                    return rightType;
+                }
+                else if(leftType->isInteger() && rightType->isInteger())
+                {
+                    if(leftType->size() < rightType->size())
+                    {
+                        return rightType;
+                    }
+                    else if(leftType->size() > rightType->size())
+                    {
+                        return leftType;
+                    }
+                    else
+                    {
+                        const IntegerType* leftIntegerType = leftType->as<IntegerType>();
+                        const IntegerType* rightIntegerType = rightType->as<IntegerType>();
 
-            return makeIntegerType(leftType->size(), leftIntegerType->isUnsigned() || rightIntegerType->isUnsigned());
-        }
-    }
+                        return makeIntegerType(leftType->size(), leftIntegerType->isUnsigned() || rightIntegerType->isUnsigned());
+                    }
+                }
 
-    return makeErroneousType();
-}
+                return makeErroneousType();
+            }
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

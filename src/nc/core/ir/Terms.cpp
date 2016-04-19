@@ -29,215 +29,249 @@
 #include <nc/common/Unreachable.h>
 #include <nc/common/make_unique.h>
 
-namespace nc {
-namespace core {
-namespace ir {
-
-std::unique_ptr<Term> Constant::doClone() const {
-    return std::make_unique<Constant>(value());
-}
-
-void Constant::doCallOnChildren(const std::function<void(Term *)> &) {}
-
-void Constant::print(QTextStream &out) const {
-    out << QString(QLatin1String("0x%1")).arg(value().value(), 0, 16);
-}
-
-std::unique_ptr<Term> Intrinsic::doClone() const {
-    return std::make_unique<Intrinsic>(intrinsicKind(), size());
-}
-
-void Intrinsic::doCallOnChildren(const std::function<void(Term *)> &) {}
-
-void Intrinsic::print(QTextStream &out) const {
-    out << "intrinsic(" << intrinsicKind() << ")";
-}
-
-MemoryLocationAccess::MemoryLocationAccess(const MemoryLocation &memoryLocation):
-    Term(MEMORY_LOCATION_ACCESS, memoryLocation.size<SmallBitSize>()), memoryLocation_(memoryLocation)
-{}
-
-std::unique_ptr<Term> MemoryLocationAccess::doClone() const {
-    return std::make_unique<MemoryLocationAccess>(memoryLocation());
-}
-
-void MemoryLocationAccess::doCallOnChildren(const std::function<void(Term *)> &) {}
-
-void MemoryLocationAccess::print(QTextStream &out) const {
-    out << memoryLocation_;
-}
-
-Dereference::Dereference(std::unique_ptr<Term> address, Domain domain, SmallBitSize size):
-    Term(DEREFERENCE, size), domain_(domain), address_(std::move(address))
-{}
-
-std::unique_ptr<Term> Dereference::doClone() const {
-    return std::make_unique<Dereference>(address()->clone(), domain(), size());
-}
-
-void Dereference::doCallOnChildren(const std::function<void(Term *)> &fun) {
-    fun(address());
-}
-
-void Dereference::print(QTextStream &out) const {
-    out << "[" << *address() << "]";
-}
-
-UnaryOperator::UnaryOperator(int operatorKind, std::unique_ptr<Term> operand, SmallBitSize size):
-    Term(UNARY_OPERATOR, size), 
-    operatorKind_(operatorKind), 
-    operand_(std::move(operand))
+namespace nc
 {
-    assert(operand_ != nullptr);
+    namespace core
+    {
+        namespace ir
+        {
 
-    switch (operatorKind) {
-        case NOT: case NEGATION:
-            assert(size == operand_->size());
-            break;
-        case SIGN_EXTEND: case ZERO_EXTEND:
-            assert(size > operand_->size());
-            break;
-        case TRUNCATE:
-            assert(size < operand_->size());
-            break;
-    }
-}
+            std::unique_ptr<Term> Constant::doClone() const
+            {
+                return std::make_unique<Constant>(value());
+            }
 
-std::unique_ptr<Term> UnaryOperator::doClone() const {
-    return std::make_unique<UnaryOperator>(operatorKind(), operand()->clone(), size());
-}
+            void Constant::doCallOnChildren(const std::function<void(Term*)> &) {}
 
-void UnaryOperator::doCallOnChildren(const std::function<void(Term *)> &fun) {
-    fun(operand());
-}
+            void Constant::print(QTextStream & out) const
+            {
+                out << QString(QLatin1String("0x%1")).arg(value().value(), 0, 16);
+            }
 
-void UnaryOperator::print(QTextStream &out) const {
-    switch (operatorKind()) {
-        case NOT:
-            out << '~';
-            break;
-        case NEGATION:
-            out << '-';
-            break;
-        case SIGN_EXTEND:
-            out << "sign_extend ";
-            break;
-        case ZERO_EXTEND:
-            out << "zero_extend ";
-            break;
-        case TRUNCATE:
-            out << "truncate ";
-            break;
-        default:
-            unreachable();
-            break;
-    }
-    out << *operand();
-}
+            std::unique_ptr<Term> Intrinsic::doClone() const
+            {
+                return std::make_unique<Intrinsic>(intrinsicKind(), size());
+            }
 
-BinaryOperator::BinaryOperator(int operatorKind, std::unique_ptr<Term> left, std::unique_ptr<Term> right, SmallBitSize size):
-    Term(BINARY_OPERATOR, size), operatorKind_(operatorKind), left_(std::move(left)), right_(std::move(right))
-{
-    assert(left_ != nullptr);
-    assert(right_ != nullptr);
+            void Intrinsic::doCallOnChildren(const std::function<void(Term*)> &) {}
 
-    switch (operatorKind) {
-        case AND: case OR: case XOR:
-        case ADD: case SUB: case MUL:
-        case SIGNED_DIV: case SIGNED_REM:
-        case UNSIGNED_DIV: case UNSIGNED_REM:
-            assert(left_->size() == right_->size());
-            assert(size == left_->size());
-            break;
+            void Intrinsic::print(QTextStream & out) const
+            {
+                out << "intrinsic(" << intrinsicKind() << ")";
+            }
 
-        case SHL: case SHR: case SAR:
-            assert(size == left_->size());
-            break;
+            MemoryLocationAccess::MemoryLocationAccess(const MemoryLocation & memoryLocation):
+                Term(MEMORY_LOCATION_ACCESS, memoryLocation.size<SmallBitSize>()), memoryLocation_(memoryLocation)
+            {}
 
-        case EQUAL:
-        case SIGNED_LESS: case SIGNED_LESS_OR_EQUAL:
-        case UNSIGNED_LESS: case UNSIGNED_LESS_OR_EQUAL:
-            assert(left_->size() == right_->size());
-            assert(size == 1);
-            break;
-    }
-}
+            std::unique_ptr<Term> MemoryLocationAccess::doClone() const
+            {
+                return std::make_unique<MemoryLocationAccess>(memoryLocation());
+            }
 
-std::unique_ptr<Term> BinaryOperator::doClone() const {
-    return std::make_unique<BinaryOperator>(operatorKind(), left()->clone(), right()->clone(), size());
-}
+            void MemoryLocationAccess::doCallOnChildren(const std::function<void(Term*)> &) {}
 
-void BinaryOperator::doCallOnChildren(const std::function<void(Term *)> &fun) {
-    fun(left());
-    fun(right());
-}
+            void MemoryLocationAccess::print(QTextStream & out) const
+            {
+                out << memoryLocation_;
+            }
 
-void BinaryOperator::print(QTextStream &out) const {
-    out << '(' << *left() << ' ';
-    switch (operatorKind()) {
-        case AND:
-            out << '&';
-            break;
-        case OR:
-            out << '|';
-            break;
-        case XOR:
-            out << '^';
-            break;
-        case SHL:
-            out << "<<";
-            break;
-        case SHR:
-            out << ">>>";
-            break;
-        case SAR:
-            out << ">>";
-            break;
-        case ADD:
-            out << '+';
-            break;
-        case SUB:
-            out << '-';
-            break;
-        case MUL:
-            out << '*';
-            break;
-        case SIGNED_DIV:
-            out << "(signed)/";
-            break;
-        case SIGNED_REM:
-            out << "(signed)%";
-            break;
-        case UNSIGNED_DIV:
-            out << "(unsigned)/";
-            break;
-        case UNSIGNED_REM:
-            out << "(unsigned)%";
-            break;
-        case EQUAL:
-            out << "==";
-            break;
-        case SIGNED_LESS:
-            out << "(signed)<";
-            break;
-        case SIGNED_LESS_OR_EQUAL:
-            out << "(signed)<=";
-            break;
-        case UNSIGNED_LESS:
-            out << "(unsigned)<";
-            break;
-        case UNSIGNED_LESS_OR_EQUAL:
-            out << "(unsigned)<=";
-            break;
-        default:
-            unreachable();
-            break;
-    }
-    out << ' ' << *right() << ')';
-}
+            Dereference::Dereference(std::unique_ptr<Term> address, Domain domain, SmallBitSize size):
+                Term(DEREFERENCE, size), domain_(domain), address_(std::move(address))
+            {}
 
-} // namespace ir
-} // namespace core
+            std::unique_ptr<Term> Dereference::doClone() const
+            {
+                return std::make_unique<Dereference>(address()->clone(), domain(), size());
+            }
+
+            void Dereference::doCallOnChildren(const std::function<void(Term*)> & fun)
+            {
+                fun(address());
+            }
+
+            void Dereference::print(QTextStream & out) const
+            {
+                out << "[" << *address() << "]";
+            }
+
+            UnaryOperator::UnaryOperator(int operatorKind, std::unique_ptr<Term> operand, SmallBitSize size):
+                Term(UNARY_OPERATOR, size),
+                operatorKind_(operatorKind),
+                operand_(std::move(operand))
+            {
+                assert(operand_ != nullptr);
+
+                switch(operatorKind)
+                {
+                case NOT:
+                case NEGATION:
+                    assert(size == operand_->size());
+                    break;
+                case SIGN_EXTEND:
+                case ZERO_EXTEND:
+                    assert(size > operand_->size());
+                    break;
+                case TRUNCATE:
+                    assert(size < operand_->size());
+                    break;
+                }
+            }
+
+            std::unique_ptr<Term> UnaryOperator::doClone() const
+            {
+                return std::make_unique<UnaryOperator>(operatorKind(), operand()->clone(), size());
+            }
+
+            void UnaryOperator::doCallOnChildren(const std::function<void(Term*)> & fun)
+            {
+                fun(operand());
+            }
+
+            void UnaryOperator::print(QTextStream & out) const
+            {
+                switch(operatorKind())
+                {
+                case NOT:
+                    out << '~';
+                    break;
+                case NEGATION:
+                    out << '-';
+                    break;
+                case SIGN_EXTEND:
+                    out << "sign_extend ";
+                    break;
+                case ZERO_EXTEND:
+                    out << "zero_extend ";
+                    break;
+                case TRUNCATE:
+                    out << "truncate ";
+                    break;
+                default:
+                    unreachable();
+                    break;
+                }
+                out << *operand();
+            }
+
+            BinaryOperator::BinaryOperator(int operatorKind, std::unique_ptr<Term> left, std::unique_ptr<Term> right, SmallBitSize size):
+                Term(BINARY_OPERATOR, size), operatorKind_(operatorKind), left_(std::move(left)), right_(std::move(right))
+            {
+                assert(left_ != nullptr);
+                assert(right_ != nullptr);
+
+                switch(operatorKind)
+                {
+                case AND:
+                case OR:
+                case XOR:
+                case ADD:
+                case SUB:
+                case MUL:
+                case SIGNED_DIV:
+                case SIGNED_REM:
+                case UNSIGNED_DIV:
+                case UNSIGNED_REM:
+                    assert(left_->size() == right_->size());
+                    assert(size == left_->size());
+                    break;
+
+                case SHL:
+                case SHR:
+                case SAR:
+                    assert(size == left_->size());
+                    break;
+
+                case EQUAL:
+                case SIGNED_LESS:
+                case SIGNED_LESS_OR_EQUAL:
+                case UNSIGNED_LESS:
+                case UNSIGNED_LESS_OR_EQUAL:
+                    assert(left_->size() == right_->size());
+                    assert(size == 1);
+                    break;
+                }
+            }
+
+            std::unique_ptr<Term> BinaryOperator::doClone() const
+            {
+                return std::make_unique<BinaryOperator>(operatorKind(), left()->clone(), right()->clone(), size());
+            }
+
+            void BinaryOperator::doCallOnChildren(const std::function<void(Term*)> & fun)
+            {
+                fun(left());
+                fun(right());
+            }
+
+            void BinaryOperator::print(QTextStream & out) const
+            {
+                out << '(' << *left() << ' ';
+                switch(operatorKind())
+                {
+                case AND:
+                    out << '&';
+                    break;
+                case OR:
+                    out << '|';
+                    break;
+                case XOR:
+                    out << '^';
+                    break;
+                case SHL:
+                    out << "<<";
+                    break;
+                case SHR:
+                    out << ">>>";
+                    break;
+                case SAR:
+                    out << ">>";
+                    break;
+                case ADD:
+                    out << '+';
+                    break;
+                case SUB:
+                    out << '-';
+                    break;
+                case MUL:
+                    out << '*';
+                    break;
+                case SIGNED_DIV:
+                    out << "(signed)/";
+                    break;
+                case SIGNED_REM:
+                    out << "(signed)%";
+                    break;
+                case UNSIGNED_DIV:
+                    out << "(unsigned)/";
+                    break;
+                case UNSIGNED_REM:
+                    out << "(unsigned)%";
+                    break;
+                case EQUAL:
+                    out << "==";
+                    break;
+                case SIGNED_LESS:
+                    out << "(signed)<";
+                    break;
+                case SIGNED_LESS_OR_EQUAL:
+                    out << "(signed)<=";
+                    break;
+                case UNSIGNED_LESS:
+                    out << "(unsigned)<";
+                    break;
+                case UNSIGNED_LESS_OR_EQUAL:
+                    out << "(unsigned)<=";
+                    break;
+                default:
+                    unreachable();
+                    break;
+                }
+                out << ' ' << *right() << ')';
+            }
+
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

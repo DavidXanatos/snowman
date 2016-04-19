@@ -29,77 +29,90 @@
 #include <nc/core/ir/MemoryLocation.h>
 #include <nc/core/ir/calling/Convention.h>
 
-namespace nc {
-namespace core {
-namespace arch {
+namespace nc
+{
+    namespace core
+    {
+        namespace arch
+        {
 
-Architecture::Architecture():
-    mBitness(0),
-    mMaxInstructionSize(0),
-    mMasterAnalyzer(nullptr),
-    mRegisters(nullptr)
-{}
+            Architecture::Architecture():
+                mBitness(0),
+                mMaxInstructionSize(0),
+                mMasterAnalyzer(nullptr),
+                mRegisters(nullptr)
+            {}
 
-Architecture::~Architecture() {}
+            Architecture::~Architecture() {}
 
-void Architecture::setName(QString name) {
-    assert(mName.isEmpty() && "Name must be non-empty.");
-    assert(!name.isEmpty() && "Name cannot be reset.");
+            void Architecture::setName(QString name)
+            {
+                assert(mName.isEmpty() && "Name must be non-empty.");
+                assert(!name.isEmpty() && "Name cannot be reset.");
 
-    mName = std::move(name);
-}
+                mName = std::move(name);
+            }
 
-void Architecture::setBitness(SmallBitSize bitness) {
-    assert(bitness > 0 && "Bitness must be a positive integer.");
-    assert(mBitness == 0 && "Bitness cannot be reset.");
+            void Architecture::setBitness(SmallBitSize bitness)
+            {
+                assert(bitness > 0 && "Bitness must be a positive integer.");
+                assert(mBitness == 0 && "Bitness cannot be reset.");
 
-    mBitness = bitness;
-}
+                mBitness = bitness;
+            }
 
-void Architecture::setMaxInstructionSize(SmallBitSize size) {
-    assert(size > 0 && "Maximal instruction size must be a positive integer.");
-    assert(mMaxInstructionSize == 0 && "Maximal instruction size cannot be reset.");
+            void Architecture::setMaxInstructionSize(SmallBitSize size)
+            {
+                assert(size > 0 && "Maximal instruction size must be a positive integer.");
+                assert(mMaxInstructionSize == 0 && "Maximal instruction size cannot be reset.");
 
-    mMaxInstructionSize = size;
-}
+                mMaxInstructionSize = size;
+            }
 
-void Architecture::setMasterAnalyzer(const MasterAnalyzer *masterAnalyzer) {
-    assert(masterAnalyzer != nullptr);
-    assert(mMasterAnalyzer == nullptr && "Master analyzer is already set.");
+            void Architecture::setMasterAnalyzer(const MasterAnalyzer* masterAnalyzer)
+            {
+                assert(masterAnalyzer != nullptr);
+                assert(mMasterAnalyzer == nullptr && "Master analyzer is already set.");
 
-    mMasterAnalyzer = masterAnalyzer;
-}
+                mMasterAnalyzer = masterAnalyzer;
+            }
 
-void Architecture::setRegisters(Registers *registers) {
-    assert(registers != nullptr);
-    assert(mRegisters == nullptr && "Register container is already set.");
+            void Architecture::setRegisters(Registers* registers)
+            {
+                assert(registers != nullptr);
+                assert(mRegisters == nullptr && "Register container is already set.");
 
-    mRegisters = registers;
-}
+                mRegisters = registers;
+            }
 
-bool Architecture::isGlobalMemory(const ir::MemoryLocation &memoryLocation) const {
-    return memoryLocation.domain() == ir::MemoryDomain::MEMORY;
-}
+            bool Architecture::isGlobalMemory(const ir::MemoryLocation & memoryLocation) const
+            {
+                return memoryLocation.domain() == ir::MemoryDomain::MEMORY;
+            }
 
-void Architecture::addCallingConvention(std::unique_ptr<ir::calling::Convention> convention) {
-    assert(convention != nullptr);
-    assert(getCallingConvention(convention->name()) == nullptr &&
-           "No two calling conventions with the same name allowed.");
+            void Architecture::addCallingConvention(std::unique_ptr<ir::calling::Convention> convention)
+            {
+                assert(convention != nullptr);
+                assert(getCallingConvention(convention->name()) == nullptr &&
+                       "No two calling conventions with the same name allowed.");
 
-    conventions_.push_back(std::move(convention));
-}
+                conventions_.push_back(std::move(convention));
+            }
 
-const ir::calling::Convention *Architecture::getCallingConvention(const QString &name) const {
-    foreach (auto convention, conventions()) {
-        if (convention->name() == name) {
-            return convention;
-        }
-    }
-    return nullptr;
-}
+            const ir::calling::Convention* Architecture::getCallingConvention(const QString & name) const
+            {
+                foreach(auto convention, conventions())
+                {
+                    if(convention->name() == name)
+                    {
+                        return convention;
+                    }
+                }
+                return nullptr;
+            }
 
-} // namespace arch
-} // namespace core
+        } // namespace arch
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

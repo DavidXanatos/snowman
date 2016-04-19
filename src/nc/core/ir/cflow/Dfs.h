@@ -32,98 +32,105 @@
 
 #include <nc/common/Range.h>
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace cflow {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace cflow
+            {
 
-class Edge;
-class Node;
-class Region;
+                class Edge;
+                class Node;
+                class Region;
 
-/**
- * This class performs a depth-first search in a given region, sorts its
- * nodes topologically, detects back edges.
- */
-class Dfs {
-public:
-    /** Node color. */
-    enum NodeColor {
-        WHITE,
-        GRAY,
-        BLACK
-    };
+                /**
+                 * This class performs a depth-first search in a given region, sorts its
+                 * nodes topologically, detects back edges.
+                 */
+                class Dfs
+                {
+                public:
+                    /** Node color. */
+                    enum NodeColor
+                    {
+                        WHITE,
+                        GRAY,
+                        BLACK
+                    };
 
-    /** Edge type. */
-    enum EdgeType {
-        UNKNOWN,
-        FORWARD,
-        BACK,
-        CROSS
-    };
+                    /** Edge type. */
+                    enum EdgeType
+                    {
+                        UNKNOWN,
+                        FORWARD,
+                        BACK,
+                        CROSS
+                    };
 
-private:
-    /** List of region nodes in the order of discovery. */
-    std::vector<Node *> preordering_;
+                private:
+                    /** List of region nodes in the order of discovery. */
+                    std::vector<Node*> preordering_;
 
-    /** List of region nodes in the order of leaving. */
-    std::vector<Node *> postordering_;
+                    /** List of region nodes in the order of leaving. */
+                    std::vector<Node*> postordering_;
 
-    /** Mapping from a node to its color. */
-    boost::unordered_map<const Node *, NodeColor> node2color_;
+                    /** Mapping from a node to its color. */
+                    boost::unordered_map<const Node*, NodeColor> node2color_;
 
-    /** Mapping from an edge to its type. */
-    boost::unordered_map<const Edge *, EdgeType> edge2type_;
+                    /** Mapping from an edge to its type. */
+                    boost::unordered_map<const Edge*, EdgeType> edge2type_;
 
-public:
+                public:
 
-    /**
-     * Performs DFS in the given region.
-     *
-     * \param region Valid pointer to the region.
-     */
-    Dfs(const Region *region);
+                    /**
+                     * Performs DFS in the given region.
+                     *
+                     * \param region Valid pointer to the region.
+                     */
+                    Dfs(const Region* region);
 
-    /**
-     * \return List of region nodes in the order of discovery.
-     */
-    std::vector<Node *> &preordering() { return preordering_; }
+                    /**
+                     * \return List of region nodes in the order of discovery.
+                     */
+                    std::vector<Node*> & preordering() { return preordering_; }
 
-    /**
-     * \return List of region nodes in the order of discovery.
-     */
-    const std::vector<Node *> &preordering() const { return preordering_; }
+                    /**
+                     * \return List of region nodes in the order of discovery.
+                     */
+                    const std::vector<Node*> & preordering() const { return preordering_; }
 
-    /**
-     * \return List of region nodes in the order of leaving.
-     */
-    std::vector<Node *> &postordering() { return postordering_; }
+                    /**
+                     * \return List of region nodes in the order of leaving.
+                     */
+                    std::vector<Node*> & postordering() { return postordering_; }
 
-    /**
-     * \return List of region nodes in the order of leaving.
-     */
-    const std::vector<Node *> &postordering() const { return postordering_; }
+                    /**
+                     * \return List of region nodes in the order of leaving.
+                     */
+                    const std::vector<Node*> & postordering() const { return postordering_; }
 
-    /**
-     * \param edge Valid pointer to an edge.
-     *
-     * \return Edge's type.
-     */
-    EdgeType getEdgeType(const Edge *edge) const { return nc::find(edge2type_, edge, UNKNOWN); }
+                    /**
+                     * \param edge Valid pointer to an edge.
+                     *
+                     * \return Edge's type.
+                     */
+                    EdgeType getEdgeType(const Edge* edge) const { return nc::find(edge2type_, edge, UNKNOWN); }
 
-private:
+                private:
 
-    /**
-     * Visits given node and all its unvisited successors.
-     *
-     * \param node Valid pointer to a not yet visited node.
-     */
-    void visit(Node *node);
-};
+                    /**
+                     * Visits given node and all its unvisited successors.
+                     *
+                     * \param node Valid pointer to a not yet visited node.
+                     */
+                    void visit(Node* node);
+                };
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

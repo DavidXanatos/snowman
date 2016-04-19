@@ -27,41 +27,45 @@
 
 #include "Expression.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-class VariableDeclaration;
+            class VariableDeclaration;
 
-/**
- * Variable identifier.
- */
-class VariableIdentifier: public Expression {
-    VariableDeclaration *declaration_; ///< Variable declaration.
+            /**
+             * Variable identifier.
+             */
+            class VariableIdentifier: public Expression
+            {
+                VariableDeclaration* declaration_; ///< Variable declaration.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] declaration Variable declaration.
-     */
-    explicit VariableIdentifier(VariableDeclaration *declaration):
-        Expression(VARIABLE_IDENTIFIER), declaration_(declaration)
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] declaration Variable declaration.
+                 */
+                explicit VariableIdentifier(VariableDeclaration* declaration):
+                    Expression(VARIABLE_IDENTIFIER), declaration_(declaration)
+                {}
 
-    /**
-     * \return Variable declaration.
-     */
-    VariableDeclaration *declaration() { return declaration_; }
+                /**
+                 * \return Variable declaration.
+                 */
+                VariableDeclaration* declaration() { return declaration_; }
 
-    /**
-     * \return Variable declaration.
-     */
-    const VariableDeclaration *declaration() const { return declaration_; }
-};
+                /**
+                 * \return Variable declaration.
+                 */
+                const VariableDeclaration* declaration() const { return declaration_; }
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Expression, nc::core::likec::VariableIdentifier, nc::core::likec::Expression::VARIABLE_IDENTIFIER)

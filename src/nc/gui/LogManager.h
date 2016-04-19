@@ -25,52 +25,57 @@
 
 #include <QObject>
 
-namespace nc { namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-/**
- * Class for handling Qt debug messages.
- *
- * It converts the messages to Qt signals, so that LogView can subscribe to them.
- */
-class LogManager: public QObject {
-    Q_OBJECT
+        /**
+         * Class for handling Qt debug messages.
+         *
+         * It converts the messages to Qt signals, so that LogView can subscribe to them.
+         */
+        class LogManager: public QObject
+        {
+            Q_OBJECT
 
-    /**
-     * Private constructor.
-     */
-    LogManager() {}
+            /**
+             * Private constructor.
+             */
+            LogManager() {}
 
-public:
-    /**
-     * \return Valid pointer to a global unique instance of LogManager.
-     */
-    static LogManager *instance();
+        public:
+            /**
+             * \return Valid pointer to a global unique instance of LogManager.
+             */
+            static LogManager* instance();
 
-    /**
-     * Qt debug message handler.
-     * Propagates the message via the message() signal.
-     *
-     * \param type Message type.
-     * \param msg Message text.
-     */
-    void log(QtMsgType type, const QString &msg);
+            /**
+             * Qt debug message handler.
+             * Propagates the message via the message() signal.
+             *
+             * \param type Message type.
+             * \param msg Message text.
+             */
+            void log(QtMsgType type, const QString & msg);
 
-    /**
-     * Propagates given log message via the message() signal.
-     *
-     * \param text Message text.
-     */
-    void log(const QString &text);
+            /**
+             * Propagates given log message via the message() signal.
+             *
+             * \param text Message text.
+             */
+            void log(const QString & text);
 
-Q_SIGNAL
-    /**
-     * A signal emitted when there is a new message to be shown.
-     *
-     * \param text Message text.
-     */
-    void message(const QString &text);
-};
+            Q_SIGNAL
+            /**
+             * A signal emitted when there is a new message to be shown.
+             *
+             * \param text Message text.
+             */
+            void message(const QString & text);
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

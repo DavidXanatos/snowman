@@ -32,63 +32,68 @@
 
 #include <nc/core/ir/Term.h>
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace calling {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace calling
+            {
 
-/**
- * Signature of a function: arguments, return value, name.
- */
-class FunctionSignature {
-    std::vector<std::shared_ptr<const Term>> arguments_; ///< Terms representing the arguments.
-    bool variadic_; ///< True if the function is variadic.
-    std::shared_ptr<const Term> returnValue_; ///< Term representing the return value.
+                /**
+                 * Signature of a function: arguments, return value, name.
+                 */
+                class FunctionSignature
+                {
+                    std::vector<std::shared_ptr<const Term>> arguments_; ///< Terms representing the arguments.
+                    bool variadic_; ///< True if the function is variadic.
+                    std::shared_ptr<const Term> returnValue_; ///< Term representing the return value.
 
-public:
-    /**
-     * Constructs an empty signature.
-     */
-    FunctionSignature(): variadic_(false) {}
+                public:
+                    /**
+                     * Constructs an empty signature.
+                     */
+                    FunctionSignature(): variadic_(false) {}
 
-    /**
-     * \return List of terms representing function's arguments.
-     */
-    std::vector<std::shared_ptr<const Term>> &arguments() { return arguments_; }
+                    /**
+                     * \return List of terms representing function's arguments.
+                     */
+                    std::vector<std::shared_ptr<const Term>> & arguments() { return arguments_; }
 
-    /**
-     * \return List of terms representing function's arguments.
-     */
-    const std::vector<std::shared_ptr<const Term>> &arguments() const { return arguments_; }
+                    /**
+                     * \return List of terms representing function's arguments.
+                     */
+                    const std::vector<std::shared_ptr<const Term>> & arguments() const { return arguments_; }
 
-    /**
-     * \return True if the function is variadic, false otherwise.
-     */
-    bool variadic() const { return variadic_; }
+                    /**
+                     * \return True if the function is variadic, false otherwise.
+                     */
+                    bool variadic() const { return variadic_; }
 
-    /**
-     * Sets whether the function is variadic.
-     *
-     * \param value Flag whether the function is variadic.
-     */
-    void setVariadic(bool value = true) { variadic_ = value; }
+                    /**
+                     * Sets whether the function is variadic.
+                     *
+                     * \param value Flag whether the function is variadic.
+                     */
+                    void setVariadic(bool value = true) { variadic_ = value; }
 
-    /**
-     * \return Pointer to the term containing the return value. Can be nullptr.
-     */
-    const std::shared_ptr<const Term> &returnValue() const { return returnValue_; }
+                    /**
+                     * \return Pointer to the term containing the return value. Can be nullptr.
+                     */
+                    const std::shared_ptr<const Term> & returnValue() const { return returnValue_; }
 
-    /**
-     * Sets the pointer to the term representing the return value.
-     *
-     * \param term Valid pointer to the term.
-     */
-    void setReturnValue(std::shared_ptr<Term> term) { returnValue_ = std::move(term); }
-};
+                    /**
+                     * Sets the pointer to the term representing the return value.
+                     *
+                     * \param term Valid pointer to the term.
+                     */
+                    void setReturnValue(std::shared_ptr<Term> term) { returnValue_ = std::move(term); }
+                };
 
-} // namespace calling
-} // namespace ir
-} // namespace core
+            } // namespace calling
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

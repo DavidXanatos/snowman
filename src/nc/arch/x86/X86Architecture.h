@@ -27,78 +27,83 @@
 
 #include <nc/core/arch/Architecture.h>
 
-namespace nc {
-namespace arch {
-namespace x86 {
+namespace nc
+{
+    namespace arch
+    {
+        namespace x86
+        {
 
-class X86InstructionAnalyzer;
-class X86MasterAnalyzer;
-class X86Registers;
+            class X86InstructionAnalyzer;
+            class X86MasterAnalyzer;
+            class X86Registers;
 
-/**
- * Intel x86 architecture.
- */
-class X86Architecture: public core::arch::Architecture {
-public:
-    /**
-     * Processor mode.
-     */
-    enum Mode {
-        REAL_MODE,      ///< 16-bit real mode.
-        PROTECTED_MODE, ///< 32-bit protected mode.
-        LONG_MODE,      ///< 64-bit long mode.
-    };
+            /**
+             * Intel x86 architecture.
+             */
+            class X86Architecture: public core::arch::Architecture
+            {
+            public:
+                /**
+                 * Processor mode.
+                 */
+                enum Mode
+                {
+                    REAL_MODE,      ///< 16-bit real mode.
+                    PROTECTED_MODE, ///< 32-bit protected mode.
+                    LONG_MODE,      ///< 64-bit long mode.
+                };
 
-    /**
-     * Constructor.
-     *
-     * \param mode Processor mode.
-     */
-    explicit
-    X86Architecture(Mode mode);
+                /**
+                 * Constructor.
+                 *
+                 * \param mode Processor mode.
+                 */
+                explicit
+                X86Architecture(Mode mode);
 
-    /**
-     * Destructor.
-     */
-    virtual ~X86Architecture();
+                /**
+                 * Destructor.
+                 */
+                virtual ~X86Architecture();
 
-    /**
-     * \return Valid pointer to the stack pointer register.
-     */
-    const core::arch::Register *stackPointer() const { return mStackPointer; }
+                /**
+                 * \return Valid pointer to the stack pointer register.
+                 */
+                const core::arch::Register* stackPointer() const { return mStackPointer; }
 
-    /**
-     * \return Valid pointer to the stack frame base pointer register.
-     */
-    const core::arch::Register *basePointer() const { return mBasePointer; }
+                /**
+                 * \return Valid pointer to the stack frame base pointer register.
+                 */
+                const core::arch::Register* basePointer() const { return mBasePointer; }
 
-    /**
-     * \return Valid pointer to instruction pointer register.
-     */
-    const core::arch::Register *instructionPointer() const { return mInstructionPointer; }
+                /**
+                 * \return Valid pointer to instruction pointer register.
+                 */
+                const core::arch::Register* instructionPointer() const { return mInstructionPointer; }
 
-    ByteOrder getByteOrder(core::ir::Domain domain) const override;
-    std::unique_ptr<core::arch::Disassembler> createDisassembler() const override;
-    std::unique_ptr<core::irgen::InstructionAnalyzer> createInstructionAnalyzer() const override;
+                ByteOrder getByteOrder(core::ir::Domain domain) const override;
+                std::unique_ptr<core::arch::Disassembler> createDisassembler() const override;
+                std::unique_ptr<core::irgen::InstructionAnalyzer> createInstructionAnalyzer() const override;
 
-protected:
-    friend class X86Registers;
+            protected:
+                friend class X86Registers;
 
-private:
-    std::unique_ptr<X86MasterAnalyzer> mMasterAnalyzer;
+            private:
+                std::unique_ptr<X86MasterAnalyzer> mMasterAnalyzer;
 
-    /** Stack pointer register. */
-    const core::arch::Register *mStackPointer;
+                /** Stack pointer register. */
+                const core::arch::Register* mStackPointer;
 
-    /** Stack frame base pointer register. */
-    const core::arch::Register *mBasePointer;
+                /** Stack frame base pointer register. */
+                const core::arch::Register* mBasePointer;
 
-    /** Instruction pointer register. */
-    const core::arch::Register *mInstructionPointer;
-};
+                /** Instruction pointer register. */
+                const core::arch::Register* mInstructionPointer;
+            };
 
-} // namespace x86
-} // namespace arch
+        } // namespace x86
+    } // namespace arch
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

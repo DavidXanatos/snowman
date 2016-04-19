@@ -25,36 +25,38 @@
 
 #include <nc/config.h>
 
-namespace nc {
+namespace nc
+{
 
-/**
- * Callback template class used to report events when something starts or ends printing.
- *
- * \tparam T Type of objects passed to the callback.
- */
-template<class T>
-class PrintCallback {
+    /**
+     * Callback template class used to report events when something starts or ends printing.
+     *
+     * \tparam T Type of objects passed to the callback.
+     */
+    template<class T>
+    class PrintCallback
+    {
     public:
 
-    /**
-     * Callback function called when something starts being printed.
-     *
-     * \param[in] what What starts printing.
-     */
-    virtual void onStartPrinting(T what) = 0;
+        /**
+         * Callback function called when something starts being printed.
+         *
+         * \param[in] what What starts printing.
+         */
+        virtual void onStartPrinting(T what) = 0;
 
-    /**
-     * Callback function called when something ends being printed.
-     *
-     * \param[in] what What ends printing.
-     */
-    virtual void onEndPrinting(T what) = 0;
+        /**
+         * Callback function called when something ends being printed.
+         *
+         * \param[in] what What ends printing.
+         */
+        virtual void onEndPrinting(T what) = 0;
 
-    /**
-     * Virtual destructor.
-     */
-    virtual ~PrintCallback() {}
-};
+        /**
+         * Virtual destructor.
+         */
+        virtual ~PrintCallback() {}
+    };
 
 } // namespace nc
 

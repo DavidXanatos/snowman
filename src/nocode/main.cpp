@@ -54,21 +54,28 @@
 #include <QStringList>
 #include <QTextStream>
 
-const char *self = "nocode";
+const char* self = "nocode";
 
 QTextStream qin(stdin, QIODevice::ReadOnly);
 QTextStream qout(stdout, QIODevice::WriteOnly);
 QTextStream qerr(stderr, QIODevice::WriteOnly);
 
 template<class T>
-void openFileForWritingAndCall(const QString &filename, T functor) {
-    if (filename.isEmpty()) {
+void openFileForWritingAndCall(const QString & filename, T functor)
+{
+    if(filename.isEmpty())
+    {
         return;
-    } else if (filename == "-") {
+    }
+    else if(filename == "-")
+    {
         functor(qout);
-    } else {
+    }
+    else
+    {
         QFile file(filename);
-        if (!file.open(QIODevice::WriteOnly)) {
+        if(!file.open(QIODevice::WriteOnly))
+        {
             throw nc::Exception("could not open file for writing");
         }
         QTextStream out(&file);
@@ -76,25 +83,33 @@ void openFileForWritingAndCall(const QString &filename, T functor) {
     }
 }
 
-void printSections(nc::core::Context &context, QTextStream &out) {
-    foreach (auto section, context.image()->sections()) {
+void printSections(nc::core::Context & context, QTextStream & out)
+{
+    foreach(auto section, context.image()->sections())
+    {
         QString flags;
-        if (section->isReadable()) {
+        if(section->isReadable())
+        {
             flags += QLatin1String("r");
         }
-        if (section->isWritable()) {
+        if(section->isWritable())
+        {
             flags += QLatin1String("w");
         }
-        if (section->isExecutable()) {
+        if(section->isExecutable())
+        {
             flags += QLatin1String("x");
         }
-        if (section->isCode()) {
+        if(section->isCode())
+        {
             flags += QLatin1String(",code");
         }
-        if (section->isData()) {
+        if(section->isData())
+        {
             flags += QLatin1String(",data");
         }
-        if (section->isBss()) {
+        if(section->isBss())
+        {
             flags += QLatin1String(",bss");
         }
         out << QString(QLatin1String("section name = '%1', start = 0x%2, size = 0x%3, flags = %4"))
@@ -102,12 +117,17 @@ void printSections(nc::core::Context &context, QTextStream &out) {
     }
 }
 
-void printSymbols(nc::core::Context &context, QTextStream &out) {
-    foreach (const auto *symbol, context.image()->symbols()) {
+void printSymbols(nc::core::Context & context, QTextStream & out)
+{
+    foreach(const auto * symbol, context.image()->symbols())
+    {
         QString value;
-        if (symbol->value()) {
+        if(symbol->value())
+        {
             value = QString("%1").arg(*symbol->value(), 0, 16);
-        } else {
+        }
+        else
+        {
             value = QLatin1String("Undefined");
         }
         out << QString("symbol name = '%1', type = %2, value = 0x%3, section = %4")
@@ -116,15 +136,18 @@ void printSymbols(nc::core::Context &context, QTextStream &out) {
     }
 }
 
-void printRegionGraphs(nc::core::Context &context, QTextStream &out) {
+void printRegionGraphs(nc::core::Context & context, QTextStream & out)
+{
     out << "digraph Functions { compound=true; " << endl;
-    foreach (const auto *function, context.functions()->list()) {
+    foreach(const auto * function, context.functions()->list())
+    {
         context.graphs()->at(function)->print(out);
     }
     out << "}" << endl;
 }
 
-void help() {
+void help()
+{
     auto branding = nc::branding();
     branding.setApplicationName("Nocode");
 
@@ -150,12 +173,14 @@ void help() {
     qout << "Version: " << branding.applicationVersion() << endl;
 
     qout << "Available architectures:";
-    foreach (auto architecture, nc::core::arch::ArchitectureRepository::instance()->architectures()) {
+    foreach(auto architecture, nc::core::arch::ArchitectureRepository::instance()->architectures())
+    {
         qout << " " << architecture->name();
     }
     qout << endl;
     qout << "Available parsers:";
-    foreach(auto parser, nc::core::input::ParserRepository::instance()->parsers()) {
+    foreach(auto parser, nc::core::input::ParserRepository::instance()->parsers())
+    {
         qout << " " << parser->name();
     }
     qout << endl;
@@ -163,10 +188,12 @@ void help() {
     qout << "License: " << branding.licenseName() << " <" << branding.licenseUrl() << ">" << endl;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[])
+{
     QCoreApplication app(argc, argv);
 
-    try {
+    try
+    {
         QString sectionsFile;
         QString symbolsFile;
         QString instructionsFile;
@@ -185,15 +212,19 @@ int main(int argc, char *argv[]) {
 
         auto args = QCoreApplication::arguments();
 
-        for (int i = 1; i < args.size(); ++i) {
+        for(int i = 1; i < args.size(); ++i)
+        {
             QString arg = args[i];
-            if (arg == "--help" || arg == "-h") {
+            if(arg == "--help" || arg == "-h")
+            {
                 help();
                 return 1;
-            } else if (arg == "--verbose" || arg == "-v") {
+            }
+            else if(arg == "--verbose" || arg == "-v")
+            {
                 verbose = true;
 
-            #define FILE_OPTION(option, variable)       \
+#define FILE_OPTION(option, variable)       \
             } else if (arg == option) {                 \
                 variable = "-";                         \
                 autoDefault = false;                    \
@@ -201,68 +232,88 @@ int main(int argc, char *argv[]) {
                 variable = arg.section('=', 1);         \
                 autoDefault = false;
 
-            FILE_OPTION("--print-sections", sectionsFile)
-            FILE_OPTION("--print-symbols", symbolsFile)
-            FILE_OPTION("--print-instructions", instructionsFile)
-            FILE_OPTION("--print-cfg", cfgFile)
-            FILE_OPTION("--print-ir", irFile)
-            FILE_OPTION("--print-regions", regionsFile)
-            FILE_OPTION("--print-cxx", cxxFile)
+                FILE_OPTION("--print-sections", sectionsFile)
+                FILE_OPTION("--print-symbols", symbolsFile)
+                FILE_OPTION("--print-instructions", instructionsFile)
+                FILE_OPTION("--print-cfg", cfgFile)
+                FILE_OPTION("--print-ir", irFile)
+                FILE_OPTION("--print-regions", regionsFile)
+                FILE_OPTION("--print-cxx", cxxFile)
 
-            #undef FILE_OPTION
+#undef FILE_OPTION
 
-            } else if (arg == "--") {
-                while (++i < args.size()) {
+            }
+            else if(arg == "--")
+            {
+                while(++i < args.size())
+                {
                     files.append(args[i]);
                 }
-            } else if (arg.startsWith("-")) {
+            }
+            else if(arg.startsWith("-"))
+            {
                 throw nc::Exception(QString("unknown argument: %1").arg(arg));
-            } else {
+            }
+            else
+            {
                 files.append(args[i]);
             }
         }
 
-        if (autoDefault) {
+        if(autoDefault)
+        {
             cxxFile = "-";
         }
 
-        if (files.empty()) {
+        if(files.empty())
+        {
             throw nc::Exception("no input files");
         }
 
         nc::core::Context context;
 
-        if (verbose) {
+        if(verbose)
+        {
             context.setLogToken(nc::LogToken(std::make_shared<nc::StreamLogger>(qerr)));
         }
 
-        foreach (const QString &filename, files) {
-            try {
+        foreach(const QString & filename, files)
+        {
+            try
+            {
                 nc::core::Driver::parse(context, filename);
-            } catch (const nc::Exception &e) {
+            }
+            catch(const nc::Exception & e)
+            {
                 throw nc::Exception(filename + ":" + e.unicodeWhat());
-            } catch (const std::exception &e) {
+            }
+            catch(const std::exception & e)
+            {
                 throw nc::Exception(filename + ":" + e.what());
             }
         }
 
-        openFileForWritingAndCall(sectionsFile, [&](QTextStream &out) { printSections(context, out); });
-        openFileForWritingAndCall(symbolsFile, [&](QTextStream &out) { printSymbols(context, out); });
+        openFileForWritingAndCall(sectionsFile, [&](QTextStream & out) { printSections(context, out); });
+        openFileForWritingAndCall(symbolsFile, [&](QTextStream & out) { printSymbols(context, out); });
 
-        if (!instructionsFile.isEmpty() || !cfgFile.isEmpty() || !irFile.isEmpty() || !regionsFile.isEmpty() || !cxxFile.isEmpty()) {
+        if(!instructionsFile.isEmpty() || !cfgFile.isEmpty() || !irFile.isEmpty() || !regionsFile.isEmpty() || !cxxFile.isEmpty())
+        {
             nc::core::Driver::disassemble(context);
-            openFileForWritingAndCall(instructionsFile, [&](QTextStream &out) { context.instructions()->print(out); });
+            openFileForWritingAndCall(instructionsFile, [&](QTextStream & out) { context.instructions()->print(out); });
 
-            if (!cfgFile.isEmpty() || !irFile.isEmpty() || !regionsFile.isEmpty() || !cxxFile.isEmpty()) {
+            if(!cfgFile.isEmpty() || !irFile.isEmpty() || !regionsFile.isEmpty() || !cxxFile.isEmpty())
+            {
                 nc::core::Driver::decompile(context);
 
-                openFileForWritingAndCall(cfgFile,     [&](QTextStream &out) { context.program()->print(out); });
-                openFileForWritingAndCall(irFile,      [&](QTextStream &out) { context.functions()->print(out); });
-                openFileForWritingAndCall(regionsFile, [&](QTextStream &out) { printRegionGraphs(context, out); });
-                openFileForWritingAndCall(cxxFile,     [&](QTextStream &out) { context.tree()->print(out); });
+                openFileForWritingAndCall(cfgFile,     [&](QTextStream & out) { context.program()->print(out); });
+                openFileForWritingAndCall(irFile,      [&](QTextStream & out) { context.functions()->print(out); });
+                openFileForWritingAndCall(regionsFile, [&](QTextStream & out) { printRegionGraphs(context, out); });
+                openFileForWritingAndCall(cxxFile,     [&](QTextStream & out) { context.tree()->print(out); });
             }
         }
-    } catch (const nc::Exception &e) {
+    }
+    catch(const nc::Exception & e)
+    {
         qerr << self << ": " << e.unicodeWhat() << endl;
         return 1;
     }

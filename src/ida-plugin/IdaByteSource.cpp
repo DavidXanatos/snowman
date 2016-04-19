@@ -30,35 +30,44 @@
 #include <bytes.hpp>
 #include "IdaWorkaroundEnd.h"
 
-namespace nc { namespace ida {
+namespace nc
+{
+    namespace ida
+    {
 
-ByteSize IdaByteSource::readBytes(ByteAddr addr, void *buf, ByteSize size) const {
+        ByteSize IdaByteSource::readBytes(ByteAddr addr, void* buf, ByteSize size) const
+        {
 #ifdef NC_USE_THREADS
 #error You are trying to shoot your leg. IDA API is not thread-safe.
 #endif
 
-    if (get_many_bytes(checked_cast<ea_t>(addr), buf, checked_cast<ssize_t>(size))) {
-        return size;
-    }
-
-    char *charBuf = static_cast<char *>(buf);
-    ByteSize i;
-    for (i = 0; i < size; i++) {
-        ea_t idaAddr = checked_cast<ea_t>(addr + i);
-
-        char value = get_byte(idaAddr);
-        if (value == 0) {
-            flags_t flags = getFlags(idaAddr);
-            if (!hasValue(flags)) {
-                break;
+            if(get_many_bytes(checked_cast<ea_t>(addr), buf, checked_cast<ssize_t>(size)))
+            {
+                return size;
             }
+
+            char* charBuf = static_cast<char*>(buf);
+            ByteSize i;
+            for(i = 0; i < size; i++)
+            {
+                ea_t idaAddr = checked_cast<ea_t>(addr + i);
+
+                char value = get_byte(idaAddr);
+                if(value == 0)
+                {
+                    flags_t flags = getFlags(idaAddr);
+                    if(!hasValue(flags))
+                    {
+                        break;
+                    }
+                }
+
+                *charBuf++ = value;
+            }
+            return i;
         }
 
-        *charBuf++ = value;
     }
-    return i;
-}
-
-}} // namespace nc::ida
+} // namespace nc::ida
 
 /* vim:set et sts=4 sw=4: */

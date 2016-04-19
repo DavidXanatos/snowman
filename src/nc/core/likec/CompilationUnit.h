@@ -30,50 +30,56 @@
 
 #include "Declaration.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Compilation unit.
- */
-class CompilationUnit: public TreeNode {
-    std::vector<std::unique_ptr<Declaration>> declarations_; ///< Declarations.
+            /**
+             * Compilation unit.
+             */
+            class CompilationUnit: public TreeNode
+            {
+                std::vector<std::unique_ptr<Declaration>> declarations_; ///< Declarations.
 
-public:
-    /**
-     * Constructor.
-     */
-    CompilationUnit(): TreeNode(COMPILATION_UNIT) {}
+            public:
+                /**
+                 * Constructor.
+                 */
+                CompilationUnit(): TreeNode(COMPILATION_UNIT) {}
 
-    /**
-     * \return Declarations.
-     */
-    std::vector<std::unique_ptr<Declaration>> &declarations() { return declarations_; }
+                /**
+                 * \return Declarations.
+                 */
+                std::vector<std::unique_ptr<Declaration>> & declarations() { return declarations_; }
 
-    /**
-     * \return Declarations.
-     */
-    const std::vector<Declaration *> &declarations() const {
-        return reinterpret_cast<const std::vector<Declaration *> &>(declarations_);
-    }
+                /**
+                 * \return Declarations.
+                 */
+                const std::vector<Declaration*> & declarations() const
+                {
+                    return reinterpret_cast<const std::vector<Declaration*> &>(declarations_);
+                }
 
-    /**
-     * Adds a declaration to the unit.
-     *
-     * \param declaration Valid pointer to a declaration. 
-     */
-    void addDeclaration(std::unique_ptr<Declaration> declaration) {
-        assert(declaration);
-        declarations_.push_back(std::move(declaration));
-    }
+                /**
+                 * Adds a declaration to the unit.
+                 *
+                 * \param declaration Valid pointer to a declaration.
+                 */
+                void addDeclaration(std::unique_ptr<Declaration> declaration)
+                {
+                    assert(declaration);
+                    declarations_.push_back(std::move(declaration));
+                }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::TreeNode, nc::core::likec::CompilationUnit, nc::core::likec::TreeNode::COMPILATION_UNIT)

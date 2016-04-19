@@ -5,11 +5,14 @@
 
 #include <nc/config.h>
 
-namespace nc {
-namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-const auto highlightColor = QColor("#445D75");
+        const auto highlightColor = QColor("#445D75");
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

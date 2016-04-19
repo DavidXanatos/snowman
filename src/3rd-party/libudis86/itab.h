@@ -2,7 +2,8 @@
 #define UD_ITAB_H
 
 /* ud_table_type -- lookup table types (see lookup.c) */
-enum ud_table_type {
+enum ud_table_type
+{
     UD_TAB__OPC_TABLE,
     UD_TAB__OPC_X87,
     UD_TAB__OPC_MOD,
@@ -17,7 +18,8 @@ enum ud_table_type {
 };
 
 /* ud_mnemonic -- mnemonic constants */
-enum ud_mnemonic_code {
+enum ud_mnemonic_code
+{
     UD_Iinvalid,
     UD_I3dnow,
     UD_Inone,
@@ -749,6 +751,6 @@ enum ud_mnemonic_code {
 #define O_rSPr12  { OP_rSPr12,   SZ_NA    }
 
 
-extern const char * ud_mnemonics_str[];
+extern const char* ud_mnemonics_str[];
 #define GROUP(n) (0x8000 | (n))
 #endif /* UD_ITAB_H */

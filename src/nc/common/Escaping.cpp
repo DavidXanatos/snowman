@@ -28,14 +28,18 @@
 
 #include <QString>
 
-namespace nc {
+namespace nc
+{
 
-QString escapeDotString(const QString &string) {
-    QString result;
-    result.reserve(string.size());
+    QString escapeDotString(const QString & string)
+    {
+        QString result;
+        result.reserve(string.size());
 
-    foreach (QChar c, string) {
-        switch (c.toLatin1()) {
+        foreach(QChar c, string)
+        {
+            switch(c.toLatin1())
+            {
             case '\\':
                 result += "\\\\";
                 break;
@@ -48,18 +52,21 @@ QString escapeDotString(const QString &string) {
             default:
                 result += c;
                 break;
+            }
         }
+
+        return result;
     }
 
-    return result;
-}
+    QString escapeCString(const QString & string)
+    {
+        QString result;
+        result.reserve(string.size());
 
-QString escapeCString(const QString &string) {
-    QString result;
-    result.reserve(string.size());
-
-    foreach (QChar c, string) {
-        switch (c.toLatin1()) {
+        foreach(QChar c, string)
+        {
+            switch(c.toLatin1())
+            {
             case '\\':
                 result += "\\\\";
                 break;
@@ -90,11 +97,11 @@ QString escapeCString(const QString &string) {
             default:
                 result += c;
                 break;
+            }
         }
-    }
 
-    return result;
-}
+        return result;
+    }
 
 } // namespace nc
 

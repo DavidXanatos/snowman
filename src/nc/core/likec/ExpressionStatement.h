@@ -29,51 +29,55 @@
 
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-class Expression;
+            class Expression;
 
-/**
- * A statement consisting of an expression.
- */
-class ExpressionStatement: public Statement {
-    std::unique_ptr<Expression> expression_; ///< Expression used as statement.
+            /**
+             * A statement consisting of an expression.
+             */
+            class ExpressionStatement: public Statement
+            {
+                std::unique_ptr<Expression> expression_; ///< Expression used as statement.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] expression Expression used as statement.
-     */
-    explicit ExpressionStatement(std::unique_ptr<Expression> expression):
-        Statement(EXPRESSION_STATEMENT), expression_(std::move(expression))
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] expression Expression used as statement.
+                 */
+                explicit ExpressionStatement(std::unique_ptr<Expression> expression):
+                    Statement(EXPRESSION_STATEMENT), expression_(std::move(expression))
+                {}
 
-    /**
-     * \return Expression used for the statement.
-     */
-    std::unique_ptr<Expression> &expression() { return expression_; }
+                /**
+                 * \return Expression used for the statement.
+                 */
+                std::unique_ptr<Expression> & expression() { return expression_; }
 
-    /**
-     * \return Expression used for the statement.
-     */
-    const Expression *expression() const { return expression_.get(); }
+                /**
+                 * \return Expression used for the statement.
+                 */
+                const Expression* expression() const { return expression_.get(); }
 
-    /**
-     * Releases operator's ownership of operand.
-     *
-     * \return Expression used as statement.
-     */
-    std::unique_ptr<Expression> releaseExpression() { return std::move(expression_); };
+                /**
+                 * Releases operator's ownership of operand.
+                 *
+                 * \return Expression used as statement.
+                 */
+                std::unique_ptr<Expression> releaseExpression() { return std::move(expression_); };
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::ExpressionStatement, nc::core::likec::Statement::EXPRESSION_STATEMENT)

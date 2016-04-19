@@ -9,20 +9,21 @@
 
 #include <QString>
 
-namespace nc {
+namespace nc
+{
 
-/**
- * Converts a string representation of an integer to an integer.
- *
- * \param s A string.
- * \param base Conversion base. 0 for C-style conversions understanding prefixes 0x and 0.
- * \tparam T Integer type to which to convert.
- *
- * \return The resulting integer on success, boost::none on failure.
- */
-template<class T>
-boost::optional<T>
-stringToInt(const QString &s, int base = 10);
+    /**
+     * Converts a string representation of an integer to an integer.
+     *
+     * \param s A string.
+     * \param base Conversion base. 0 for C-style conversions understanding prefixes 0x and 0.
+     * \tparam T Integer type to which to convert.
+     *
+     * \return The resulting integer on success, boost::none on failure.
+     */
+    template<class T>
+    boost::optional<T>
+    stringToInt(const QString & s, int base = 10);
 
 } // namespace nc
 

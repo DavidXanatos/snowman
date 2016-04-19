@@ -33,151 +33,183 @@
 #include <nc/common/Escaping.h>
 #include <nc/common/Foreach.h>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-BasicBlock::BasicBlock(const boost::optional<ByteAddr> &address):
-    address_(address), successorAddress_(address), function_(nullptr)
-{}
+            BasicBlock::BasicBlock(const boost::optional<ByteAddr> & address):
+                address_(address), successorAddress_(address), function_(nullptr)
+            {}
 
-BasicBlock::~BasicBlock() {}
+            BasicBlock::~BasicBlock() {}
 
-void BasicBlock::setAddress(const boost::optional<ByteAddr> &address) {
-    address_ = address;
-    if (!address_) {
-        setSuccessorAddress(boost::none);
-    }
-}
+            void BasicBlock::setAddress(const boost::optional<ByteAddr> & address)
+            {
+                address_ = address;
+                if(!address_)
+                {
+                    setSuccessorAddress(boost::none);
+                }
+            }
 
-void BasicBlock::setSuccessorAddress(const boost::optional<ByteAddr> &successorAddress) {
-    assert((!successorAddress || address()) && "A non-memory-bound basic block cannot have a successor address.");
-    successorAddress_ = successorAddress;
-}
+            void BasicBlock::setSuccessorAddress(const boost::optional<ByteAddr> & successorAddress)
+            {
+                assert((!successorAddress || address()) && "A non-memory-bound basic block cannot have a successor address.");
+                successorAddress_ = successorAddress;
+            }
 
-Statement *BasicBlock::insert(ilist<Statement>::const_iterator position, std::unique_ptr<Statement> statement) {
-    assert(statement != nullptr);
-    assert(statement->basicBlock() == nullptr);
+            Statement* BasicBlock::insert(ilist<Statement>::const_iterator position, std::unique_ptr<Statement> statement)
+            {
+                assert(statement != nullptr);
+                assert(statement->basicBlock() == nullptr);
 
-    auto result = statement.get();
-    statements_.insert(position, std::move(statement));
-    result->setBasicBlock(this);
-    return result;
-}
+                auto result = statement.get();
+                statements_.insert(position, std::move(statement));
+                result->setBasicBlock(this);
+                return result;
+            }
 
-Statement *BasicBlock::pushFront(std::unique_ptr<Statement> statement) {
-    assert(statement != nullptr);
+            Statement* BasicBlock::pushFront(std::unique_ptr<Statement> statement)
+            {
+                assert(statement != nullptr);
 
-    return insert(statements_.begin(), std::move(statement));
-}
+                return insert(statements_.begin(), std::move(statement));
+            }
 
-Statement *BasicBlock::pushBack(std::unique_ptr<Statement> statement) {
-    assert(statement != nullptr);
+            Statement* BasicBlock::pushBack(std::unique_ptr<Statement> statement)
+            {
+                assert(statement != nullptr);
 
-    return insert(statements_.end(), std::move(statement));
-}
+                return insert(statements_.end(), std::move(statement));
+            }
 
-Statement *BasicBlock::insertAfter(const Statement *after, std::unique_ptr<Statement> statement) {
-    assert(after != nullptr);
-    assert(statement != nullptr);
+            Statement* BasicBlock::insertAfter(const Statement* after, std::unique_ptr<Statement> statement)
+            {
+                assert(after != nullptr);
+                assert(statement != nullptr);
 
-    return insert(++statements_.get_iterator(after), std::move(statement));
-}
+                return insert(++statements_.get_iterator(after), std::move(statement));
+            }
 
-Statement *BasicBlock::insertBefore(const Statement *before, std::unique_ptr<Statement> statement) {
-    assert(before != nullptr);
-    assert(statement != nullptr);
+            Statement* BasicBlock::insertBefore(const Statement* before, std::unique_ptr<Statement> statement)
+            {
+                assert(before != nullptr);
+                assert(statement != nullptr);
 
-    return insert(statements_.get_iterator(before), std::move(statement));
-}
+                return insert(statements_.get_iterator(before), std::move(statement));
+            }
 
-std::unique_ptr<Statement> BasicBlock::erase(Statement *statement) {
-    auto result = statements_.erase(statement);
-    assert(result->basicBlock() == this);
-    result->setBasicBlock(nullptr);
-    return result;
-}
+            std::unique_ptr<Statement> BasicBlock::erase(Statement* statement)
+            {
+                auto result = statements_.erase(statement);
+                assert(result->basicBlock() == this);
+                result->setBasicBlock(nullptr);
+                return result;
+            }
 
-const Statement *BasicBlock::getTerminator() const {
-    if (statements().empty()) {
-        return nullptr;
-    }
+            const Statement* BasicBlock::getTerminator() const
+            {
+                if(statements().empty())
+                {
+                    return nullptr;
+                }
 
-    auto lastStatement = statements().back();
-    if (lastStatement->isTerminator()) {
-        return lastStatement;
-    }
+                auto lastStatement = statements().back();
+                if(lastStatement->isTerminator())
+                {
+                    return lastStatement;
+                }
 
-    return nullptr;
-}
+                return nullptr;
+            }
 
-Jump *BasicBlock::getJump() {
-    if (statements().empty()) {
-        return nullptr;
-    } else {
-        return statements().back()->as<Jump>();
-    }
-}
+            Jump* BasicBlock::getJump()
+            {
+                if(statements().empty())
+                {
+                    return nullptr;
+                }
+                else
+                {
+                    return statements().back()->as<Jump>();
+                }
+            }
 
-const Jump *BasicBlock::getJump() const {
-    if (statements().empty()) {
-        return nullptr;
-    } else {
-        return statements().back()->as<Jump>();
-    }
-}
+            const Jump* BasicBlock::getJump() const
+            {
+                if(statements().empty())
+                {
+                    return nullptr;
+                }
+                else
+                {
+                    return statements().back()->as<Jump>();
+                }
+            }
 
-std::unique_ptr<BasicBlock> BasicBlock::split(ilist<Statement>::const_iterator position, const boost::optional<ByteAddr> &address) {
-    /* Create a new basic block. */
-    std::unique_ptr<BasicBlock> result(new BasicBlock(address));
-    result->setSuccessorAddress(this->successorAddress());
-    this->setSuccessorAddress(address);
+            std::unique_ptr<BasicBlock> BasicBlock::split(ilist<Statement>::const_iterator position, const boost::optional<ByteAddr> & address)
+            {
+                /* Create a new basic block. */
+                std::unique_ptr<BasicBlock> result(new BasicBlock(address));
+                result->setSuccessorAddress(this->successorAddress());
+                this->setSuccessorAddress(address);
 
-    /* Move statements to it. */
-    result->statements_ = statements_.cut_out(position, statements_.end());
-    foreach (auto statement, result->statements_) {
-        statement->setBasicBlock(result.get());
-    }
+                /* Move statements to it. */
+                result->statements_ = statements_.cut_out(position, statements_.end());
+                foreach(auto statement, result->statements_)
+                {
+                    statement->setBasicBlock(result.get());
+                }
 
-    return result;
-}
+                return result;
+            }
 
-std::unique_ptr<BasicBlock> BasicBlock::clone() const {
-    std::unique_ptr<BasicBlock> result(new BasicBlock(address()));
-    result->setSuccessorAddress(successorAddress());
+            std::unique_ptr<BasicBlock> BasicBlock::clone() const
+            {
+                std::unique_ptr<BasicBlock> result(new BasicBlock(address()));
+                result->setSuccessorAddress(successorAddress());
 
-    foreach (const Statement *statement, statements()) {
-        result->pushBack(statement->clone());
-    }
+                foreach(const Statement * statement, statements())
+                {
+                    result->pushBack(statement->clone());
+                }
 
-    return result;
-}
+                return result;
+            }
 
-void BasicBlock::print(QTextStream &out) const {
-    out << "basicBlock" << this << " [shape=box,label=\"";
+            void BasicBlock::print(QTextStream & out) const
+            {
+                out << "basicBlock" << this << " [shape=box,label=\"";
 
-    QString label;
-    QTextStream ls(&label);
+                QString label;
+                QTextStream ls(&label);
 
-    ls << "Address: ";
-    if (address()) {
-        int integerBase = ls.integerBase();
-        hex(ls) << "0x" << *address();
-        ls.setIntegerBase(integerBase);
-    } else {
-        ls << "None";
-    }
-    ls << endl;
+                ls << "Address: ";
+                if(address())
+                {
+                    int integerBase = ls.integerBase();
+                    hex(ls) << "0x" << *address();
+                    ls.setIntegerBase(integerBase);
+                }
+                else
+                {
+                    ls << "None";
+                }
+                ls << endl;
 
-    foreach (const Statement *statement, statements()) {
-        ls << *statement;
-    }
+                foreach(const Statement * statement, statements())
+                {
+                    ls << *statement;
+                }
 
-    out << escapeDotString(label) << "\"];" << endl;
-}
+                out << escapeDotString(label) << "\"];" << endl;
+            }
 
-} // namespace ir
-} // namespace core
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

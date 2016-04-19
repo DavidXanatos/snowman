@@ -26,21 +26,26 @@
 
 #include <nc/common/make_unique.h>
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-void If::doCallOnChildren(const std::function<void(TreeNode *)> &fun) {
-    fun(condition_.get());
-    fun(thenStatement_.get());
+            void If::doCallOnChildren(const std::function<void(TreeNode*)> & fun)
+            {
+                fun(condition_.get());
+                fun(thenStatement_.get());
 
-    if (elseStatement_) {
-        fun(elseStatement_.get());
-    }
-}
+                if(elseStatement_)
+                {
+                    fun(elseStatement_.get());
+                }
+            }
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

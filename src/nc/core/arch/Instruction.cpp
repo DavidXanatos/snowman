@@ -24,14 +24,17 @@
 
 #include "Instruction.h"
 
-namespace nc {
-namespace core {
-namespace arch {
+namespace nc
+{
+    namespace core
+    {
+        namespace arch
+        {
 
-Instruction::~Instruction() {}
+            Instruction::~Instruction() {}
 
-} // namespace arch
-} // namespace core
+        } // namespace arch
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

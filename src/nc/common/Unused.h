@@ -25,19 +25,21 @@
 
 #include <nc/config.h>
 
-namespace nc { 
-namespace unused_detail {
+namespace nc
+{
+    namespace unused_detail
+    {
 
-template<class T>
-inline void unused(const T &) {}
+        template<class T>
+        inline void unused(const T &) {}
 
-} // namespace unused_detail
+    } // namespace unused_detail
 } // namespace nc
 
 
 /**
  * Macro for suppressing warnings about unused arguments, variables.
- * 
+ *
  * Rationale behind this macro is that we don't want to comment
  * unused arguments out because we want them to be found by doxygen.
  * Also, separating declaration and definition is a long way to go.

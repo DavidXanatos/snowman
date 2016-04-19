@@ -29,27 +29,33 @@
 
 #include <QString>
 
-namespace nc {
-namespace core {
-namespace mangling {
+namespace nc
+{
+    namespace core
+    {
+        namespace mangling
+        {
 
-/**
- * Base class for a demangler.
- */
-class Demangler {
-public:
-    virtual ~Demangler() {}
+            /**
+             * Base class for a demangler.
+             */
+            class Demangler
+            {
+            public:
+                virtual ~Demangler() {}
 
-    /**
-     * Demangle a string.
-     *
-     * \param[in] symbol Symbol.
-     *
-     * \return Demangled name, or QString() in case of failure.
-     */
-    virtual QString demangle(const QString &symbol) const { NC_UNUSED(symbol); return QString(); }
-};
+                /**
+                 * Demangle a string.
+                 *
+                 * \param[in] symbol Symbol.
+                 *
+                 * \return Demangled name, or QString() in case of failure.
+                 */
+                virtual QString demangle(const QString & symbol) const { NC_UNUSED(symbol); return QString(); }
+            };
 
-}}} // namespace nc::core::mangling
+        }
+    }
+} // namespace nc::core::mangling
 
 /* vim:set et sts=4 sw=4: */

@@ -33,47 +33,57 @@
 #include "Convention.h"
 #include "FunctionSignature.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace calling {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace calling
+            {
 
-EntryHook::EntryHook(const Convention *convention, const FunctionSignature *signature) {
-    assert(convention != nullptr);
+                EntryHook::EntryHook(const Convention* convention, const FunctionSignature* signature)
+                {
+                    assert(convention != nullptr);
 
-    auto &statements = patch_.statements();
+                    auto & statements = patch_.statements();
 
-    if (convention->stackPointer()) {
-        statements.push_back(std::make_unique<Assignment>(
-            std::make_unique<MemoryLocationAccess>(convention->stackPointer()),
-            std::make_unique<Intrinsic>(Intrinsic::ZERO_STACK_OFFSET, convention->stackPointer().size<SmallBitSize>())
-        ));
-    }
+                    if(convention->stackPointer())
+                    {
+                        statements.push_back(std::make_unique<Assignment>(
+                                                 std::make_unique<MemoryLocationAccess>(convention->stackPointer()),
+                                                 std::make_unique<Intrinsic>(Intrinsic::ZERO_STACK_OFFSET, convention->stackPointer().size<SmallBitSize>())
+                                             ));
+                    }
 
-    foreach (auto statement, convention->entryStatements()) {
-        statements.push_back(statement->clone());
-    }
+                    foreach(auto statement, convention->entryStatements())
+                    {
+                        statements.push_back(statement->clone());
+                    }
 
-    auto createArgument = [&](const Term *term) {
-        auto clone = term->clone();
-        argumentTerms_[term] = clone.get();
+                    auto createArgument = [&](const Term * term)
+                    {
+                        auto clone = term->clone();
+                        argumentTerms_[term] = clone.get();
 
-        statements.push_back(std::make_unique<Assignment>(
-            std::move(clone),
-            std::make_unique<Intrinsic>(Intrinsic::UNDEFINED, term->size())
-        ));
-    };
+                        statements.push_back(std::make_unique<Assignment>(
+                                                 std::move(clone),
+                                                 std::make_unique<Intrinsic>(Intrinsic::UNDEFINED, term->size())
+                                             ));
+                    };
 
-    if (signature) {
-        foreach (const auto &term, signature->arguments()) {
-            createArgument(term.get());
-        }
-    }
-}
+                    if(signature)
+                    {
+                        foreach(const auto & term, signature->arguments())
+                        {
+                            createArgument(term.get());
+                        }
+                    }
+                }
 
-} // namespace calling
-} // namespace ir
-} // namespace core
+            } // namespace calling
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et ts=4 sw=4: */

@@ -28,52 +28,69 @@
 
 #include "StructTypeDeclaration.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-void ErroneousType::print(QTextStream &out) const {
-    out << "<erroneous type>";
-}
+            void ErroneousType::print(QTextStream & out) const
+            {
+                out << "<erroneous type>";
+            }
 
-void VoidType::print(QTextStream &out) const {
-    out << "void";
-}
+            void VoidType::print(QTextStream & out) const
+            {
+                out << "void";
+            }
 
-void IntegerType::print(QTextStream &out) const {
-    if (size() == 8) {
-        if (isUnsigned()) {
-            out << "unsigned";
-        } else {
-            out << "signed";
-        }
-        out << " char";
-    } else {
-        if (isUnsigned()) {
-            out << 'u';
-        }
-        out << "int" << size() << "_t";
-    }
-}
+            void IntegerType::print(QTextStream & out) const
+            {
+                if(size() == 8)
+                {
+                    if(isUnsigned())
+                    {
+                        out << "unsigned";
+                    }
+                    else
+                    {
+                        out << "signed";
+                    }
+                    out << " char";
+                }
+                else
+                {
+                    if(isUnsigned())
+                    {
+                        out << 'u';
+                    }
+                    out << "int" << size() << "_t";
+                }
+            }
 
-void FloatType::print(QTextStream &out) const {
-    out << "float" << size();
-}
+            void FloatType::print(QTextStream & out) const
+            {
+                out << "float" << size();
+            }
 
-void PointerType::print(QTextStream &out) const {
-    out << *pointeeType_ << '*';
-}
+            void PointerType::print(QTextStream & out) const
+            {
+                out << *pointeeType_ << '*';
+            }
 
-void ArrayType::print(QTextStream &out) const {
-    out << *elementType() << '[' << length() << ']';
-}
+            void ArrayType::print(QTextStream & out) const
+            {
+                out << *elementType() << '[' << length() << ']';
+            }
 
-void StructType::print(QTextStream &out) const {
-    out << "struct " << typeDeclaration_->identifier();
-}
+            void StructType::print(QTextStream & out) const
+            {
+                out << "struct " << typeDeclaration_->identifier();
+            }
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

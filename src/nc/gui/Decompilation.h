@@ -29,42 +29,47 @@
 
 #include "Activity.h"
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    class Context;
-}
+    namespace core
+    {
+        class Context;
+    }
 
-namespace gui {
+    namespace gui
+    {
 
-/**
- * Activity doing the actual decompilation.
- */
-class Decompilation: public Activity {
-    Q_OBJECT
+        /**
+         * Activity doing the actual decompilation.
+         */
+        class Decompilation: public Activity
+        {
+            Q_OBJECT
 
-    /** Context. */
-    std::shared_ptr<core::Context> context_;
+            /** Context. */
+            std::shared_ptr<core::Context> context_;
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param context Valid pointer to the context.
-     */
-    Decompilation(const std::shared_ptr<core::Context> &context);
+            /**
+             * Constructor.
+             *
+             * \param context Valid pointer to the context.
+             */
+            Decompilation(const std::shared_ptr<core::Context> & context);
 
-    /**
-     * Destructor.
-     */
-    ~Decompilation();
+            /**
+             * Destructor.
+             */
+            ~Decompilation();
 
-    protected:
+        protected:
 
-    void work() override;
-};
+            void work() override;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

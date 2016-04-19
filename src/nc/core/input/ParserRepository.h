@@ -30,44 +30,52 @@
 
 #include <QString>
 
-namespace nc { namespace core { namespace input {
+namespace nc
+{
+    namespace core
+    {
+        namespace input
+        {
 
-class Parser;
+            class Parser;
 
-/**
- * Static repository of parsers.
- */
-class ParserRepository {
-    std::vector<std::unique_ptr<Parser>> parsers_;
+            /**
+             * Static repository of parsers.
+             */
+            class ParserRepository
+            {
+                std::vector<std::unique_ptr<Parser>> parsers_;
 
-public:
-    /**
-     * \returns Parser repository instance.
-     */
-    static ParserRepository *instance();
+            public:
+                /**
+                 * \returns Parser repository instance.
+                 */
+                static ParserRepository* instance();
 
-    /**
-     * Registers an parser. The parser must have a name different
-     * from the already registered parsers.
-     *
-     * \param[in] parser Valid pointer to an parser.
-     */
-    void registerParser(std::unique_ptr<Parser> parser);
+                /**
+                 * Registers an parser. The parser must have a name different
+                 * from the already registered parsers.
+                 *
+                 * \param[in] parser Valid pointer to an parser.
+                 */
+                void registerParser(std::unique_ptr<Parser> parser);
 
-    /**
-     * \param[in] name Name of the parser.
-     *
-     * \returns Valid pointer to the parser with the given name,
-     *          or nullptr if no such parser found.
-     */
-    const Parser *getParser(const QString &name) const;
+                /**
+                 * \param[in] name Name of the parser.
+                 *
+                 * \returns Valid pointer to the parser with the given name,
+                 *          or nullptr if no such parser found.
+                 */
+                const Parser* getParser(const QString & name) const;
 
-    /**
-     * \returns List of all registered parsers.
-     */
-    const std::vector<const Parser *> &parsers() const;
-};
+                /**
+                 * \returns List of all registered parsers.
+                 */
+                const std::vector<const Parser*> & parsers() const;
+            };
 
-}}} // namespace nc::core::input
+        }
+    }
+} // namespace nc::core::input
 
 /* vim:set et sts=4 sw=4: */

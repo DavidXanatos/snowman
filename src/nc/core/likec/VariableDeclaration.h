@@ -33,60 +33,65 @@
 #include "Expression.h"
 #include "VariableIdentifier.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-class Type;
+            class Type;
 
-/**
- * Variable declaration.
- */
-class VariableDeclaration: public Declaration, public Commentable {
-    const Type *type_; ///< Type of this variable.
-    std::unique_ptr<VariableIdentifier> variableIdentifier_; ///< Variable identifier node. Needed for refactoring.
-    std::unique_ptr<Expression> initialValue_; ///< Initial value of this variable.
+            /**
+             * Variable declaration.
+             */
+            class VariableDeclaration: public Declaration, public Commentable
+            {
+                const Type* type_; ///< Type of this variable.
+                std::unique_ptr<VariableIdentifier> variableIdentifier_; ///< Variable identifier node. Needed for refactoring.
+                std::unique_ptr<Expression> initialValue_; ///< Initial value of this variable.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] identifier Name of this variable.
-     * \param[in] type Valid pointer to the type of this variable.
-     * \param[in] initialValue Pointer to the expression representing the initial value. Can be nullptr.
-     */
-    VariableDeclaration(QString identifier, const Type *type, std::unique_ptr<Expression> initialValue = nullptr)
-        : Declaration(VARIABLE_DECLARATION, std::move(identifier)), type_(type),
-          variableIdentifier_(new VariableIdentifier(this)), initialValue_(std::move(initialValue)) {
-        assert(type != nullptr);
-    }
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] identifier Name of this variable.
+                 * \param[in] type Valid pointer to the type of this variable.
+                 * \param[in] initialValue Pointer to the expression representing the initial value. Can be nullptr.
+                 */
+                VariableDeclaration(QString identifier, const Type* type, std::unique_ptr<Expression> initialValue = nullptr)
+                    : Declaration(VARIABLE_DECLARATION, std::move(identifier)), type_(type),
+                      variableIdentifier_(new VariableIdentifier(this)), initialValue_(std::move(initialValue))
+                {
+                    assert(type != nullptr);
+                }
 
-    /**
-     * \return Valid pointer to the type of this variable.
-     */
-    const Type *type() const { return type_; }
+                /**
+                 * \return Valid pointer to the type of this variable.
+                 */
+                const Type* type() const { return type_; }
 
-    /**
-     * \return Valid pointer to the variable identifier used in the declaration.
-     */
-    const VariableIdentifier *variableIdentifier() const { return variableIdentifier_.get(); }
+                /**
+                 * \return Valid pointer to the variable identifier used in the declaration.
+                 */
+                const VariableIdentifier* variableIdentifier() const { return variableIdentifier_.get(); }
 
-    /**
-     * \return Pointer to the expression representing the initial value. Can be nullptr.
-     */
-    std::unique_ptr<Expression> &initialValue() { return initialValue_; }
+                /**
+                 * \return Pointer to the expression representing the initial value. Can be nullptr.
+                 */
+                std::unique_ptr<Expression> & initialValue() { return initialValue_; }
 
-    /**
-     * \return Pointer to the expression representing the initial value. Can be nullptr.
-     */
-    const Expression *initialValue() const { return initialValue_.get(); }
+                /**
+                 * \return Pointer to the expression representing the initial value. Can be nullptr.
+                 */
+                const Expression* initialValue() const { return initialValue_.get(); }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Declaration, nc::core::likec::VariableDeclaration, nc::core::likec::Declaration::VARIABLE_DECLARATION)

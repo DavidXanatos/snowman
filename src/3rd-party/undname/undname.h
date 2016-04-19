@@ -18,7 +18,7 @@
  *
  * NOTES
  *   Naming conventions
- *	- Symbols are prefixed with MSVCRT_ if they conflict
+ *  - Symbols are prefixed with MSVCRT_ if they conflict
  *        with libc symbols
  *      - Internal symbols are usually prefixed by msvcrt_.
  *      - Exported symbols that are not present in the public

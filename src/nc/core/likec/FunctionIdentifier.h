@@ -27,49 +27,54 @@
 
 #include "Expression.h"
 
-namespace nc {
-namespace core {
-namespace likec {
-
-class FunctionDeclaration;
-
-/**
- * Function identifier.
- */
-class FunctionIdentifier: public Expression {
-    FunctionDeclaration *declaration_; ///< Declaration of accessed function.
-
-public:
-    /**
-     * \param[in] declaration Valid pointer to a function declaration.
-     */
-    explicit FunctionIdentifier(FunctionDeclaration *declaration):
-        Expression(FUNCTION_IDENTIFIER), declaration_(declaration)
+namespace nc
+{
+    namespace core
     {
-        assert(declaration != nullptr);
-    }
+        namespace likec
+        {
 
-    /**
-     * \return Valid pointer to the function declaration.
-     */
-    FunctionDeclaration *declaration() { return declaration_; }
+            class FunctionDeclaration;
 
-    /**
-     * \return Valid pointer to the function declaration.
-     */
-    const FunctionDeclaration *declaration() const { return declaration_; }
+            /**
+             * Function identifier.
+             */
+            class FunctionIdentifier: public Expression
+            {
+                FunctionDeclaration* declaration_; ///< Declaration of accessed function.
 
-    /**
-     * \param declaration Valid pointer to the function declaration.
-     */
-    void setDeclaration(FunctionDeclaration *declaration) {
-        assert(declaration != nullptr);
-        declaration_ = declaration;
-    }
-};
+            public:
+                /**
+                 * \param[in] declaration Valid pointer to a function declaration.
+                 */
+                explicit FunctionIdentifier(FunctionDeclaration* declaration):
+                    Expression(FUNCTION_IDENTIFIER), declaration_(declaration)
+                {
+                    assert(declaration != nullptr);
+                }
 
-} // namespace likec
-} // namespace core
+                /**
+                 * \return Valid pointer to the function declaration.
+                 */
+                FunctionDeclaration* declaration() { return declaration_; }
+
+                /**
+                 * \return Valid pointer to the function declaration.
+                 */
+                const FunctionDeclaration* declaration() const { return declaration_; }
+
+                /**
+                 * \param declaration Valid pointer to the function declaration.
+                 */
+                void setDeclaration(FunctionDeclaration* declaration)
+                {
+                    assert(declaration != nullptr);
+                    declaration_ = declaration;
+                }
+            };
+
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Expression, nc::core::likec::FunctionIdentifier, nc::core::likec::Expression::FUNCTION_IDENTIFIER)

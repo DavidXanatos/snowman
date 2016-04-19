@@ -30,70 +30,76 @@
 
 #include <QAbstractItemModel>
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    namespace arch {
-        class Instruction;
-        class Instructions;
+    namespace core
+    {
+        namespace arch
+        {
+            class Instruction;
+            class Instructions;
+        }
     }
-}
 
-namespace gui {
+    namespace gui
+    {
 
-/**
- * Item model for InstructionsView.
- */
-class InstructionsModel: public QAbstractItemModel {
-    Q_OBJECT
+        /**
+         * Item model for InstructionsView.
+         */
+        class InstructionsModel: public QAbstractItemModel
+        {
+            Q_OBJECT
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param parent  Pointer to the parent object. Can be nullptr.
-     * \param instructions Pointer to the set of instructions. Can be nullptr.
-     */
-    InstructionsModel(QObject *parent = nullptr, std::shared_ptr<const core::arch::Instructions> instructions = nullptr);
+        public:
+            /**
+             * Constructor.
+             *
+             * \param parent  Pointer to the parent object. Can be nullptr.
+             * \param instructions Pointer to the set of instructions. Can be nullptr.
+             */
+            InstructionsModel(QObject* parent = nullptr, std::shared_ptr<const core::arch::Instructions> instructions = nullptr);
 
-    /**
-     * Sets the set of instructions that must be highlighted.
-     *
-     * \param instructions Instructions that must be highlighted.
-     */
-    void setHighlightedInstructions(std::vector<const core::arch::Instruction *> instructions);
+            /**
+             * Sets the set of instructions that must be highlighted.
+             *
+             * \param instructions Instructions that must be highlighted.
+             */
+            void setHighlightedInstructions(std::vector<const core::arch::Instruction*> instructions);
 
-    /**
-     * \param index Model index.
-     *
-     * \return Pointer to the instruction associated with the index. Can be nullptr.
-     */
-    const core::arch::Instruction *getInstruction(const QModelIndex &index) const;
+            /**
+             * \param index Model index.
+             *
+             * \return Pointer to the instruction associated with the index. Can be nullptr.
+             */
+            const core::arch::Instruction* getInstruction(const QModelIndex & index) const;
 
-    /**
-     * \param[in] instruction Valid pointer to an instruction.
-     *
-     * \return Index for the given instruction.
-     */
-    QModelIndex getIndex(const core::arch::Instruction *instruction) const;
+            /**
+             * \param[in] instruction Valid pointer to an instruction.
+             *
+             * \return Index for the given instruction.
+             */
+            QModelIndex getIndex(const core::arch::Instruction* instruction) const;
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    QModelIndex parent(const QModelIndex &index) const override;
-    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+            int rowCount(const QModelIndex & parent = QModelIndex()) const override;
+            int columnCount(const QModelIndex & parent = QModelIndex()) const override;
+            QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const override;
+            QModelIndex parent(const QModelIndex & index) const override;
+            QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const override;
 
-private:
-    /** Associated set of instructions. */
-    std::shared_ptr<const core::arch::Instructions> instructions_;
+        private:
+            /** Associated set of instructions. */
+            std::shared_ptr<const core::arch::Instructions> instructions_;
 
-    /** Set of instructions as a vector (needed for direct access by index). */
-    std::vector<const core::arch::Instruction *> instructionsVector_;
+            /** Set of instructions as a vector (needed for direct access by index). */
+            std::vector<const core::arch::Instruction*> instructionsVector_;
 
-    /** Sorted vector of instructions that must be highlighted. */
-    std::vector<const core::arch::Instruction *> highlightedInstructions_;
-};
+            /** Sorted vector of instructions that must be highlighted. */
+            std::vector<const core::arch::Instruction*> highlightedInstructions_;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

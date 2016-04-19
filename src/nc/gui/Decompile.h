@@ -27,45 +27,51 @@
 
 #include "Command.h"
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    namespace arch {
-        class Instructions;
+    namespace core
+    {
+        namespace arch
+        {
+            class Instructions;
+        }
     }
-}
 
-namespace gui {
+    namespace gui
+    {
 
-class Project;
+        class Project;
 
-/**
- * 'Decompile' command.
- */
-class Decompile: public Command {
-    Q_OBJECT
+        /**
+         * 'Decompile' command.
+         */
+        class Decompile: public Command
+        {
+            Q_OBJECT
 
-    /** Project. */
-    Project *project_;
+            /** Project. */
+            Project* project_;
 
-    /** Instructions to be decompiled. */
-    std::shared_ptr<const core::arch::Instructions> instructions_;
+            /** Instructions to be decompiled. */
+            std::shared_ptr<const core::arch::Instructions> instructions_;
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param project Valid pointer to a project.
-     * \param instructions List of instructions to be decompiled.
-     */
-    Decompile(Project *project, const std::shared_ptr<const core::arch::Instructions> &instructions);
+            /**
+             * Constructor.
+             *
+             * \param project Valid pointer to a project.
+             * \param instructions List of instructions to be decompiled.
+             */
+            Decompile(Project* project, const std::shared_ptr<const core::arch::Instructions> & instructions);
 
-    protected:
+        protected:
 
-    void work() override;
-};
+            void work() override;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

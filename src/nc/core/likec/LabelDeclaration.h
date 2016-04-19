@@ -27,39 +27,43 @@
 
 #include "Declaration.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Label in function code.
- */
-class LabelDeclaration: public Declaration {
-    int referenceCount_; ///< Number of references to this label in the code.
+            /**
+             * Label in function code.
+             */
+            class LabelDeclaration: public Declaration
+            {
+                int referenceCount_; ///< Number of references to this label in the code.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] identifier Name of the label.
-     */
-    explicit LabelDeclaration(QString identifier):
-        Declaration(LABEL_DECLARATION, std::move(identifier)), referenceCount_(0)
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] identifier Name of the label.
+                 */
+                explicit LabelDeclaration(QString identifier):
+                    Declaration(LABEL_DECLARATION, std::move(identifier)), referenceCount_(0)
+                {}
 
-    /**
-     * Increments reference count by the given delta.
-     */
-    void incReferenceCount(int delta = 1) { referenceCount_ += delta; }
+                /**
+                 * Increments reference count by the given delta.
+                 */
+                void incReferenceCount(int delta = 1) { referenceCount_ += delta; }
 
-    /**
-     * \return Reference count.
-     */
-    int referenceCount() const { return referenceCount_; }
-};
+                /**
+                 * \return Reference count.
+                 */
+                int referenceCount() const { return referenceCount_; }
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Declaration, nc::core::likec::LabelDeclaration, nc::core::likec::Declaration::LABEL_DECLARATION)

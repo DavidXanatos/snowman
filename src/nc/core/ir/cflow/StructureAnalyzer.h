@@ -27,134 +27,140 @@
 
 #include <memory>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-namespace dflow {
-    class Dataflow;
-}
+            namespace dflow
+            {
+                class Dataflow;
+            }
 
-namespace cflow {
+            namespace cflow
+            {
 
-class Dfs;
-class Graph;
-class Node;
-class Region;
+                class Dfs;
+                class Graph;
+                class Node;
+                class Region;
 
-/**
- * Class performing structural analysis on a graph.
- */
-class StructureAnalyzer {
-    /** Graph to analyze. */
-    Graph &graph_;
+                /**
+                 * Class performing structural analysis on a graph.
+                 */
+                class StructureAnalyzer
+                {
+                    /** Graph to analyze. */
+                    Graph & graph_;
 
-    /** Dataflow information. */
-    const dflow::Dataflow &dataflow_;
+                    /** Dataflow information. */
+                    const dflow::Dataflow & dataflow_;
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param graph Graph to analyze.
-     * \param dataflow Dataflow information.
-     */
-    StructureAnalyzer(Graph &graph, const dflow::Dataflow &dataflow):
-        graph_(graph), dataflow_(dataflow)
-    {}
+                public:
+                    /**
+                     * Class constructor.
+                     *
+                     * \param graph Graph to analyze.
+                     * \param dataflow Dataflow information.
+                     */
+                    StructureAnalyzer(Graph & graph, const dflow::Dataflow & dataflow):
+                        graph_(graph), dataflow_(dataflow)
+                    {}
 
-    /**
-     * Performs structural analysis on the graph.
-     */
-    void analyze();
+                    /**
+                     * Performs structural analysis on the graph.
+                     */
+                    void analyze();
 
-private:
-    /**
-     * Runs structural analysis in the region.
-     *
-     * \param[in] region Valid pointer to a region.
-     */
-    void analyze(Region *region);
+                private:
+                    /**
+                     * Runs structural analysis in the region.
+                     *
+                     * \param[in] region Valid pointer to a region.
+                     */
+                    void analyze(Region* region);
 
-    /**
-     * Tries to reduce block region ending in the node.
-     *
-     * \param[in] entry Valid pointer to the entry node.
-     *
-     * \return True if the region was reduced.
-     */
-    bool reduceBlock(Node *entry);
+                    /**
+                     * Tries to reduce block region ending in the node.
+                     *
+                     * \param[in] entry Valid pointer to the entry node.
+                     *
+                     * \return True if the region was reduced.
+                     */
+                    bool reduceBlock(Node* entry);
 
-    /**
-     * Tries to reduce if-then or if-then-else region with given entry.
-     *
-     * \param[in] entry Valid pointer to the entry node.
-     *
-     * \return True if the region was reduced.
-     */
-    bool reduceConditional(Node *entry);
+                    /**
+                     * Tries to reduce if-then or if-then-else region with given entry.
+                     *
+                     * \param[in] entry Valid pointer to the entry node.
+                     *
+                     * \return True if the region was reduced.
+                     */
+                    bool reduceConditional(Node* entry);
 
-    /**
-     * Tries to reduce if-then-else region with given entry.
-     * Successfully reduces regions even if then and else branches do not merge.
-     *
-     * \param[in] entry Valid pointer to the entry node.
-     *
-     * \return True if the region was reduced.
-     */
-    bool reduceHopelessConditional(Node *entry);
+                    /**
+                     * Tries to reduce if-then-else region with given entry.
+                     * Successfully reduces regions even if then and else branches do not merge.
+                     *
+                     * \param[in] entry Valid pointer to the entry node.
+                     *
+                     * \return True if the region was reduced.
+                     */
+                    bool reduceHopelessConditional(Node* entry);
 
-    /**
-     * Tries to reduce compound condition region with given entry.
-     *
-     * \param[in] entry Valid pointer to the entry node.
-     *
-     * \return True if the region was reduced.
-     */
-    bool reduceCompoundCondition(Node *entry);
+                    /**
+                     * Tries to reduce compound condition region with given entry.
+                     *
+                     * \param[in] entry Valid pointer to the entry node.
+                     *
+                     * \return True if the region was reduced.
+                     */
+                    bool reduceCompoundCondition(Node* entry);
 
-    /**
-     * Tries to reduce cyclic region with the given entry.
-     *
-     * \param[in] entry Valid pointer to the entry node.
-     * \param[in] dfs   Depth-first results for node->parent().
-     *                  (Needed for recognizing back edges.)
-     *
-     * \return True if the region was reduced.
-     */
-    bool reduceCyclic(Node *entry, const Dfs &dfs);
+                    /**
+                     * Tries to reduce cyclic region with the given entry.
+                     *
+                     * \param[in] entry Valid pointer to the entry node.
+                     * \param[in] dfs   Depth-first results for node->parent().
+                     *                  (Needed for recognizing back edges.)
+                     *
+                     * \return True if the region was reduced.
+                     */
+                    bool reduceCyclic(Node* entry, const Dfs & dfs);
 
-    /**
-     * Tries to reduce a switch using a jump table.
-     *
-     * \param[in] entry Valid pointer to the switch's entry node.
-     *
-     * \return True if the region was reduced.
-     */
-    bool reduceSwitch(Node *entry);
+                    /**
+                     * Tries to reduce a switch using a jump table.
+                     *
+                     * \param[in] entry Valid pointer to the switch's entry node.
+                     *
+                     * \return True if the region was reduced.
+                     */
+                    bool reduceSwitch(Node* entry);
 
-    /**
-     * Inserts a subregion into a region.
-     * Can fail if the structure of the parent region gets broken because
-     * of this insertion. For example, if the entry node of the region
-     * is in the inserted subregion, but is not subregion's entry node.
-     *
-     * All nodes of the subregion are removed from the region.
-     * All edges from the nodes of the subregion become edges from the subregion.
-     * All edges to the entry node of the subregion become edges to the subregion.
-     * All other edges as well as duplicate edges are deleted.
-     *
-     * \param region Valid pointer to the region.
-     * \param subregion Valid pointer to the subregion.
-     *
-     * \return Pointer to the subregion on success, nullptr on failure.
-     */
-    Region *insertSubregion(Region *region, std::unique_ptr<Region> subregion);
-};
+                    /**
+                     * Inserts a subregion into a region.
+                     * Can fail if the structure of the parent region gets broken because
+                     * of this insertion. For example, if the entry node of the region
+                     * is in the inserted subregion, but is not subregion's entry node.
+                     *
+                     * All nodes of the subregion are removed from the region.
+                     * All edges from the nodes of the subregion become edges from the subregion.
+                     * All edges to the entry node of the subregion become edges to the subregion.
+                     * All other edges as well as duplicate edges are deleted.
+                     *
+                     * \param region Valid pointer to the region.
+                     * \param subregion Valid pointer to the subregion.
+                     *
+                     * \return Pointer to the subregion on success, nullptr on failure.
+                     */
+                    Region* insertSubregion(Region* region, std::unique_ptr<Region> subregion);
+                };
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

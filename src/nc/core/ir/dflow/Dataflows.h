@@ -9,22 +9,26 @@
 
 #include "Dataflow.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Function;
+            class Function;
 
-namespace dflow {
+            namespace dflow
+            {
 
-/**
- * Mapping from a function to its dataflow information.
- */
-class Dataflows: public boost::unordered_map<const Function *, std::unique_ptr<const Dataflow>> {};
+                /**
+                 * Mapping from a function to its dataflow information.
+                 */
+                class Dataflows: public boost::unordered_map<const Function*, std::unique_ptr<const Dataflow>> {};
 
-} // namespace dflow
-} // namespace ir
-} // namespace core
+            } // namespace dflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

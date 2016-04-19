@@ -34,86 +34,100 @@
 #include "CallSignature.h"
 #include "Convention.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace calling {
-
-CallHook::CallHook(const Convention *convention, const CallSignature *signature,
-    const boost::optional<ByteSize> &stackArgumentsSize):
-    stackPointer_(nullptr), snapshotStatement_(nullptr)
+namespace nc
 {
-    assert(convention != nullptr);
+    namespace core
+    {
+        namespace ir
+        {
+            namespace calling
+            {
 
-    auto &statements = patch_.statements();
+                CallHook::CallHook(const Convention* convention, const CallSignature* signature,
+                                   const boost::optional<ByteSize> & stackArgumentsSize):
+                    stackPointer_(nullptr), snapshotStatement_(nullptr)
+                {
+                    assert(convention != nullptr);
 
-    if (convention->stackPointer()) {
-        auto stackPointer = std::make_unique<MemoryLocationAccess>(convention->stackPointer());
-        stackPointer_ = stackPointer.get();
+                    auto & statements = patch_.statements();
 
-        statements.push_back(std::make_unique<Touch>(
-            std::move(stackPointer),
-            Term::READ
-        ));
-    }
+                    if(convention->stackPointer())
+                    {
+                        auto stackPointer = std::make_unique<MemoryLocationAccess>(convention->stackPointer());
+                        stackPointer_ = stackPointer.get();
 
-    auto addArgumentRead = [&](std::unique_ptr<Term> term) {
-        statements.push_back(std::make_unique<Touch>(
-            std::move(term),
-            Term::READ
-        ));
-    };
+                        statements.push_back(std::make_unique<Touch>(
+                                                 std::move(stackPointer),
+                                                 Term::READ
+                                             ));
+                    }
 
-    auto addReturnValueWrite = [&](std::unique_ptr<Term> term) {
-        auto size = term->size();
-        statements.push_back(std::make_unique<Assignment>(
-            std::move(term),
-            std::make_unique<Intrinsic>(Intrinsic::UNDEFINED, size)
-        ));
-    };
+                    auto addArgumentRead = [&](std::unique_ptr<Term> term)
+                    {
+                        statements.push_back(std::make_unique<Touch>(
+                                                 std::move(term),
+                                                 Term::READ
+                                             ));
+                    };
 
-    if (signature) {
-        foreach (const auto &term, signature->arguments()) {
-            auto clone = term->clone();
-            argumentTerms_[term.get()] = clone.get();
-            addArgumentRead(std::move(clone));
-        }
+                    auto addReturnValueWrite = [&](std::unique_ptr<Term> term)
+                    {
+                        auto size = term->size();
+                        statements.push_back(std::make_unique<Assignment>(
+                                                 std::move(term),
+                                                 std::make_unique<Intrinsic>(Intrinsic::UNDEFINED, size)
+                                             ));
+                    };
 
-        if (signature->returnValue()) {
-            auto clone = signature->returnValue()->clone();
-            returnValueTerms_[signature->returnValue().get()] = clone.get();
-            addReturnValueWrite(std::move(clone));
-        }
-    } else {
-        auto snapshotStatement = std::make_unique<RememberReachingDefinitions>();
-        snapshotStatement_ = snapshotStatement.get();
-        statements.push_back(std::move(snapshotStatement));
+                    if(signature)
+                    {
+                        foreach(const auto & term, signature->arguments())
+                        {
+                            auto clone = term->clone();
+                            argumentTerms_[term.get()] = clone.get();
+                            addArgumentRead(std::move(clone));
+                        }
 
-        foreach (const auto &memoryLocation, convention->returnValueLocations()) {
-            auto term = std::make_unique<MemoryLocationAccess>(memoryLocation);
-            speculativeReturnValueTerms_.push_back(std::make_pair(memoryLocation, term.get()));
-            addReturnValueWrite(std::move(term));
-        }
-    }
+                        if(signature->returnValue())
+                        {
+                            auto clone = signature->returnValue()->clone();
+                            returnValueTerms_[signature->returnValue().get()] = clone.get();
+                            addReturnValueWrite(std::move(clone));
+                        }
+                    }
+                    else
+                    {
+                        auto snapshotStatement = std::make_unique<RememberReachingDefinitions>();
+                        snapshotStatement_ = snapshotStatement.get();
+                        statements.push_back(std::move(snapshotStatement));
 
-    if (convention->calleeCleanup() && stackArgumentsSize) {
-        assert(convention->stackPointer());
+                        foreach(const auto & memoryLocation, convention->returnValueLocations())
+                        {
+                            auto term = std::make_unique<MemoryLocationAccess>(memoryLocation);
+                            speculativeReturnValueTerms_.push_back(std::make_pair(memoryLocation, term.get()));
+                            addReturnValueWrite(std::move(term));
+                        }
+                    }
 
-        statements.push_back(std::make_unique<Assignment>(
-            std::make_unique<MemoryLocationAccess>(convention->stackPointer()),
-            std::make_unique<BinaryOperator>(
-                BinaryOperator::ADD,
-                std::make_unique<MemoryLocationAccess>(convention->stackPointer()),
-                std::make_unique<Constant>(SizedValue(convention->stackPointer().size(), *stackArgumentsSize)),
-                convention->stackPointer().size<SmallBitSize>())));
-    }
-}
+                    if(convention->calleeCleanup() && stackArgumentsSize)
+                    {
+                        assert(convention->stackPointer());
 
-CallHook::~CallHook() {}
+                        statements.push_back(std::make_unique<Assignment>(
+                                                 std::make_unique<MemoryLocationAccess>(convention->stackPointer()),
+                                                 std::make_unique<BinaryOperator>(
+                                                     BinaryOperator::ADD,
+                                                     std::make_unique<MemoryLocationAccess>(convention->stackPointer()),
+                                                     std::make_unique<Constant>(SizedValue(convention->stackPointer().size(), *stackArgumentsSize)),
+                                                     convention->stackPointer().size<SmallBitSize>())));
+                    }
+                }
 
-} // namespace calling
-} // namespace ir
-} // namespace core
+                CallHook::~CallHook() {}
+
+            } // namespace calling
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et ts=4 sw=4: */

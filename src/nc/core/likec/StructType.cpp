@@ -26,37 +26,49 @@
 
 #include <nc/common/Foreach.h>
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-void StructType::addMember(std::unique_ptr<MemberDeclaration> memberDeclaration) {
-    setSize(size() + memberDeclaration->type()->sizeOf());
-    members_.push_back(std::move(memberDeclaration));
-}
+            void StructType::addMember(std::unique_ptr<MemberDeclaration> memberDeclaration)
+            {
+                setSize(size() + memberDeclaration->type()->sizeOf());
+                members_.push_back(std::move(memberDeclaration));
+            }
 
-const MemberDeclaration *StructType::getMember(BitSize offset) const {
-    if (offset >= size()) {
-        return 0;
-    }
+            const MemberDeclaration* StructType::getMember(BitSize offset) const
+            {
+                if(offset >= size())
+                {
+                    return 0;
+                }
 
-    /* If this starts lagging someday, organize binary search here. */
-    SmallBitSize currentOffset = 0;
-    foreach (const auto &member, members_) {
-        if (currentOffset == offset) {
-            return member.get();
-        } else if (currentOffset > offset) {
-            break;
-        } else {
-            currentOffset += member->type()->sizeOf();
-        }
-    }
+                /* If this starts lagging someday, organize binary search here. */
+                SmallBitSize currentOffset = 0;
+                foreach(const auto & member, members_)
+                {
+                    if(currentOffset == offset)
+                    {
+                        return member.get();
+                    }
+                    else if(currentOffset > offset)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        currentOffset += member->type()->sizeOf();
+                    }
+                }
 
-    return 0;
-}
+                return 0;
+            }
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

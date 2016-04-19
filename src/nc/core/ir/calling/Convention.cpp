@@ -31,202 +31,245 @@
 #include <nc/core/ir/Statement.h>
 #include <nc/core/ir/Term.h>
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace calling {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace calling
+            {
 
-Convention::Convention(QString name):
-    name_(std::move(name)),
-    firstArgumentOffset_(0),
-    argumentAlignment_(0),
-    calleeCleanup_(false)
-{}
+                Convention::Convention(QString name):
+                    name_(std::move(name)),
+                    firstArgumentOffset_(0),
+                    argumentAlignment_(0),
+                    calleeCleanup_(false)
+                {}
 
-Convention::~Convention() {}
+                Convention::~Convention() {}
 
-namespace {
+                namespace
+                {
 
-/**
- * Rounds given number down to the closest multiple of the multiple.
- */
-template<class T>
-T roundDown(T number, T multiple) {
-    assert(multiple > 0);
+                    /**
+                     * Rounds given number down to the closest multiple of the multiple.
+                     */
+                    template<class T>
+                    T roundDown(T number, T multiple)
+                    {
+                        assert(multiple > 0);
 
-    auto remainder = number % multiple;
-    if (remainder == 0) {
-        return number;
-    }
+                        auto remainder = number % multiple;
+                        if(remainder == 0)
+                        {
+                            return number;
+                        }
 
-    if (number >= 0) {
-        assert(remainder > 0);
-        return number - remainder;
-    } else {
-        assert(remainder < 0);
-        return number - remainder - multiple;
-    }
-}
+                        if(number >= 0)
+                        {
+                            assert(remainder > 0);
+                            return number - remainder;
+                        }
+                        else
+                        {
+                            assert(remainder < 0);
+                            return number - remainder - multiple;
+                        }
+                    }
 
-/**
- * Rounds given number up to the closest multiple of the multiple.
- */
-template<class T>
-T roundUp(T number, T multiple) {
-    assert(multiple > 0);
+                    /**
+                     * Rounds given number up to the closest multiple of the multiple.
+                     */
+                    template<class T>
+                    T roundUp(T number, T multiple)
+                    {
+                        assert(multiple > 0);
 
-    auto remainder = number % multiple;
-    if (remainder == 0) {
-        return number;
-    }
+                        auto remainder = number % multiple;
+                        if(remainder == 0)
+                        {
+                            return number;
+                        }
 
-    if (number >= 0) {
-        assert(remainder > 0);
-        return number - remainder + multiple;
-    } else {
-        assert(remainder < 0);
-        return number - remainder;
-    }
-}
+                        if(number >= 0)
+                        {
+                            assert(remainder > 0);
+                            return number - remainder + multiple;
+                        }
+                        else
+                        {
+                            assert(remainder < 0);
+                            return number - remainder;
+                        }
+                    }
 
 #ifndef NDEBUG
-bool testRounding() {
-    assert(roundDown(3, 4) == 0);
-    assert(roundDown(5, 4) == 4);
-    assert(roundDown(-3, 4) == -4);
-    assert(roundDown(-5, 4) == -8);
+                    bool testRounding()
+                    {
+                        assert(roundDown(3, 4) == 0);
+                        assert(roundDown(5, 4) == 4);
+                        assert(roundDown(-3, 4) == -4);
+                        assert(roundDown(-5, 4) == -8);
 
-    assert(roundUp(3, 4) == 4);
-    assert(roundUp(5, 4) == 8);
-    assert(roundUp(-3, 4) == 0);
-    assert(roundUp(-5, 4) == -4);
+                        assert(roundUp(3, 4) == 4);
+                        assert(roundUp(5, 4) == 8);
+                        assert(roundUp(-3, 4) == 0);
+                        assert(roundUp(-5, 4) == -4);
 
-    return true;
-}
+                        return true;
+                    }
 
-const bool roundingWorks = (NC_UNUSED(roundingWorks), testRounding());
+                    const bool roundingWorks = (NC_UNUSED(roundingWorks), testRounding());
 #endif
 
-} // anonymous namespace
+                } // anonymous namespace
 
-MemoryLocation Convention::getArgumentLocationCovering(const MemoryLocation &memoryLocation) const {
-    if (!memoryLocation) {
-        return MemoryLocation();
-    }
-
-    /* Note: this assumes the stack growing down. */
-    if (memoryLocation.domain() == MemoryDomain::STACK &&
-        memoryLocation.addr() >= firstArgumentOffset()
-    ) {
-        /* Align the location properly. */
-        if (argumentAlignment()) {
-            auto addr = roundDown(memoryLocation.addr(), argumentAlignment());
-            auto endAddr = roundUp(memoryLocation.endAddr(), argumentAlignment());
-            return MemoryLocation(MemoryDomain::STACK, addr, endAddr - addr);
-        } else {
-            return memoryLocation;
-        }
-    }
-
-    foreach (const auto &argumentLocations, argumentGroups()) {
-        foreach (const auto &argumentLocation, argumentLocations) {
-            if (argumentLocation.covers(memoryLocation)) {
-                return argumentLocation;
-            }
-        }
-    }
-
-    return MemoryLocation();
-}
-
-std::vector<MemoryLocation> Convention::sortArguments(std::vector<MemoryLocation> arguments) const {
-    assert(!nc::contains(arguments, MemoryLocation()));
-
-    std::vector<MemoryLocation> result;
-    result.reserve(arguments.size());
-
-    /* Copy non-stack arguments in the order. */
-    bool someGroupIsFilled = argumentGroups().empty();
-
-    foreach (const auto &argumentLocations, argumentGroups()) {
-        bool groupIsFilled = true;
-
-        foreach (const auto &argumentLocation, argumentLocations) {
-            bool argumentFound = false;
-
-            foreach (MemoryLocation &memoryLocation, arguments) {
-                if (argumentLocation.covers(memoryLocation)) {
-                    result.push_back(memoryLocation);
-                    memoryLocation = MemoryLocation();
-                    argumentFound = true;
-                }
-            }
-
-            if (!argumentFound) {
-                groupIsFilled = false;
-                break;
-            }
-        }
-
-        someGroupIsFilled = someGroupIsFilled || groupIsFilled;
-    }
-
-    /* If some group was completely filled, copy the stack arguments. */
-    if (someGroupIsFilled) {
-        arguments.erase(
-            std::remove_if(arguments.begin(), arguments.end(),
-                [](const MemoryLocation &memoryLocation) {
-                    return memoryLocation.domain() != MemoryDomain::STACK;
-                }),
-            arguments.end());
-
-        if (!arguments.empty()) {
-            std::sort(arguments.begin(), arguments.end());
-
-            BitAddr nextArgumentOffset = firstArgumentOffset();
-
-            foreach (const auto &memoryLocation, arguments) {
-                if (nextArgumentOffset <= memoryLocation.addr() &&
-                    memoryLocation.addr() < nextArgumentOffset + argumentAlignment())
+                MemoryLocation Convention::getArgumentLocationCovering(const MemoryLocation & memoryLocation) const
                 {
-                    result.push_back(memoryLocation);
-                    nextArgumentOffset = getArgumentLocationCovering(memoryLocation).endAddr();
-                } else {
-                    break;
+                    if(!memoryLocation)
+                    {
+                        return MemoryLocation();
+                    }
+
+                    /* Note: this assumes the stack growing down. */
+                    if(memoryLocation.domain() == MemoryDomain::STACK &&
+                            memoryLocation.addr() >= firstArgumentOffset()
+                      )
+                    {
+                        /* Align the location properly. */
+                        if(argumentAlignment())
+                        {
+                            auto addr = roundDown(memoryLocation.addr(), argumentAlignment());
+                            auto endAddr = roundUp(memoryLocation.endAddr(), argumentAlignment());
+                            return MemoryLocation(MemoryDomain::STACK, addr, endAddr - addr);
+                        }
+                        else
+                        {
+                            return memoryLocation;
+                        }
+                    }
+
+                    foreach(const auto & argumentLocations, argumentGroups())
+                    {
+                        foreach(const auto & argumentLocation, argumentLocations)
+                        {
+                            if(argumentLocation.covers(memoryLocation))
+                            {
+                                return argumentLocation;
+                            }
+                        }
+                    }
+
+                    return MemoryLocation();
                 }
-            }
-        }
-    }
 
-    return result;
-}
+                std::vector<MemoryLocation> Convention::sortArguments(std::vector<MemoryLocation> arguments) const
+                {
+                    assert(!nc::contains(arguments, MemoryLocation()));
 
-void Convention::addArgumentGroup(std::vector<MemoryLocation> memoryLocations) {
-    argumentGroups_.push_back(std::move(memoryLocations));
-}
+                    std::vector<MemoryLocation> result;
+                    result.reserve(arguments.size());
 
-MemoryLocation Convention::getReturnValueLocationCovering(const MemoryLocation &memoryLocation) const {
-    foreach (const auto &returnValueLocation, returnValueLocations_) {
-        if (returnValueLocation.covers(memoryLocation)) {
-            return returnValueLocation;
-        }
-    }
-    return MemoryLocation();
-}
+                    /* Copy non-stack arguments in the order. */
+                    bool someGroupIsFilled = argumentGroups().empty();
 
-void Convention::addReturnValueLocation(const MemoryLocation &memoryLocation) {
-    assert(memoryLocation);
-    returnValueLocations_.push_back(memoryLocation);
-}
+                    foreach(const auto & argumentLocations, argumentGroups())
+                    {
+                        bool groupIsFilled = true;
 
-void Convention::addEnterStatement(std::unique_ptr<Statement> statement) {
-    assert(statement != nullptr);
-    entryStatements_.push_back(std::move(statement));
-}
+                        foreach(const auto & argumentLocation, argumentLocations)
+                        {
+                            bool argumentFound = false;
 
-} // namespace calling
-} // namespace ir
-} // namespace core
+                            foreach(MemoryLocation & memoryLocation, arguments)
+                            {
+                                if(argumentLocation.covers(memoryLocation))
+                                {
+                                    result.push_back(memoryLocation);
+                                    memoryLocation = MemoryLocation();
+                                    argumentFound = true;
+                                }
+                            }
+
+                            if(!argumentFound)
+                            {
+                                groupIsFilled = false;
+                                break;
+                            }
+                        }
+
+                        someGroupIsFilled = someGroupIsFilled || groupIsFilled;
+                    }
+
+                    /* If some group was completely filled, copy the stack arguments. */
+                    if(someGroupIsFilled)
+                    {
+                        arguments.erase(
+                            std::remove_if(arguments.begin(), arguments.end(),
+                                           [](const MemoryLocation & memoryLocation)
+                        {
+                            return memoryLocation.domain() != MemoryDomain::STACK;
+                        }),
+                        arguments.end());
+
+                        if(!arguments.empty())
+                        {
+                            std::sort(arguments.begin(), arguments.end());
+
+                            BitAddr nextArgumentOffset = firstArgumentOffset();
+
+                            foreach(const auto & memoryLocation, arguments)
+                            {
+                                if(nextArgumentOffset <= memoryLocation.addr() &&
+                                        memoryLocation.addr() < nextArgumentOffset + argumentAlignment())
+                                {
+                                    result.push_back(memoryLocation);
+                                    nextArgumentOffset = getArgumentLocationCovering(memoryLocation).endAddr();
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    return result;
+                }
+
+                void Convention::addArgumentGroup(std::vector<MemoryLocation> memoryLocations)
+                {
+                    argumentGroups_.push_back(std::move(memoryLocations));
+                }
+
+                MemoryLocation Convention::getReturnValueLocationCovering(const MemoryLocation & memoryLocation) const
+                {
+                    foreach(const auto & returnValueLocation, returnValueLocations_)
+                    {
+                        if(returnValueLocation.covers(memoryLocation))
+                        {
+                            return returnValueLocation;
+                        }
+                    }
+                    return MemoryLocation();
+                }
+
+                void Convention::addReturnValueLocation(const MemoryLocation & memoryLocation)
+                {
+                    assert(memoryLocation);
+                    returnValueLocations_.push_back(memoryLocation);
+                }
+
+                void Convention::addEnterStatement(std::unique_ptr<Statement> statement)
+                {
+                    assert(statement != nullptr);
+                    entryStatements_.push_back(std::move(statement));
+                }
+
+            } // namespace calling
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

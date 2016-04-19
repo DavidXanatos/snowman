@@ -26,45 +26,65 @@
 
 #include "Statements.h"
 
-namespace nc { namespace core { namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-void Term::setStatement(const Statement *statement) {
-    assert(statement_ == nullptr);
-    assert(statement != nullptr);
+            void Term::setStatement(const Statement* statement)
+            {
+                assert(statement_ == nullptr);
+                assert(statement != nullptr);
 
-    statement_ = statement;
+                statement_ = statement;
 
-    callOnChildren([statement](Term *term) { term->setStatement(statement); });
-}
+                callOnChildren([statement](Term * term) { term->setStatement(statement); });
+            }
 
-Term::AccessType Term::accessType() const {
-    assert(statement() && "Each term must belong to a statement.");
+            Term::AccessType Term::accessType() const
+            {
+                assert(statement() && "Each term must belong to a statement.");
 
-    if (auto assignment = statement()->asAssignment()) {
-        if (assignment->left() == this) {
-            return WRITE;
-        } else {
-            return READ;
+                if(auto assignment = statement()->asAssignment())
+                {
+                    if(assignment->left() == this)
+                    {
+                        return WRITE;
+                    }
+                    else
+                    {
+                        return READ;
+                    }
+                }
+                else if(auto touch = statement()->asTouch())
+                {
+                    return touch->accessType();
+                }
+                else
+                {
+                    return READ;
+                }
+            }
+
+            const Term* Term::source() const
+            {
+                assert(statement() && "Each term must belong to a statement.");
+
+                if(auto assignment = statement()->as<Assignment>())
+                {
+                    if(assignment->left() == this)
+                    {
+                        return assignment->right();
+                    }
+                }
+
+                return nullptr;
+            }
+
         }
-    } else if (auto touch = statement()->asTouch()) {
-        return touch->accessType();
-    } else {
-        return READ;
     }
-}
-
-const Term *Term::source() const {
-    assert(statement() && "Each term must belong to a statement.");
-
-    if (auto assignment = statement()->as<Assignment>()) {
-        if (assignment->left() == this) {
-            return assignment->right();
-        }
-    }
-
-    return nullptr;
-}
-
-}}} // namespace nc::core::ir
+} // namespace nc::core::ir
 
 /* vim:set et sts=4 sw=4: */

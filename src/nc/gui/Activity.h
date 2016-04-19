@@ -28,38 +28,42 @@
 #include <QObject>
 #include <QRunnable>
 
-namespace nc {
-namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-/**
- * Base class for background activities.
- */
-class Activity: public QObject, public QRunnable {
-    Q_OBJECT
+        /**
+         * Base class for background activities.
+         */
+        class Activity: public QObject, public QRunnable
+        {
+            Q_OBJECT
 
-    public:
+        public:
 
-    /**
-     * Does the work and emits the finished() signal.
-     */
-    void run() override;
+            /**
+             * Does the work and emits the finished() signal.
+             */
+            void run() override;
 
-    protected:
+        protected:
 
-    /**
-     * This function does the real work.
-     * Override it in subclasses.
-     */
-    virtual void work() = 0;
+            /**
+             * This function does the real work.
+             * Override it in subclasses.
+             */
+            virtual void work() = 0;
 
-    Q_SIGNALS:
+        Q_SIGNALS:
 
-    /**
-     * This signal is emitted when the activity has finished execution.
-     */
-    void finished();
-};
+            /**
+             * This signal is emitted when the activity has finished execution.
+             */
+            void finished();
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

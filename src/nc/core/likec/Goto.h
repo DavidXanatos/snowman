@@ -30,42 +30,46 @@
 #include "Expression.h"
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Goto statement.
- */
-class Goto: public Statement {
-    std::unique_ptr<Expression> destination_; ///< Goto destination address.
+            /**
+             * Goto statement.
+             */
+            class Goto: public Statement
+            {
+                std::unique_ptr<Expression> destination_; ///< Goto destination address.
 
-    public:
+            public:
 
-    /**
-     * Class constructor.
-     *
-     * \param[in] destination Goto destination address.
-     */
-    explicit Goto(std::unique_ptr<Expression> destination):
-        Statement(GOTO), destination_(std::move(destination)) {}
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] destination Goto destination address.
+                 */
+                explicit Goto(std::unique_ptr<Expression> destination):
+                    Statement(GOTO), destination_(std::move(destination)) {}
 
-    /**
-     * \return Goto destination address.
-     */
-    std::unique_ptr<Expression> &destination() { return destination_; }
+                /**
+                 * \return Goto destination address.
+                 */
+                std::unique_ptr<Expression> & destination() { return destination_; }
 
-    /**
-     * \return Goto destination address.
-     */
-    const Expression *destination() const { return destination_.get(); }
+                /**
+                 * \return Goto destination address.
+                 */
+                const Expression* destination() const { return destination_.get(); }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::Goto, nc::core::likec::Statement::GOTO)

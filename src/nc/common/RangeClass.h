@@ -25,112 +25,121 @@
 
 #include <cassert>
 
-namespace nc {
-
-/**
- * Immutable class for representing ranges.
- *
- * A range is represented by its start and end.
- * The start belongs to the range, the end does not.
- *
- * \tparam T Type of range boundaries.
- */
-template<class T>
-class Range {
-    T start_; ///< Start of the range.
-    T end_; ///< End of the range.
-
-public:
-    /**
-     * Constructor of an invalid range.
-     */
-    Range(): start_(0), end_(-1) {}
+namespace nc
+{
 
     /**
-     * Constructor of a valid range.
+     * Immutable class for representing ranges.
      *
-     * \param start     Start of the range.
-     * \param end       End of the range.
+     * A range is represented by its start and end.
+     * The start belongs to the range, the end does not.
+     *
+     * \tparam T Type of range boundaries.
      */
-    Range(T start, T end):
-        start_(start), end_(end)
+    template<class T>
+    class Range
     {
-        assert(start <= end);
+        T start_; ///< Start of the range.
+        T end_; ///< End of the range.
+
+    public:
+        /**
+         * Constructor of an invalid range.
+         */
+        Range(): start_(0), end_(-1) {}
+
+        /**
+         * Constructor of a valid range.
+         *
+         * \param start     Start of the range.
+         * \param end       End of the range.
+         */
+        Range(T start, T end):
+            start_(start), end_(end)
+        {
+            assert(start <= end);
+        }
+
+        /**
+         * \return Start of the range --- the first position in the range.
+         */
+        T start() const { return start_; }
+
+        /**
+         * \return End of the range --- the first position not in the range.
+         */
+        T end() const { return end_; }
+
+        /**
+         * \return end() - start()
+         */
+        T length() const { return end() - start(); }
+
+        /**
+         * \return start() + length() / 2
+         */
+        T center() const { return start() + length() / 2; }
+
+        /**
+         * \param position Position.
+         *
+         * \return True if the range contains given position, false otherwise.
+         */
+        bool contains(T position) const { return start() <= position && position < end(); }
+
+        /**
+         * \return True iff *this and that are disjoint ranges.
+         */
+        bool disjoint(const Range<T> & that) const
+        {
+            return this->end() <= that.start() || that.end() <= this->start();
+        }
+
+        /**
+         * \return True iff *this and that are overlapping ranges.
+         */
+        bool overlaps(const Range<T> & that) const
+        {
+            return !disjoint(that);
+        }
+
+        /**
+         * \return This range shifted by the given offset.
+         */
+        Range<T> shifted(T offset) const
+        {
+            return Range<T>(start() + offset, end() + offset);
+        }
+
+        /**
+         * \return Non-zero pointer if and only if the range is valid.
+         */
+        operator const void* () const { return start() <= end() ? this : 0; }
+    };
+
+    template<class T>
+    inline bool operator==(const Range<T> & a, const Range<T> & b)
+    {
+        return a.start() == b.start() && a.end() == b.end();
     }
 
-    /**
-     * \return Start of the range --- the first position in the range.
-     */
-    T start() const { return start_; }
-
-    /**
-     * \return End of the range --- the first position not in the range.
-     */
-    T end() const { return end_; }
-
-    /**
-     * \return end() - start()
-     */
-    T length() const { return end() - start(); }
-
-    /**
-     * \return start() + length() / 2
-     */
-    T center() const { return start() + length() / 2; }
-
-    /**
-     * \param position Position.
-     *
-     * \return True if the range contains given position, false otherwise.
-     */
-    bool contains(T position) const { return start() <= position && position < end(); }
-
-    /**
-     * \return True iff *this and that are disjoint ranges.
-     */
-    bool disjoint(const Range<T> &that) const {
-        return this->end() <= that.start() || that.end() <= this->start();
+    template<class T>
+    inline bool operator!=(const Range<T> & a, const Range<T> & b)
+    {
+        return !(a == b);
     }
 
-    /**
-     * \return True iff *this and that are overlapping ranges.
-     */
-    bool overlaps(const Range<T> &that) const {
-        return !disjoint(that);
+    template<class T>
+    inline bool operator<(const Range<T> & a, const Range<T> & b)
+    {
+        return a.start() < b.start() || (a.start() == b.start() && a.end() < b.end());
     }
 
-    /**
-     * \return This range shifted by the given offset.
-     */
-    Range<T> shifted(T offset) const {
-        return Range<T>(start() + offset, end() + offset);
+    template<class T>
+    Range<T> make_range(T start, T end)
+    {
+        return Range<T>(start, end);
     }
-
-    /**
-     * \return Non-zero pointer if and only if the range is valid.
-     */
-    operator const void *() const { return start() <= end() ? this : 0; }
-};
-
-template<class T>
-inline bool operator==(const Range<T> &a, const Range<T> &b) {
-    return a.start() == b.start() && a.end() == b.end();
-}
-
-template<class T>
-inline bool operator!=(const Range<T> &a, const Range<T> &b) {
-    return !(a == b);
-}
-
-template<class T>
-inline bool operator<(const Range<T> &a, const Range<T> &b) {
-    return a.start() < b.start() || (a.start() == b.start() && a.end() < b.end());
-}
-
-template<class T>
-Range<T> make_range(T start, T end) {
-    return Range<T>(start, end);
-}
 
 } // namespace nc
 

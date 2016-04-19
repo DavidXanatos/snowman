@@ -26,16 +26,20 @@
 
 #include <QTextStream>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-void MemoryLocation::print(QTextStream &out) const {
-    out << "<" << domain_ << ":" << addr_ << ".." << (addr_ + size_ - 1) << ">";
-}
+            void MemoryLocation::print(QTextStream & out) const
+            {
+                out << "<" << domain_ << ":" << addr_ << ".." << (addr_ + size_ - 1) << ">";
+            }
 
-} // namespace ir
-} // namespace core
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

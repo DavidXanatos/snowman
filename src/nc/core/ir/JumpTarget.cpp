@@ -30,51 +30,59 @@
 
 #include "Term.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-
-JumpTarget::JumpTarget(): basicBlock_(nullptr) {}
-
-JumpTarget::JumpTarget(std::unique_ptr<Term> address):
-    address_(std::move(address)), basicBlock_(nullptr)
+namespace nc
 {
-    assert(address_ != nullptr);
-}
+    namespace core
+    {
+        namespace ir
+        {
 
-JumpTarget::JumpTarget(BasicBlock *basicBlock):
-    basicBlock_(basicBlock)
-{
-    assert(basicBlock != nullptr);
-}
+            JumpTarget::JumpTarget(): basicBlock_(nullptr) {}
 
-JumpTarget::JumpTarget(const JumpTarget &other):
-    address_(other.address_ ? other.address_->clone() : nullptr),
-    basicBlock_(other.basicBlock_),
-    table_(other.table_ ? new JumpTable(*other.table_) : nullptr)
-{}
+            JumpTarget::JumpTarget(std::unique_ptr<Term> address):
+                address_(std::move(address)), basicBlock_(nullptr)
+            {
+                assert(address_ != nullptr);
+            }
 
-JumpTarget::JumpTarget(JumpTarget &&other):
-    address_(std::move(other.address_)), basicBlock_(other.basicBlock_), table_(std::move(other.table_))
-{}
+            JumpTarget::JumpTarget(BasicBlock* basicBlock):
+                basicBlock_(basicBlock)
+            {
+                assert(basicBlock != nullptr);
+            }
 
-JumpTarget::~JumpTarget() {}
+            JumpTarget::JumpTarget(const JumpTarget & other):
+                address_(other.address_ ? other.address_->clone() : nullptr),
+                basicBlock_(other.basicBlock_),
+                table_(other.table_ ? new JumpTable(*other.table_) : nullptr)
+            {}
 
-void JumpTarget::setAddress(std::unique_ptr<Term> address) {
-    assert(address != nullptr);
-    address_ = std::move(address);
-}
+            JumpTarget::JumpTarget(JumpTarget && other):
+                address_(std::move(other.address_)), basicBlock_(other.basicBlock_), table_(std::move(other.table_))
+            {}
 
-void JumpTarget::print(QTextStream &out) const {
-    if (address()) {
-        out << "address " << *address();
-    } else if (basicBlock()) {
-        out << "basic block " << basicBlock();
-    }
-}
+            JumpTarget::~JumpTarget() {}
 
-} // namespace ir
-} // namespace core
+            void JumpTarget::setAddress(std::unique_ptr<Term> address)
+            {
+                assert(address != nullptr);
+                address_ = std::move(address);
+            }
+
+            void JumpTarget::print(QTextStream & out) const
+            {
+                if(address())
+                {
+                    out << "address " << *address();
+                }
+                else if(basicBlock())
+                {
+                    out << "basic block " << basicBlock();
+                }
+            }
+
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

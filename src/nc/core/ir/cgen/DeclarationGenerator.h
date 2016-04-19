@@ -31,110 +31,117 @@
 
 #include "CodeGenerator.h"
 
-namespace nc {
-namespace core {
+namespace nc
+{
+    namespace core
+    {
 
-namespace likec {
-    class ArgumentDeclaration;
-    class FunctionDeclaration;
-    class Tree;
-}
+        namespace likec
+        {
+            class ArgumentDeclaration;
+            class FunctionDeclaration;
+            class Tree;
+        }
 
-namespace ir {
+        namespace ir
+        {
 
-class Term;
+            class Term;
 
-namespace calling {
-    class FunctionSignature;
-}
+            namespace calling
+            {
+                class FunctionSignature;
+            }
 
-namespace cgen {
+            namespace cgen
+            {
 
-/**
- * Generator of function declarations.
- */
-class DeclarationGenerator: boost::noncopyable {
-    CodeGenerator &parent_;
-    calling::CalleeId calleeId_;
-    const calling::FunctionSignature *signature_;
-    likec::FunctionDeclaration *declaration_;
+                /**
+                 * Generator of function declarations.
+                 */
+                class DeclarationGenerator: boost::noncopyable
+                {
+                    CodeGenerator & parent_;
+                    calling::CalleeId calleeId_;
+                    const calling::FunctionSignature* signature_;
+                    likec::FunctionDeclaration* declaration_;
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param parent Parent code generator.
-     * \param calleeId Id of the function.
-     * \param signature Valid pointer to the function's signature.
-     */
-    DeclarationGenerator(CodeGenerator &parent, const calling::CalleeId &calleeId, const calling::FunctionSignature *signature);
+                public:
+                    /**
+                     * Constructor.
+                     *
+                     * \param parent Parent code generator.
+                     * \param calleeId Id of the function.
+                     * \param signature Valid pointer to the function's signature.
+                     */
+                    DeclarationGenerator(CodeGenerator & parent, const calling::CalleeId & calleeId, const calling::FunctionSignature* signature);
 
-    /**
-     * Virtual destructor.
-     */
-    virtual ~DeclarationGenerator() {}
+                    /**
+                     * Virtual destructor.
+                     */
+                    virtual ~DeclarationGenerator() {}
 
-    /**
-     * \return Parent code generator.
-     */
-    CodeGenerator &parent() const { return parent_; }
+                    /**
+                     * \return Parent code generator.
+                     */
+                    CodeGenerator & parent() const { return parent_; }
 
-    /**
-     * \return LikeC tree.
-     */
-    likec::Tree &tree() const { return parent().tree(); }
+                    /**
+                     * \return LikeC tree.
+                     */
+                    likec::Tree & tree() const { return parent().tree(); }
 
-    /**
-     * \return Pointer to the signature of the function, for which
-     *         declaration is generated. Can be nullptr.
-     */
-    const calling::FunctionSignature *signature() const { return signature_; }
+                    /**
+                     * \return Pointer to the signature of the function, for which
+                     *         declaration is generated. Can be nullptr.
+                     */
+                    const calling::FunctionSignature* signature() const { return signature_; }
 
-    /**
-     * \return Function's declaration.
-     */
-    likec::FunctionDeclaration *declaration() const { return declaration_; }
+                    /**
+                     * \return Function's declaration.
+                     */
+                    likec::FunctionDeclaration* declaration() const { return declaration_; }
 
-    /**
-     * Sets function's declaration without taking ownership of it.
-     *
-     * \param[in] declaration Function's declaration.
-     */
-    void setDeclaration(likec::FunctionDeclaration *declaration);
+                    /**
+                     * Sets function's declaration without taking ownership of it.
+                     *
+                     * \param[in] declaration Function's declaration.
+                     */
+                    void setDeclaration(likec::FunctionDeclaration* declaration);
 
-    /**
-     * Creates function's declaration and sets function's declaration to it.
-     *
-     * \return Valid pointer to the created declaration.
-     */
-    std::unique_ptr<likec::FunctionDeclaration> createDeclaration();
+                    /**
+                     * Creates function's declaration and sets function's declaration to it.
+                     *
+                     * \return Valid pointer to the created declaration.
+                     */
+                    std::unique_ptr<likec::FunctionDeclaration> createDeclaration();
 
-protected:
-    /**
-     * \return Type of function's return value.
-     */
-    const likec::Type *makeReturnType();
+                protected:
+                    /**
+                     * \return Type of function's return value.
+                     */
+                    const likec::Type* makeReturnType();
 
-    /**
-     * \return Whether the function has variable number of arguments.
-     */
-    bool variadic() const;
+                    /**
+                     * \return Whether the function has variable number of arguments.
+                     */
+                    bool variadic() const;
 
-    /**
-     * Creates the declaration of a function's argument.
-     * Declaration is automatically added to the list of formal arguments
-     * of current function's declaration.
-     *
-     * \param[in] term Valid pointer to the term representing the argument.
-     *
-     * \return Created declaration of function's argument.
-     */
-    likec::ArgumentDeclaration *makeArgumentDeclaration(const Term *term);
-};
+                    /**
+                     * Creates the declaration of a function's argument.
+                     * Declaration is automatically added to the list of formal arguments
+                     * of current function's declaration.
+                     *
+                     * \param[in] term Valid pointer to the term representing the argument.
+                     *
+                     * \return Created declaration of function's argument.
+                     */
+                    likec::ArgumentDeclaration* makeArgumentDeclaration(const Term* term);
+                };
 
-} // namespace cgen
-} // namespace ir
-} // namespace core
+            } // namespace cgen
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

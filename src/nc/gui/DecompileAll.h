@@ -27,39 +27,44 @@
 
 #include "Command.h"
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    class Instructions;
-}
+    namespace core
+    {
+        class Instructions;
+    }
 
-namespace gui {
+    namespace gui
+    {
 
-class Project;
+        class Project;
 
-/**
- * 'Decompile all' command.
- */
-class DecompileAll: public Command {
-    Q_OBJECT
+        /**
+         * 'Decompile all' command.
+         */
+        class DecompileAll: public Command
+        {
+            Q_OBJECT
 
-    /** Project. */
-    Project *project_;
+            /** Project. */
+            Project* project_;
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param project Valid pointer to a project.
-     */
-    explicit DecompileAll(Project *project);
+            /**
+             * Constructor.
+             *
+             * \param project Valid pointer to a project.
+             */
+            explicit DecompileAll(Project* project);
 
-    protected:
+        protected:
 
-    void work() override;
-};
+            void work() override;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

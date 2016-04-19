@@ -24,14 +24,18 @@
 
 #include "Activity.h"
 
-namespace nc {
-namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-void Activity::run() {
-    work();
-    Q_EMIT finished();
-}
+        void Activity::run()
+        {
+            work();
+            Q_EMIT finished();
+        }
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

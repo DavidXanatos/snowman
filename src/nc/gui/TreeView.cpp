@@ -41,177 +41,208 @@
 #include "SearchWidget.h"
 #include "TreeViewSearcher.h"
 
-namespace nc { namespace gui {
-
-TreeView::TreeView(const QString &title, QWidget *parent):
-    QDockWidget(title, parent)
+namespace nc
 {
-    treeView_ = new QTreeView(this);
+    namespace gui
+    {
 
-    treeView_->setContextMenuPolicy(Qt::CustomContextMenu);
-    treeView_->viewport()->installEventFilter(this);
+        TreeView::TreeView(const QString & title, QWidget* parent):
+            QDockWidget(title, parent)
+        {
+            treeView_ = new QTreeView(this);
 
-    connect(treeView_, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
-    connect(this, SIGNAL(contextMenuCreated(QMenu *)), this, SLOT(populateContextMenu(QMenu *)));
+            treeView_->setContextMenuPolicy(Qt::CustomContextMenu);
+            treeView_->viewport()->installEventFilter(this);
 
-    auto searchWidget = new SearchWidget(std::make_unique<TreeViewSearcher>(treeView_), this);
-    searchWidget->hide();
+            connect(treeView_, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
+            connect(this, SIGNAL(contextMenuCreated(QMenu*)), this, SLOT(populateContextMenu(QMenu*)));
 
-    QWidget *widget = new QWidget(this);
+            auto searchWidget = new SearchWidget(std::make_unique<TreeViewSearcher>(treeView_), this);
+            searchWidget->hide();
 
-    QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->setContentsMargins(QMargins());
-    layout->addWidget(treeView_);
-    layout->addWidget(searchWidget);
+            QWidget* widget = new QWidget(this);
 
-    setWidget(widget);
+            QVBoxLayout* layout = new QVBoxLayout(widget);
+            layout->setContentsMargins(QMargins());
+            layout->addWidget(treeView_);
+            layout->addWidget(searchWidget);
 
-    QList<QKeySequence> searchShortcuts;
-    searchShortcuts.append(QKeySequence::Find);
-    searchShortcuts.append(tr("/"));
+            setWidget(widget);
 
-    copyAction_ = new QAction(tr("Copy"), this);
-    copyAction_->setShortcut(QKeySequence::Copy);
-    copyAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    treeView()->addAction(copyAction_);
+            QList<QKeySequence> searchShortcuts;
+            searchShortcuts.append(QKeySequence::Find);
+            searchShortcuts.append(tr("/"));
 
-    connect(copyAction_, SIGNAL(triggered()), this, SLOT(copy()));
+            copyAction_ = new QAction(tr("Copy"), this);
+            copyAction_->setShortcut(QKeySequence::Copy);
+            copyAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+            treeView()->addAction(copyAction_);
 
-    openSearchAction_ = new QAction(tr("Find..."), this);
-    openSearchAction_->setShortcuts(searchShortcuts);
-    openSearchAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    addAction(openSearchAction_);
-    connect(openSearchAction_, SIGNAL(triggered()), searchWidget, SLOT(activate()));
+            connect(copyAction_, SIGNAL(triggered()), this, SLOT(copy()));
 
-    findNextAction_ = new QAction(tr("Find Next"), this);
-    findNextAction_->setShortcut(QKeySequence::FindNext);
-    findNextAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    addAction(findNextAction_);
-    connect(findNextAction_, SIGNAL(triggered()), searchWidget, SLOT(findNext()));
+            openSearchAction_ = new QAction(tr("Find..."), this);
+            openSearchAction_->setShortcuts(searchShortcuts);
+            openSearchAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+            addAction(openSearchAction_);
+            connect(openSearchAction_, SIGNAL(triggered()), searchWidget, SLOT(activate()));
 
-    findPreviousAction_ = new QAction(tr("Find Previous"), this);
-    findPreviousAction_->setShortcut(QKeySequence::FindPrevious);
-    findPreviousAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    addAction(findPreviousAction_);
-    connect(findPreviousAction_, SIGNAL(triggered()), searchWidget, SLOT(findPrevious()));
+            findNextAction_ = new QAction(tr("Find Next"), this);
+            findNextAction_->setShortcut(QKeySequence::FindNext);
+            findNextAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+            addAction(findNextAction_);
+            connect(findNextAction_, SIGNAL(triggered()), searchWidget, SLOT(findNext()));
 
-    QAction *closeEverythingAction = new QAction(this);
-    closeEverythingAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    closeEverythingAction->setShortcut(Qt::Key_Escape);
-    addAction(closeEverythingAction);
+            findPreviousAction_ = new QAction(tr("Find Previous"), this);
+            findPreviousAction_->setShortcut(QKeySequence::FindPrevious);
+            findPreviousAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+            addAction(findPreviousAction_);
+            connect(findPreviousAction_, SIGNAL(triggered()), searchWidget, SLOT(findPrevious()));
 
-    connect(closeEverythingAction, SIGNAL(triggered()), searchWidget, SLOT(deactivate()));
-    connect(closeEverythingAction, SIGNAL(triggered()), treeView_, SLOT(setFocus()));
+            QAction* closeEverythingAction = new QAction(this);
+            closeEverythingAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+            closeEverythingAction->setShortcut(Qt::Key_Escape);
+            addAction(closeEverythingAction);
 
-    selectFontAction_ = new QAction(tr("Select Font..."), this);
-    addAction(selectFontAction_);
+            connect(closeEverythingAction, SIGNAL(triggered()), searchWidget, SLOT(deactivate()));
+            connect(closeEverythingAction, SIGNAL(triggered()), treeView_, SLOT(setFocus()));
 
-    connect(selectFontAction_, SIGNAL(triggered()), this, SLOT(selectFont()));
-}
+            selectFontAction_ = new QAction(tr("Select Font..."), this);
+            addAction(selectFontAction_);
 
-void TreeView::showContextMenu(const QPoint &pos) {
-    auto menu = std::make_unique<QMenu>();
-
-    Q_EMIT contextMenuCreated(menu.get());
-
-    if (!menu->isEmpty()) {
-        menu->exec(treeView()->viewport()->mapToGlobal(pos));
-    }
-}
-
-void TreeView::populateContextMenu(QMenu *menu) {
-    if (!treeView_->selectionModel()) {
-        return;
-    }
-    if (!treeView_->selectionModel()->selectedIndexes().isEmpty()) {
-        menu->addSeparator();
-        menu->addAction(copyAction_);
-    }
-
-    menu->addSeparator();
-    menu->addAction(tr("Select All"), treeView(), SLOT(selectAll()), QKeySequence::SelectAll);
-    menu->addSeparator();
-    menu->addAction(openSearchAction_);
-    menu->addAction(findNextAction_);
-    menu->addAction(findPreviousAction_);
-    menu->addSeparator();
-    menu->addAction(selectFontAction_);
-    menu->addSeparator();
-}
-
-void TreeView::copy() {
-    auto indexes = treeView()->selectionModel()->selectedIndexes();
-
-    if (indexes.isEmpty()) {
-        return;
-    }
-
-    qSort(indexes.begin(), indexes.end(), [](const QModelIndex &a, const QModelIndex &b) -> bool {
-        if (a.parent() == b.parent()) {
-            return a.row() < b.row() || (a.row() == b.row() && a.column() < b.column());
-        } else {
-            return a < b;
+            connect(selectFontAction_, SIGNAL(triggered()), this, SLOT(selectFont()));
         }
-    });
 
-    QString text;
+        void TreeView::showContextMenu(const QPoint & pos)
+        {
+            auto menu = std::make_unique<QMenu>();
 
-    QModelIndex last;
-    foreach (const auto &index, indexes) {
-        if (last.parent() != index.parent() || last.row() != index.row()) {
-            if (!text.isEmpty()) {
-                text += '\n';
+            Q_EMIT contextMenuCreated(menu.get());
+
+            if(!menu->isEmpty())
+            {
+                menu->exec(treeView()->viewport()->mapToGlobal(pos));
             }
-            last = index;
-        } else {
-            text += '\t';
         }
-        text += index.data().toString();
-    }
 
-    QApplication::clipboard()->setText(text);
-}
+        void TreeView::populateContextMenu(QMenu* menu)
+        {
+            if(!treeView_->selectionModel())
+            {
+                return;
+            }
+            if(!treeView_->selectionModel()->selectedIndexes().isEmpty())
+            {
+                menu->addSeparator();
+                menu->addAction(copyAction_);
+            }
 
-void TreeView::zoomIn(int delta) {
-    QFont font = documentFont();
-    font.setPointSize(std::max(font.pointSize() + delta, 1));
-    setDocumentFont(font);
-}
+            menu->addSeparator();
+            menu->addAction(tr("Select All"), treeView(), SLOT(selectAll()), QKeySequence::SelectAll);
+            menu->addSeparator();
+            menu->addAction(openSearchAction_);
+            menu->addAction(findNextAction_);
+            menu->addAction(findPreviousAction_);
+            menu->addSeparator();
+            menu->addAction(selectFontAction_);
+            menu->addSeparator();
+        }
 
-void TreeView::zoomOut(int delta) {
-    zoomIn(-delta);
-}
+        void TreeView::copy()
+        {
+            auto indexes = treeView()->selectionModel()->selectedIndexes();
 
-const QFont &TreeView::documentFont() const {
-    return treeView()->font();
-}
+            if(indexes.isEmpty())
+            {
+                return;
+            }
 
-void TreeView::setDocumentFont(const QFont &font) {
-    treeView()->setFont(font);
-}
-
-void TreeView::selectFont() {
-    setDocumentFont(QFontDialog::getFont(nullptr, documentFont(), this));
-}
-
-bool TreeView::eventFilter(QObject *watched, QEvent *event) {
-    if (watched == treeView()->viewport()) {
-        if (event->type() == QEvent::Wheel) {
-            auto wheelEvent = static_cast<QWheelEvent *>(event);
-
-            if (wheelEvent->orientation() == Qt::Vertical && wheelEvent->modifiers() & Qt::ControlModifier) {
-                if (wheelEvent->delta() > 0) {
-                    zoomIn(1 + wheelEvent->delta() / 360);
-                } else {
-                    zoomOut(1 - wheelEvent->delta() / 360);
+            qSort(indexes.begin(), indexes.end(), [](const QModelIndex & a, const QModelIndex & b) -> bool
+            {
+                if(a.parent() == b.parent())
+                {
+                    return a.row() < b.row() || (a.row() == b.row() && a.column() < b.column());
                 }
-                return true;
-            }
-        }
-    }
-    return QDockWidget::eventFilter(watched, event);
-}
+                else {
+                    return a < b;
+                }
+            });
 
-}} // namespace nc::gui
+            QString text;
+
+            QModelIndex last;
+            foreach(const auto & index, indexes)
+            {
+                if(last.parent() != index.parent() || last.row() != index.row())
+                {
+                    if(!text.isEmpty())
+                    {
+                        text += '\n';
+                    }
+                    last = index;
+                }
+                else
+                {
+                    text += '\t';
+                }
+                text += index.data().toString();
+            }
+
+            QApplication::clipboard()->setText(text);
+        }
+
+        void TreeView::zoomIn(int delta)
+        {
+            QFont font = documentFont();
+            font.setPointSize(std::max(font.pointSize() + delta, 1));
+            setDocumentFont(font);
+        }
+
+        void TreeView::zoomOut(int delta)
+        {
+            zoomIn(-delta);
+        }
+
+        const QFont & TreeView::documentFont() const
+        {
+            return treeView()->font();
+        }
+
+        void TreeView::setDocumentFont(const QFont & font)
+        {
+            treeView()->setFont(font);
+        }
+
+        void TreeView::selectFont()
+        {
+            setDocumentFont(QFontDialog::getFont(nullptr, documentFont(), this));
+        }
+
+        bool TreeView::eventFilter(QObject* watched, QEvent* event)
+        {
+            if(watched == treeView()->viewport())
+            {
+                if(event->type() == QEvent::Wheel)
+                {
+                    auto wheelEvent = static_cast<QWheelEvent*>(event);
+
+                    if(wheelEvent->orientation() == Qt::Vertical && wheelEvent->modifiers() & Qt::ControlModifier)
+                    {
+                        if(wheelEvent->delta() > 0)
+                        {
+                            zoomIn(1 + wheelEvent->delta() / 360);
+                        }
+                        else
+                        {
+                            zoomOut(1 - wheelEvent->delta() / 360);
+                        }
+                        return true;
+                    }
+                }
+            }
+            return QDockWidget::eventFilter(watched, event);
+        }
+
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

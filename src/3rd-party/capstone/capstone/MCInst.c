@@ -14,163 +14,163 @@
 
 #define MCINST_CACHE (ARR_SIZE(mcInst->Operands) - 1)
 
-void MCInst_Init(MCInst *inst)
+void MCInst_Init(MCInst* inst)
 {
-	inst->OpcodePub = 0;
-	inst->size = 0;
-	inst->has_imm = false;
-	inst->op1_size = 0;
-	inst->writeback = false;
+    inst->OpcodePub = 0;
+    inst->size = 0;
+    inst->has_imm = false;
+    inst->op1_size = 0;
+    inst->writeback = false;
 }
 
-void MCInst_clear(MCInst *inst)
+void MCInst_clear(MCInst* inst)
 {
-	inst->size = 0;
+    inst->size = 0;
 }
 
 // do not free @Op
-void MCInst_insert0(MCInst *inst, int index, MCOperand *Op)
+void MCInst_insert0(MCInst* inst, int index, MCOperand* Op)
 {
-	int i;
+    int i;
 
-	for(i = inst->size; i > index; i--)
-		//memcpy(&(inst->Operands[i]), &(inst->Operands[i-1]), sizeof(MCOperand));
-		inst->Operands[i] = inst->Operands[i-1];
+    for(i = inst->size; i > index; i--)
+        //memcpy(&(inst->Operands[i]), &(inst->Operands[i-1]), sizeof(MCOperand));
+        inst->Operands[i] = inst->Operands[i - 1];
 
-	inst->Operands[index] = *Op;
-	inst->size++;
+    inst->Operands[index] = *Op;
+    inst->size++;
 }
 
-void MCInst_setOpcode(MCInst *inst, unsigned Op)
+void MCInst_setOpcode(MCInst* inst, unsigned Op)
 {
-	inst->Opcode = Op;
+    inst->Opcode = Op;
 }
 
-void MCInst_setOpcodePub(MCInst *inst, unsigned Op)
+void MCInst_setOpcodePub(MCInst* inst, unsigned Op)
 {
-	inst->OpcodePub = Op;
+    inst->OpcodePub = Op;
 }
 
-unsigned MCInst_getOpcode(const MCInst *inst)
+unsigned MCInst_getOpcode(const MCInst* inst)
 {
-	return inst->Opcode;
+    return inst->Opcode;
 }
 
-unsigned MCInst_getOpcodePub(const MCInst *inst)
+unsigned MCInst_getOpcodePub(const MCInst* inst)
 {
-	return inst->OpcodePub;
+    return inst->OpcodePub;
 }
 
-MCOperand *MCInst_getOperand(MCInst *inst, unsigned i)
+MCOperand* MCInst_getOperand(MCInst* inst, unsigned i)
 {
-	return &inst->Operands[i];
+    return &inst->Operands[i];
 }
 
-unsigned MCInst_getNumOperands(const MCInst *inst)
+unsigned MCInst_getNumOperands(const MCInst* inst)
 {
-	return inst->size;
+    return inst->size;
 }
 
 // This addOperand2 function doesnt free Op
-void MCInst_addOperand2(MCInst *inst, MCOperand *Op)
+void MCInst_addOperand2(MCInst* inst, MCOperand* Op)
 {
-	inst->Operands[inst->size] = *Op;
+    inst->Operands[inst->size] = *Op;
 
-	inst->size++;
+    inst->size++;
 }
 
-void MCOperand_Init(MCOperand *op)
+void MCOperand_Init(MCOperand* op)
 {
-	op->Kind = kInvalid;
-	op->FPImmVal = 0.0;
+    op->Kind = kInvalid;
+    op->FPImmVal = 0.0;
 }
 
-bool MCOperand_isValid(const MCOperand *op)
+bool MCOperand_isValid(const MCOperand* op)
 {
-	return op->Kind != kInvalid;
+    return op->Kind != kInvalid;
 }
 
-bool MCOperand_isReg(const MCOperand *op)
+bool MCOperand_isReg(const MCOperand* op)
 {
-	return op->Kind == kRegister;
+    return op->Kind == kRegister;
 }
 
-bool MCOperand_isImm(const MCOperand *op)
+bool MCOperand_isImm(const MCOperand* op)
 {
-	return op->Kind == kImmediate;
+    return op->Kind == kImmediate;
 }
 
-bool MCOperand_isFPImm(const MCOperand *op)
+bool MCOperand_isFPImm(const MCOperand* op)
 {
-	return op->Kind == kFPImmediate;
+    return op->Kind == kFPImmediate;
 }
 
 /// getReg - Returns the register number.
-unsigned MCOperand_getReg(const MCOperand *op)
+unsigned MCOperand_getReg(const MCOperand* op)
 {
-	return op->RegVal;
+    return op->RegVal;
 }
 
 /// setReg - Set the register number.
-void MCOperand_setReg(MCOperand *op, unsigned Reg)
+void MCOperand_setReg(MCOperand* op, unsigned Reg)
 {
-	op->RegVal = Reg;
+    op->RegVal = Reg;
 }
 
-int64_t MCOperand_getImm(MCOperand *op)
+int64_t MCOperand_getImm(MCOperand* op)
 {
-	return op->ImmVal;
+    return op->ImmVal;
 }
 
-void MCOperand_setImm(MCOperand *op, int64_t Val)
+void MCOperand_setImm(MCOperand* op, int64_t Val)
 {
-	op->ImmVal = Val;
+    op->ImmVal = Val;
 }
 
-double MCOperand_getFPImm(const MCOperand *op)
+double MCOperand_getFPImm(const MCOperand* op)
 {
-	return op->FPImmVal;
+    return op->FPImmVal;
 }
 
-void MCOperand_setFPImm(MCOperand *op, double Val)
+void MCOperand_setFPImm(MCOperand* op, double Val)
 {
-	op->FPImmVal = Val;
+    op->FPImmVal = Val;
 }
 
-MCOperand *MCOperand_CreateReg1(MCInst *mcInst, unsigned Reg)
+MCOperand* MCOperand_CreateReg1(MCInst* mcInst, unsigned Reg)
 {
-	MCOperand *op = &(mcInst->Operands[MCINST_CACHE]);
+    MCOperand* op = &(mcInst->Operands[MCINST_CACHE]);
 
-	op->Kind = kRegister;
-	op->RegVal = Reg;
+    op->Kind = kRegister;
+    op->RegVal = Reg;
 
-	return op;
+    return op;
 }
 
-void MCOperand_CreateReg0(MCInst *mcInst, unsigned Reg)
+void MCOperand_CreateReg0(MCInst* mcInst, unsigned Reg)
 {
-	MCOperand *op = &(mcInst->Operands[mcInst->size]);
-	mcInst->size++;
+    MCOperand* op = &(mcInst->Operands[mcInst->size]);
+    mcInst->size++;
 
-	op->Kind = kRegister;
-	op->RegVal = Reg;
+    op->Kind = kRegister;
+    op->RegVal = Reg;
 }
 
-MCOperand *MCOperand_CreateImm1(MCInst *mcInst, int64_t Val)
+MCOperand* MCOperand_CreateImm1(MCInst* mcInst, int64_t Val)
 {
-	MCOperand *op = &(mcInst->Operands[MCINST_CACHE]);
+    MCOperand* op = &(mcInst->Operands[MCINST_CACHE]);
 
-	op->Kind = kImmediate;
-	op->ImmVal = Val;
+    op->Kind = kImmediate;
+    op->ImmVal = Val;
 
-	return op;
+    return op;
 }
 
-void MCOperand_CreateImm0(MCInst *mcInst, int64_t Val)
+void MCOperand_CreateImm0(MCInst* mcInst, int64_t Val)
 {
-	MCOperand *op = &(mcInst->Operands[mcInst->size]);
-	mcInst->size++;
+    MCOperand* op = &(mcInst->Operands[mcInst->size]);
+    mcInst->size++;
 
-	op->Kind = kImmediate;
-	op->ImmVal = Val;
+    op->Kind = kImmediate;
+    op->ImmVal = Val;
 }

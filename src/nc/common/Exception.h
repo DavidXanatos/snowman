@@ -32,49 +32,51 @@
 #include <QString>
 #include <QByteArray>
 
-namespace nc {
+namespace nc
+{
 
-/** Error info structure for the error message.  */
-typedef boost::error_info<struct MessageTag, QString> ExceptionMessage;
-
-/**
- * Base exception class for all nocode exceptions.
- * 
- * Provides unicode error messages via unicodeWhat() function.
- */
-class Exception: virtual public std::exception, virtual public boost::exception {
-public:
-    /**
-     * Constructor.
-     */
-    Exception() {}
+    /** Error info structure for the error message.  */
+    typedef boost::error_info<struct MessageTag, QString> ExceptionMessage;
 
     /**
-     * Constructor.
+     * Base exception class for all nocode exceptions.
      *
-     * \param message Exception message.
+     * Provides unicode error messages via unicodeWhat() function.
      */
-    explicit
-    Exception(const QString &message);
+    class Exception: virtual public std::exception, virtual public boost::exception
+    {
+    public:
+        /**
+         * Constructor.
+         */
+        Exception() {}
 
-    /**
-     * Virtual destructor.
-     */
-    virtual ~Exception() noexcept;
+        /**
+         * Constructor.
+         *
+         * \param message Exception message.
+         */
+        explicit
+        Exception(const QString & message);
 
-    /**
-     * \return A Unicode string containing a generic description of the exception.
-     */
-    virtual QString unicodeWhat() const noexcept;
+        /**
+         * Virtual destructor.
+         */
+        virtual ~Exception() noexcept;
 
-    /**
-     * \return A null terminated string containing a generic description of the exception.
-     */
-    virtual const char *what() const noexcept override;
+        /**
+         * \return A Unicode string containing a generic description of the exception.
+         */
+        virtual QString unicodeWhat() const noexcept;
 
-private:
-    mutable QByteArray mCachedWhat;
-};
+        /**
+         * \return A null terminated string containing a generic description of the exception.
+         */
+        virtual const char* what() const noexcept override;
+
+    private:
+        mutable QByteArray mCachedWhat;
+    };
 
 } // namespace nc
 

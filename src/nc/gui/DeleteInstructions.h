@@ -30,43 +30,49 @@
 
 #include "Command.h"
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    namespace arch {
-        class Instruction;
+    namespace core
+    {
+        namespace arch
+        {
+            class Instruction;
+        }
     }
-}
 
-namespace gui {
+    namespace gui
+    {
 
-class Project;
+        class Project;
 
-/**
- * Command for decompiling the project.
- */
-class DeleteInstructions: public Command {
-    Q_OBJECT
+        /**
+         * Command for decompiling the project.
+         */
+        class DeleteInstructions: public Command
+        {
+            Q_OBJECT
 
-    /** Project. */
-    Project *project_;
+            /** Project. */
+            Project* project_;
 
-    /** Instructions to be removed. */
-    std::vector<std::shared_ptr<const core::arch::Instruction>> instructions_;
+            /** Instructions to be removed. */
+            std::vector<std::shared_ptr<const core::arch::Instruction>> instructions_;
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param project Valid pointer to a project.
-     * \param instructions Instructions to delete.
-     */
-    DeleteInstructions(Project *project, const std::vector<const core::arch::Instruction *> &instructions);
+            /**
+             * Constructor.
+             *
+             * \param project Valid pointer to a project.
+             * \param instructions Instructions to delete.
+             */
+            DeleteInstructions(Project* project, const std::vector<const core::arch::Instruction*> & instructions);
 
-    void work() override;
-};
+            void work() override;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

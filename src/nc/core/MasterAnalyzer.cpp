@@ -57,221 +57,245 @@
 #include <nc/core/likec/Tree.h>
 #include <nc/core/mangling/Demangler.h>
 
-namespace nc {
-namespace core {
+namespace nc
+{
+    namespace core
+    {
 
-MasterAnalyzer::~MasterAnalyzer() {}
+        MasterAnalyzer::~MasterAnalyzer() {}
 
-void MasterAnalyzer::createProgram(Context &context) const {
-    context.logToken().info(tr("Creating intermediate representation of the program."));
+        void MasterAnalyzer::createProgram(Context & context) const
+        {
+            context.logToken().info(tr("Creating intermediate representation of the program."));
 
-    std::unique_ptr<ir::Program> program(new ir::Program());
+            std::unique_ptr<ir::Program> program(new ir::Program());
 
-    core::irgen::IRGenerator(context.image().get(), context.instructions().get(), program.get(),
-        context.cancellationToken(), context.logToken())
-    .generate();
+            core::irgen::IRGenerator(context.image().get(), context.instructions().get(), program.get(),
+                                     context.cancellationToken(), context.logToken())
+            .generate();
 
-    context.setProgram(std::move(program));
-}
+            context.setProgram(std::move(program));
+        }
 
-void MasterAnalyzer::createFunctions(Context &context) const {
-    context.logToken().info(tr("Creating functions."));
+        void MasterAnalyzer::createFunctions(Context & context) const
+        {
+            context.logToken().info(tr("Creating functions."));
 
-    std::unique_ptr<ir::Functions> functions(new ir::Functions);
+            std::unique_ptr<ir::Functions> functions(new ir::Functions);
 
-    ir::FunctionsGenerator().makeFunctions(*context.program(), *functions);
+            ir::FunctionsGenerator().makeFunctions(*context.program(), *functions);
 
-    context.setFunctions(std::move(functions));
-}
+            context.setFunctions(std::move(functions));
+        }
 
-void MasterAnalyzer::createHooks(Context &context) const {
-    context.logToken().info(tr("Creating hooks."));
+        void MasterAnalyzer::createHooks(Context & context) const
+        {
+            context.logToken().info(tr("Creating hooks."));
 
-    context.setSignatures(std::make_unique<ir::calling::Signatures>());
-    context.setConventions(std::make_unique<ir::calling::Conventions>());
-    context.setHooks(std::make_unique<ir::calling::Hooks>(*context.conventions(), *context.signatures()));
+            context.setSignatures(std::make_unique<ir::calling::Signatures>());
+            context.setConventions(std::make_unique<ir::calling::Conventions>());
+            context.setHooks(std::make_unique<ir::calling::Hooks>(*context.conventions(), *context.signatures()));
 
-    context.hooks()->setConventionDetector([this, &context](const ir::calling::CalleeId &calleeId) {
-        this->detectCallingConvention(context, calleeId);
-    });
-}
+            context.hooks()->setConventionDetector([this, &context](const ir::calling::CalleeId & calleeId)
+            {
+                this->detectCallingConvention(context, calleeId);
+            });
+        }
 
-void MasterAnalyzer::detectCallingConventions(Context &) const {
-    return;
-}
+        void MasterAnalyzer::detectCallingConventions(Context &) const
+        {
+            return;
+        }
 
-void MasterAnalyzer::detectCallingConvention(Context &context, const ir::calling::CalleeId &calleeId) const {
-    if (!context.image()->platform().architecture()->conventions().empty()) {
-        context.conventions()->setConvention(calleeId, context.image()->platform().architecture()->conventions().front());
-    }
-}
+        void MasterAnalyzer::detectCallingConvention(Context & context, const ir::calling::CalleeId & calleeId) const
+        {
+            if(!context.image()->platform().architecture()->conventions().empty())
+            {
+                context.conventions()->setConvention(calleeId, context.image()->platform().architecture()->conventions().front());
+            }
+        }
 
-void MasterAnalyzer::dataflowAnalysis(Context &context) const {
-    context.logToken().info(tr("Dataflow analysis."));
+        void MasterAnalyzer::dataflowAnalysis(Context & context) const
+        {
+            context.logToken().info(tr("Dataflow analysis."));
 
-    context.setDataflows(std::make_unique<ir::dflow::Dataflows>());
+            context.setDataflows(std::make_unique<ir::dflow::Dataflows>());
 
-    foreach (auto function, context.functions()->list()) {
-        dataflowAnalysis(context, function);
-        context.cancellationToken().poll();
-    }
-}
+            foreach(auto function, context.functions()->list())
+            {
+                dataflowAnalysis(context, function);
+                context.cancellationToken().poll();
+            }
+        }
 
-void MasterAnalyzer::dataflowAnalysis(Context &context, ir::Function *function) const {
-    context.logToken().info(tr("Dataflow analysis of %1.").arg(getFunctionName(context, function)));
+        void MasterAnalyzer::dataflowAnalysis(Context & context, ir::Function* function) const
+        {
+            context.logToken().info(tr("Dataflow analysis of %1.").arg(getFunctionName(context, function)));
 
-    std::unique_ptr<ir::dflow::Dataflow> dataflow(new ir::dflow::Dataflow());
+            std::unique_ptr<ir::dflow::Dataflow> dataflow(new ir::dflow::Dataflow());
 
-    context.hooks()->instrument(function, dataflow.get());
+            context.hooks()->instrument(function, dataflow.get());
 
-    ir::dflow::DataflowAnalyzer(*dataflow, context.image()->platform().architecture(), context.cancellationToken(),
-                                context.logToken()).analyze(ir::CFG(function->basicBlocks()));
+            ir::dflow::DataflowAnalyzer(*dataflow, context.image()->platform().architecture(), context.cancellationToken(),
+                                        context.logToken()).analyze(ir::CFG(function->basicBlocks()));
 
-    context.dataflows()->emplace(function, std::move(dataflow));
-}
+            context.dataflows()->emplace(function, std::move(dataflow));
+        }
 
-void MasterAnalyzer::reconstructSignatures(Context &context) const {
-    context.logToken().info(tr("Reconstructing function signatures."));
+        void MasterAnalyzer::reconstructSignatures(Context & context) const
+        {
+            context.logToken().info(tr("Reconstructing function signatures."));
 
-    ir::calling::SignatureAnalyzer(*context.signatures(), *context.dataflows(), *context.hooks(),
-        *context.livenesses(), context.cancellationToken(), context.logToken())
-        .analyze();
-}
+            ir::calling::SignatureAnalyzer(*context.signatures(), *context.dataflows(), *context.hooks(),
+                                           *context.livenesses(), context.cancellationToken(), context.logToken())
+            .analyze();
+        }
 
-void MasterAnalyzer::reconstructVariables(Context &context) const {
-    context.logToken().info(tr("Reconstructing variables."));
+        void MasterAnalyzer::reconstructVariables(Context & context) const
+        {
+            context.logToken().info(tr("Reconstructing variables."));
 
-    std::unique_ptr<ir::vars::Variables> variables(new ir::vars::Variables());
+            std::unique_ptr<ir::vars::Variables> variables(new ir::vars::Variables());
 
-    ir::vars::VariableAnalyzer(*variables, *context.dataflows(), context.image()->platform().architecture())
-        .analyze();
+            ir::vars::VariableAnalyzer(*variables, *context.dataflows(), context.image()->platform().architecture())
+            .analyze();
 
-    context.setVariables(std::move(variables));
-}
+            context.setVariables(std::move(variables));
+        }
 
-void MasterAnalyzer::livenessAnalysis(Context &context) const {
-    context.logToken().info(tr("Liveness analysis."));
+        void MasterAnalyzer::livenessAnalysis(Context & context) const
+        {
+            context.logToken().info(tr("Liveness analysis."));
 
-    context.setLivenesses(std::make_unique<ir::liveness::Livenesses>());
+            context.setLivenesses(std::make_unique<ir::liveness::Livenesses>());
 
-    foreach (const ir::Function *function, context.functions()->list()) {
-        livenessAnalysis(context, function);
-    }
-}
+            foreach(const ir::Function * function, context.functions()->list())
+            {
+                livenessAnalysis(context, function);
+            }
+        }
 
-void MasterAnalyzer::livenessAnalysis(Context &context, const ir::Function *function) const {
-    context.logToken().info(tr("Liveness analysis of %1.").arg(getFunctionName(context, function)));
+        void MasterAnalyzer::livenessAnalysis(Context & context, const ir::Function* function) const
+        {
+            context.logToken().info(tr("Liveness analysis of %1.").arg(getFunctionName(context, function)));
 
-    std::unique_ptr<ir::liveness::Liveness> liveness(new ir::liveness::Liveness());
+            std::unique_ptr<ir::liveness::Liveness> liveness(new ir::liveness::Liveness());
 
-    ir::liveness::LivenessAnalyzer(*liveness, function,
-        *context.dataflows()->at(function), context.image()->platform().architecture(),
-        context.graphs() ? context.graphs()->at(function).get() : nullptr, *context.hooks(),
-        context.signatures(), context.logToken())
-    .analyze();
+            ir::liveness::LivenessAnalyzer(*liveness, function,
+                                           *context.dataflows()->at(function), context.image()->platform().architecture(),
+                                           context.graphs() ? context.graphs()->at(function).get() : nullptr, *context.hooks(),
+                                           context.signatures(), context.logToken())
+            .analyze();
 
-    context.livenesses()->emplace(function, std::move(liveness));
-}
+            context.livenesses()->emplace(function, std::move(liveness));
+        }
 
-void MasterAnalyzer::reconstructTypes(Context &context) const {
-    context.logToken().info(tr("Reconstructing types."));
+        void MasterAnalyzer::reconstructTypes(Context & context) const
+        {
+            context.logToken().info(tr("Reconstructing types."));
 
-    std::unique_ptr<ir::types::Types> types(new ir::types::Types());
+            std::unique_ptr<ir::types::Types> types(new ir::types::Types());
 
-    ir::types::TypeAnalyzer(
-        *types, *context.functions(), *context.dataflows(), *context.variables(),
-        *context.livenesses(), *context.hooks(), *context.signatures(),
-        context.cancellationToken())
-    .analyze();
+            ir::types::TypeAnalyzer(
+                *types, *context.functions(), *context.dataflows(), *context.variables(),
+                *context.livenesses(), *context.hooks(), *context.signatures(),
+                context.cancellationToken())
+            .analyze();
 
-    context.setTypes(std::move(types));
-}
+            context.setTypes(std::move(types));
+        }
 
-void MasterAnalyzer::structuralAnalysis(Context &context) const {
-    context.logToken().info(tr("Structural analysis."));
+        void MasterAnalyzer::structuralAnalysis(Context & context) const
+        {
+            context.logToken().info(tr("Structural analysis."));
 
-    context.setGraphs(std::make_unique<ir::cflow::Graphs>());
+            context.setGraphs(std::make_unique<ir::cflow::Graphs>());
 
-    foreach (auto function, context.functions()->list()) {
-        structuralAnalysis(context, function);
-        context.cancellationToken().poll();
-    }
-}
+            foreach(auto function, context.functions()->list())
+            {
+                structuralAnalysis(context, function);
+                context.cancellationToken().poll();
+            }
+        }
 
-void MasterAnalyzer::structuralAnalysis(Context &context, const ir::Function *function) const {
-    context.logToken().info(tr("Structural analysis of %1.").arg(getFunctionName(context, function)));
+        void MasterAnalyzer::structuralAnalysis(Context & context, const ir::Function* function) const
+        {
+            context.logToken().info(tr("Structural analysis of %1.").arg(getFunctionName(context, function)));
 
-    std::unique_ptr<ir::cflow::Graph> graph(new ir::cflow::Graph());
+            std::unique_ptr<ir::cflow::Graph> graph(new ir::cflow::Graph());
 
-    ir::cflow::GraphBuilder()(*graph, function);
-    ir::cflow::StructureAnalyzer(*graph, *context.dataflows()->at(function)).analyze();
+            ir::cflow::GraphBuilder()(*graph, function);
+            ir::cflow::StructureAnalyzer(*graph, *context.dataflows()->at(function)).analyze();
 
-    context.graphs()->emplace(function, std::move(graph));
-}
+            context.graphs()->emplace(function, std::move(graph));
+        }
 
-void MasterAnalyzer::generateTree(Context &context) const {
-    context.logToken().info(tr("Generating AST."));
+        void MasterAnalyzer::generateTree(Context & context) const
+        {
+            context.logToken().info(tr("Generating AST."));
 
-    auto tree = std::make_unique<nc::core::likec::Tree>();
+            auto tree = std::make_unique<nc::core::likec::Tree>();
 
-    ir::cgen::CodeGenerator(*tree, *context.image(), *context.functions(), *context.hooks(),
-        *context.signatures(), *context.dataflows(), *context.variables(), *context.graphs(),
-        *context.livenesses(), *context.types(), context.cancellationToken())
-        .makeCompilationUnit();
+            ir::cgen::CodeGenerator(*tree, *context.image(), *context.functions(), *context.hooks(),
+                                    *context.signatures(), *context.dataflows(), *context.variables(), *context.graphs(),
+                                    *context.livenesses(), *context.types(), context.cancellationToken())
+            .makeCompilationUnit();
 
-    context.setTree(std::move(tree));
-}
+            context.setTree(std::move(tree));
+        }
 
-void MasterAnalyzer::decompile(Context &context) const {
-    context.logToken().info(tr("Decompiling."));
+        void MasterAnalyzer::decompile(Context & context) const
+        {
+            context.logToken().info(tr("Decompiling."));
 
-    createProgram(context);
-    context.cancellationToken().poll();
+            createProgram(context);
+            context.cancellationToken().poll();
 
-    createFunctions(context);
-    context.cancellationToken().poll();
+            createFunctions(context);
+            context.cancellationToken().poll();
 
-    createHooks(context);
-    context.cancellationToken().poll();
+            createHooks(context);
+            context.cancellationToken().poll();
 
-    detectCallingConventions(context);
-    context.cancellationToken().poll();
+            detectCallingConventions(context);
+            context.cancellationToken().poll();
 
-    dataflowAnalysis(context);
-    context.cancellationToken().poll();
+            dataflowAnalysis(context);
+            context.cancellationToken().poll();
 
-    livenessAnalysis(context);
-    context.cancellationToken().poll();
+            livenessAnalysis(context);
+            context.cancellationToken().poll();
 
-    reconstructSignatures(context);
-    context.cancellationToken().poll();
+            reconstructSignatures(context);
+            context.cancellationToken().poll();
 
-    dataflowAnalysis(context);
-    context.cancellationToken().poll();
+            dataflowAnalysis(context);
+            context.cancellationToken().poll();
 
-    reconstructVariables(context);
-    context.cancellationToken().poll();
+            reconstructVariables(context);
+            context.cancellationToken().poll();
 
-    structuralAnalysis(context);
-    context.cancellationToken().poll();
+            structuralAnalysis(context);
+            context.cancellationToken().poll();
 
-    livenessAnalysis(context);
-    context.cancellationToken().poll();
+            livenessAnalysis(context);
+            context.cancellationToken().poll();
 
-    reconstructTypes(context);
-    context.cancellationToken().poll();
+            reconstructTypes(context);
+            context.cancellationToken().poll();
 
-    generateTree(context);
-    context.cancellationToken().poll();
+            generateTree(context);
+            context.cancellationToken().poll();
 
-    context.logToken().info(tr("Decompilation completed."));
-}
+            context.logToken().info(tr("Decompilation completed."));
+        }
 
-QString MasterAnalyzer::getFunctionName(Context &context, const ir::Function *function) const {
-    return ir::cgen::NameGenerator(*context.image()).getFunctionName(function).name();
-}
+        QString MasterAnalyzer::getFunctionName(Context & context, const ir::Function* function) const
+        {
+            return ir::cgen::NameGenerator(*context.image()).getFunctionName(function).name();
+        }
 
-} // namespace core
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

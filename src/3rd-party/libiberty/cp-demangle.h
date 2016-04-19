@@ -26,7 +26,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA. 
+   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
 /* This file provides some definitions shared by cp-demangle.c and
@@ -36,92 +36,92 @@
 
 struct demangle_operator_info
 {
-  /* Mangled name.  */
-  const char *code;
-  /* Real name.  */
-  const char *name;
-  /* Length of real name.  */
-  int len;
-  /* Number of arguments.  */
-  int args;
+    /* Mangled name.  */
+    const char* code;
+    /* Real name.  */
+    const char* name;
+    /* Length of real name.  */
+    int len;
+    /* Number of arguments.  */
+    int args;
 };
 
 /* How to print the value of a builtin type.  */
 
 enum d_builtin_type_print
 {
-  /* Print as (type)val.  */
-  D_PRINT_DEFAULT,
-  /* Print as integer.  */
-  D_PRINT_INT,
-  /* Print as unsigned integer, with trailing "u".  */
-  D_PRINT_UNSIGNED,
-  /* Print as long, with trailing "l".  */
-  D_PRINT_LONG,
-  /* Print as unsigned long, with trailing "ul".  */
-  D_PRINT_UNSIGNED_LONG,
-  /* Print as long long, with trailing "ll".  */
-  D_PRINT_LONG_LONG,
-  /* Print as unsigned long long, with trailing "ull".  */
-  D_PRINT_UNSIGNED_LONG_LONG,
-  /* Print as bool.  */
-  D_PRINT_BOOL,
-  /* Print as float--put value in square brackets.  */
-  D_PRINT_FLOAT,
-  /* Print in usual way, but here to detect void.  */
-  D_PRINT_VOID
+    /* Print as (type)val.  */
+    D_PRINT_DEFAULT,
+    /* Print as integer.  */
+    D_PRINT_INT,
+    /* Print as unsigned integer, with trailing "u".  */
+    D_PRINT_UNSIGNED,
+    /* Print as long, with trailing "l".  */
+    D_PRINT_LONG,
+    /* Print as unsigned long, with trailing "ul".  */
+    D_PRINT_UNSIGNED_LONG,
+    /* Print as long long, with trailing "ll".  */
+    D_PRINT_LONG_LONG,
+    /* Print as unsigned long long, with trailing "ull".  */
+    D_PRINT_UNSIGNED_LONG_LONG,
+    /* Print as bool.  */
+    D_PRINT_BOOL,
+    /* Print as float--put value in square brackets.  */
+    D_PRINT_FLOAT,
+    /* Print in usual way, but here to detect void.  */
+    D_PRINT_VOID
 };
 
 /* Information we keep for a builtin type.  */
 
 struct demangle_builtin_type_info
 {
-  /* Type name.  */
-  const char *name;
-  /* Length of type name.  */
-  int len;
-  /* Type name when using Java.  */
-  const char *java_name;
-  /* Length of java name.  */
-  int java_len;
-  /* How to print a value of this type.  */
-  enum d_builtin_type_print print;
+    /* Type name.  */
+    const char* name;
+    /* Length of type name.  */
+    int len;
+    /* Type name when using Java.  */
+    const char* java_name;
+    /* Length of java name.  */
+    int java_len;
+    /* How to print a value of this type.  */
+    enum d_builtin_type_print print;
 };
 
 /* The information structure we pass around.  */
 
 struct d_info
 {
-  /* The string we are demangling.  */
-  const char *s;
-  /* The end of the string we are demangling.  */
-  const char *send;
-  /* The options passed to the demangler.  */
-  int options;
-  /* The next character in the string to consider.  */
-  const char *n;
-  /* The array of components.  */
-  struct demangle_component *comps;
-  /* The index of the next available component.  */
-  int next_comp;
-  /* The number of available component structures.  */
-  int num_comps;
-  /* The array of substitutions.  */
-  struct demangle_component **subs;
-  /* The index of the next substitution.  */
-  int next_sub;
-  /* The number of available entries in the subs array.  */
-  int num_subs;
-  /* The number of substitutions which we actually made from the subs
-     array, plus the number of template parameter references we
-     saw.  */
-  int did_subs;
-  /* The last name we saw, for constructors and destructors.  */
-  struct demangle_component *last_name;
-  /* A running total of the length of large expansions from the
-     mangled name to the demangled name, such as standard
-     substitutions and builtin types.  */
-  int expansion;
+    /* The string we are demangling.  */
+    const char* s;
+    /* The end of the string we are demangling.  */
+    const char* send;
+    /* The options passed to the demangler.  */
+    int options;
+    /* The next character in the string to consider.  */
+    const char* n;
+    /* The array of components.  */
+    struct demangle_component* comps;
+    /* The index of the next available component.  */
+    int next_comp;
+    /* The number of available component structures.  */
+    int num_comps;
+    /* The array of substitutions.  */
+    struct demangle_component** subs;
+    /* The index of the next substitution.  */
+    int next_sub;
+    /* The number of available entries in the subs array.  */
+    int num_subs;
+    /* The number of substitutions which we actually made from the subs
+       array, plus the number of template parameter references we
+       saw.  */
+    int did_subs;
+    /* The last name we saw, for constructors and destructors.  */
+    struct demangle_component* last_name;
+    /* A running total of the length of large expansions from the
+       mangled name to the demangled name, such as standard
+       substitutions and builtin types.  */
+    int expansion;
 };
 
 /* To avoid running past the ending '\0', don't:
@@ -152,18 +152,18 @@ extern const struct demangle_operator_info cplus_demangle_operators[];
 
 CP_STATIC_IF_GLIBCPP_V3
 const struct demangle_builtin_type_info
-cplus_demangle_builtin_types[D_BUILTIN_TYPE_COUNT];
+        cplus_demangle_builtin_types[D_BUILTIN_TYPE_COUNT];
 
 CP_STATIC_IF_GLIBCPP_V3
-struct demangle_component *
-cplus_demangle_mangled_name (struct d_info *, int);
+struct demangle_component*
+cplus_demangle_mangled_name(struct d_info*, int);
 
 CP_STATIC_IF_GLIBCPP_V3
-struct demangle_component *
-cplus_demangle_type (struct d_info *);
+struct demangle_component*
+cplus_demangle_type(struct d_info*);
 
 extern void
-cplus_demangle_init_info (const char *, int, size_t, struct d_info *);
+cplus_demangle_init_info(const char*, int, size_t, struct d_info*);
 
 /* cp-demangle.c needs to define this a little differently */
 #undef CP_STATIC_IF_GLIBCPP_V3

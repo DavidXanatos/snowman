@@ -31,31 +31,37 @@
 #include "Edge.h"
 #include "Region.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace cflow {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace cflow
+            {
 
-Graph::Graph(): root_(nullptr) {}
+                Graph::Graph(): root_(nullptr) {}
 
-Graph::~Graph() {}
+                Graph::~Graph() {}
 
-Edge *Graph::createEdge(Node *tail, Node *head) {
-    auto edge = std::make_unique<Edge>(tail, head);
-    auto result = edge.get();
+                Edge* Graph::createEdge(Node* tail, Node* head)
+                {
+                    auto edge = std::make_unique<Edge>(tail, head);
+                    auto result = edge.get();
 
-    edges_.push_back(std::move(edge));
+                    edges_.push_back(std::move(edge));
 
-    return result;
-}
+                    return result;
+                }
 
-void Graph::print(QTextStream &out) const {
-    out << *root();
-}
+                void Graph::print(QTextStream & out) const
+                {
+                    out << *root();
+                }
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

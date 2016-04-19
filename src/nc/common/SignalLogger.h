@@ -29,25 +29,27 @@
 
 #include "Logger.h"
 
-namespace nc {
+namespace nc
+{
 
-/**
- * Logger converting log() calls to signals.
- */
-class SignalLogger: public QObject, public nc::Logger {
-    Q_OBJECT
-
-public:
-    void log(LogLevel level, const QString &text) override;
-
-Q_SIGNAL
     /**
-     * Signal emitted when there is a message to be logged.
-     *
-     * \param message Formatted log message.
+     * Logger converting log() calls to signals.
      */
-    void onMessage(const QString &message);
-};
+    class SignalLogger: public QObject, public nc::Logger
+    {
+        Q_OBJECT
+
+    public:
+        void log(LogLevel level, const QString & text) override;
+
+        Q_SIGNAL
+        /**
+         * Signal emitted when there is a message to be logged.
+         *
+         * \param message Formatted log message.
+         */
+        void onMessage(const QString & message);
+    };
 
 } // namespace nc
 

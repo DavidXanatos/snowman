@@ -33,30 +33,34 @@
 #include "Disassembly.h"
 #include "Project.h"
 
-namespace nc {
-namespace gui {
-
-Disassemble::Disassemble(Project *project, const core::image::ByteSource *source, ByteAddr begin, ByteAddr end):
-    project_(project), source_(source), begin_(begin), end_(end)
+namespace nc
 {
-    assert(project);
-    assert(source);
-}
+    namespace gui
+    {
 
-void Disassemble::work() {
-    project_->logToken().info(tr("Disassembling addresses %2 to %3...").arg(begin_, 0, 16).arg(end_, 0, 16));
+        Disassemble::Disassemble(Project* project, const core::image::ByteSource* source, ByteAddr begin, ByteAddr end):
+            project_(project), source_(source), begin_(begin), end_(end)
+        {
+            assert(project);
+            assert(source);
+        }
 
-    auto context = std::make_shared<core::Context>();
-    context->setImage(project_->image());
-    context->setInstructions(project_->instructions());
-    context->setCancellationToken(cancellationToken());
-    context->setLogToken(project_->logToken());
+        void Disassemble::work()
+        {
+            project_->logToken().info(tr("Disassembling addresses %2 to %3...").arg(begin_, 0, 16).arg(end_, 0, 16));
 
-    project_->setContext(context);
+            auto context = std::make_shared<core::Context>();
+            context->setImage(project_->image());
+            context->setInstructions(project_->instructions());
+            context->setCancellationToken(cancellationToken());
+            context->setLogToken(project_->logToken());
 
-    delegate(std::make_unique<Disassembly>(context, source_, begin_, end_));
-}
+            project_->setContext(context);
 
-}} // namespace nc::gui
+            delegate(std::make_unique<Disassembly>(context, source_, begin_, end_));
+        }
+
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

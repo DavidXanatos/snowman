@@ -28,76 +28,96 @@
 
 #include <nc/common/Foreach.h>
 
-namespace nc {
-namespace core {
-namespace arch {
-
-const std::shared_ptr<const Instruction> &Instructions::getCovering(ByteAddr addr) const {
-    auto i = address2instruction_.lower_bound(addr);
-
-    if (i != address2instruction_.end() &&
-        i->second->addr() <= addr && addr < i->second->endAddr())
+namespace nc
+{
+    namespace core
     {
-        return i->second;
-    } else {
-        static const std::shared_ptr<const Instruction> null;
-        return null;
-    }
-}
+        namespace arch
+        {
 
-bool Instructions::add(std::shared_ptr<const Instruction> instruction) {
-    assert(instruction != nullptr);
+            const std::shared_ptr<const Instruction> & Instructions::getCovering(ByteAddr addr) const
+            {
+                auto i = address2instruction_.lower_bound(addr);
 
-    auto &existing = address2instruction_[instruction->addr()];
-    if (!existing) {
-        existing = instruction;
-        return true;
-    } else {
-        return false;
-    }
-}
+                if(i != address2instruction_.end() &&
+                        i->second->addr() <= addr && addr < i->second->endAddr())
+                {
+                    return i->second;
+                }
+                else
+                {
+                    static const std::shared_ptr<const Instruction> null;
+                    return null;
+                }
+            }
 
-bool Instructions::remove(const Instruction *instruction) {
-    if (get(instruction->addr()).get() == instruction) {
-        return address2instruction_.erase(instruction->addr());
-    } else {
-        return false;
-    }
-}
+            bool Instructions::add(std::shared_ptr<const Instruction> instruction)
+            {
+                assert(instruction != nullptr);
 
-void Instructions::print(QTextStream &out, PrintCallback<const Instruction *> *callback) const {
-    if (all().empty()) {
-        return;
-    }
+                auto & existing = address2instruction_[instruction->addr()];
+                if(!existing)
+                {
+                    existing = instruction;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
-    ByteAddr successorAddress = all().front()->addr();
+            bool Instructions::remove(const Instruction* instruction)
+            {
+                if(get(instruction->addr()).get() == instruction)
+                {
+                    return address2instruction_.erase(instruction->addr());
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
-    foreach (const auto &instr, all()) {
-        if (instr->addr() != successorAddress) {
-            out << endl;
-        }
-        successorAddress = instr->endAddr();
+            void Instructions::print(QTextStream & out, PrintCallback<const Instruction*>* callback) const
+            {
+                if(all().empty())
+                {
+                    return;
+                }
 
-        if (callback) {
-            callback->onStartPrinting(instr.get());
-        }
+                ByteAddr successorAddress = all().front()->addr();
 
-        int integerBase = out.integerBase();
-        hex(out) << instr->addr() << ":\t";
-        out.setIntegerBase(integerBase);
+                foreach(const auto & instr, all())
+                {
+                    if(instr->addr() != successorAddress)
+                    {
+                        out << endl;
+                    }
+                    successorAddress = instr->endAddr();
 
-        out << *instr;
+                    if(callback)
+                    {
+                        callback->onStartPrinting(instr.get());
+                    }
 
-        if (callback) {
-            callback->onEndPrinting(instr.get());
-        }
+                    int integerBase = out.integerBase();
+                    hex(out) << instr->addr() << ":\t";
+                    out.setIntegerBase(integerBase);
 
-        out << endl;
-    }
-}
+                    out << *instr;
 
-} // namespace arch
-} // namespace core
+                    if(callback)
+                    {
+                        callback->onEndPrinting(instr.get());
+                    }
+
+                    out << endl;
+                }
+            }
+
+        } // namespace arch
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

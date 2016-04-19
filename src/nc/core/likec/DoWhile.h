@@ -29,56 +29,60 @@
 
 #include <memory> /* unique_ptr */
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-class Expression;
+            class Expression;
 
-/**
- * Do-While loop.
- */
-class DoWhile: public Statement {
-    std::unique_ptr<Statement> body_; ///< Loop body.
-    std::unique_ptr<Expression> condition_; ///< Loop condition.
+            /**
+             * Do-While loop.
+             */
+            class DoWhile: public Statement
+            {
+                std::unique_ptr<Statement> body_; ///< Loop body.
+                std::unique_ptr<Expression> condition_; ///< Loop condition.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] condition Valid pointer to the loop condition.
-     * \param[in] body Valid pointer to the loop body.
-     */
-    DoWhile(std::unique_ptr<Statement> body, std::unique_ptr<Expression> condition):
-        Statement(DO_WHILE), body_(std::move(body)), condition_(std::move(condition))
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] condition Valid pointer to the loop condition.
+                 * \param[in] body Valid pointer to the loop body.
+                 */
+                DoWhile(std::unique_ptr<Statement> body, std::unique_ptr<Expression> condition):
+                    Statement(DO_WHILE), body_(std::move(body)), condition_(std::move(condition))
+                {}
 
-    /**
-     * \return Loop body.
-     */
-    std::unique_ptr<Statement> &body() { return body_; }
+                /**
+                 * \return Loop body.
+                 */
+                std::unique_ptr<Statement> & body() { return body_; }
 
-    /**
-     * \return Loop body.
-     */
-    const Statement *body() const { return body_.get(); }
+                /**
+                 * \return Loop body.
+                 */
+                const Statement* body() const { return body_.get(); }
 
-    /**
-     * \return Loop condition.
-     */
-    std::unique_ptr<Expression> &condition() { return condition_; }
+                /**
+                 * \return Loop condition.
+                 */
+                std::unique_ptr<Expression> & condition() { return condition_; }
 
-    /**
-     * \return Loop condition.
-     */
-    const Expression *condition() const { return condition_.get(); }
+                /**
+                 * \return Loop condition.
+                 */
+                const Expression* condition() const { return condition_.get(); }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::DoWhile, nc::core::likec::Statement::DO_WHILE)

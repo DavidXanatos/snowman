@@ -29,26 +29,33 @@
 
 #include <cassert>
 
-namespace nc {
-namespace gui {
-
-Disassembly::Disassembly(const std::shared_ptr<core::Context> &context, const core::image::ByteSource *source, ByteAddr begin, ByteAddr end):
-    context_(context), source_(source), begin_(begin), end_(end)
+namespace nc
 {
-    assert(context);
-    assert(source);
-}
+    namespace gui
+    {
 
-Disassembly::~Disassembly() {}
+        Disassembly::Disassembly(const std::shared_ptr<core::Context> & context, const core::image::ByteSource* source, ByteAddr begin, ByteAddr end):
+            context_(context), source_(source), begin_(begin), end_(end)
+        {
+            assert(context);
+            assert(source);
+        }
 
-void Disassembly::work() {
-    try {
-        core::Driver::disassemble(*context_, source_, begin_, end_);
-    } catch (const CancellationException &) {
-        /* Nothing to do. */
+        Disassembly::~Disassembly() {}
+
+        void Disassembly::work()
+        {
+            try
+            {
+                core::Driver::disassemble(*context_, source_, begin_, end_);
+            }
+            catch(const CancellationException &)
+            {
+                /* Nothing to do. */
+            }
+        }
+
     }
-}
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

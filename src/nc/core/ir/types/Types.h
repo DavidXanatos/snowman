@@ -25,54 +25,62 @@
 
 #include <boost/unordered_map.hpp>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Term;
+            class Term;
 
-namespace types {
+            namespace types
+            {
 
-class Type;
+                class Type;
 
-/**
- * Information about types of terms.
- */
-class Types {
-    mutable boost::unordered_map<const Term *, std::unique_ptr<Type> > types_; ///< Mapping of terms to their type traits.
+                /**
+                 * Information about types of terms.
+                 */
+                class Types
+                {
+                    mutable boost::unordered_map<const Term*, std::unique_ptr<Type>> types_;  ///< Mapping of terms to their type traits.
 
-    public:
+                public:
 
-    /**
-     * Constructor.
-     */
-    Types();
+                    /**
+                     * Constructor.
+                     */
+                    Types();
 
-    /**
-     * Destructor.
-     */
-    ~Types();
+                    /**
+                     * Destructor.
+                     */
+                    ~Types();
 
-    /**
-     * \param[in] term Term.
-     *
-     * \return Valid pointer to Type traits for this term.
-     */
-    Type *getType(const Term *term);
+                    /**
+                     * \param[in] term Term.
+                     *
+                     * \return Valid pointer to Type traits for this term.
+                     */
+                    Type* getType(const Term* term);
 
-    /**
-     * \param[in] term Term.
-     *
-     * \return Valid pointer to type traits for this term.
-     */
-    const Type *getType(const Term *term) const;
+                    /**
+                     * \param[in] term Term.
+                     *
+                     * \return Valid pointer to type traits for this term.
+                     */
+                    const Type* getType(const Term* term) const;
 
-    /**
-     * \return Mapping of terms to their type traits.
-     */
-    boost::unordered_map<const Term *, std::unique_ptr<Type> > &map() { return types_; };
-};
+                    /**
+                     * \return Mapping of terms to their type traits.
+                     */
+                    boost::unordered_map<const Term*, std::unique_ptr<Type>> & map() { return types_; };
+                };
 
-}}}} // namespace nc::core::ir::types
+            }
+        }
+    }
+} // namespace nc::core::ir::types
 
 /* vim:set et sts=4 sw=4: */

@@ -36,153 +36,163 @@
 
 #include "MemoryLocation.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-
-class Constant;
-class Intrinsic;
-class BinaryOperator;
-class Dereference;
-class MemoryLocationAccess;
-class UnaryOperator;
-
-class Statement;
-
-/**
- * Base class for different kinds of expressions of intermediate representation.
- */
-class Term: public Printable, boost::noncopyable {
-    NC_BASE_CLASS(Term, kind)
-
-public:
-    /**
-     * Term kind.
-     */
-    enum {
-        INT_CONST, ///< Integer constant.
-        INTRINSIC, ///< Some special value.
-        MEMORY_LOCATION_ACCESS, ///< Access to an abstract memory location.
-        DEREFERENCE, ///< Dereference.
-        UNARY_OPERATOR, ///< Unary operator.
-        BINARY_OPERATOR, ///< Binary operator.
-    };
-
-    /**
-     * How term is used.
-     */
-    enum AccessType {
-        READ,      ///< Term is read.
-        WRITE,     ///< Term is written.
-    };
-
-private:
-    const Statement *statement_; ///< Statement that this term belongs to.
-    SmallBitSize size_; ///< Size of this term's value in bits.
-
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] kind Kind of this term.
-     * \param[in] size Size of this term's value in bits.
-     */
-    Term(int kind, SmallBitSize size):
-        kind_(kind), statement_(nullptr), size_(size)
+namespace nc
+{
+    namespace core
     {
-        assert(size != 0);
+        namespace ir
+        {
+
+            class Constant;
+            class Intrinsic;
+            class BinaryOperator;
+            class Dereference;
+            class MemoryLocationAccess;
+            class UnaryOperator;
+
+            class Statement;
+
+            /**
+             * Base class for different kinds of expressions of intermediate representation.
+             */
+            class Term: public Printable, boost::noncopyable
+            {
+                NC_BASE_CLASS(Term, kind)
+
+            public:
+                /**
+                 * Term kind.
+                 */
+                enum
+                {
+                    INT_CONST, ///< Integer constant.
+                    INTRINSIC, ///< Some special value.
+                    MEMORY_LOCATION_ACCESS, ///< Access to an abstract memory location.
+                    DEREFERENCE, ///< Dereference.
+                    UNARY_OPERATOR, ///< Unary operator.
+                    BINARY_OPERATOR, ///< Binary operator.
+                };
+
+                /**
+                 * How term is used.
+                 */
+                enum AccessType
+                {
+                    READ,      ///< Term is read.
+                    WRITE,     ///< Term is written.
+                };
+
+            private:
+                const Statement* statement_; ///< Statement that this term belongs to.
+                SmallBitSize size_; ///< Size of this term's value in bits.
+
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] kind Kind of this term.
+                 * \param[in] size Size of this term's value in bits.
+                 */
+                Term(int kind, SmallBitSize size):
+                    kind_(kind), statement_(nullptr), size_(size)
+                {
+                    assert(size != 0);
+                }
+
+                /**
+                 * \returns Size of this term's value in bits.
+                 */
+                SmallBitSize size() const { return size_; }
+
+                /**
+                 * \return Pointer to the statement this term belongs to. Can be nullptr.
+                 */
+                const Statement* statement() const { return statement_; }
+
+                /**
+                 * Sets the statement this term and its children belong to.
+                 *
+                 * \param[in] statement Valid pointer to the statement.
+                 *
+                 * \note Must be called only once for each term.
+                 */
+                void setStatement(const Statement* statement);
+
+                /**
+                 * \return Term's access type.
+                 */
+                AccessType accessType() const;
+
+                /**
+                 * \return True if term is used for reading, false otherwise.
+                 */
+                bool isRead() const { return accessType() == READ; }
+
+                /**
+                 * \return True if term is used for writing, false otherwise.
+                 */
+                bool isWrite() const { return accessType() == WRITE; }
+
+                /**
+                 * \return If the term stands in the left hand side of an assignment,
+                 *         returns the right hand size of this assignment. Otherwise,
+                 *         nullptr is returned.
+                 */
+                const Term* source() const;
+
+                /**
+                 * \return Clone of the term.
+                 */
+                std::unique_ptr<Term> clone() const { return doClone(); }
+
+                /**
+                 * Calls a given function on all the children of this term.
+                 *
+                 * \param fun Valid function.
+                 */
+                void callOnChildren(const std::function<void(const Term*)> & fun) const
+                {
+                    assert(fun);
+                    const_cast<Term*>(this)->doCallOnChildren(fun);
+                }
+
+                /**
+                 * Calls a given function on all the children of this term.
+                 *
+                 * \param fun Valid function.
+                 */
+                void callOnChildren(const std::function<void(Term*)> & fun)
+                {
+                    assert(fun);
+                    doCallOnChildren(fun);
+                }
+
+                /* The following functions are defined in Terms.h. */
+
+                inline const Constant* asConstant() const;
+                inline const Intrinsic* asIntrinsic() const;
+                inline const MemoryLocationAccess* asMemoryLocationAccess() const;
+                inline const Dereference* asDereference() const;
+                inline const UnaryOperator* asUnaryOperator() const;
+                inline const BinaryOperator* asBinaryOperator() const;
+
+            protected:
+                /**
+                 * \return Valid pointer to the clone of this term.
+                 */
+                virtual std::unique_ptr<Term> doClone() const = 0;
+
+                /**
+                 * Calls a given function on all the children of this term.
+                 *
+                 * \param fun Valid function.
+                 */
+                virtual void doCallOnChildren(const std::function<void(Term*)> & fun) = 0;
+            };
+
+        }
     }
-
-    /**
-     * \returns Size of this term's value in bits.
-     */
-    SmallBitSize size() const { return size_; }
-
-    /**
-     * \return Pointer to the statement this term belongs to. Can be nullptr.
-     */
-    const Statement *statement() const { return statement_; }
-
-    /**
-     * Sets the statement this term and its children belong to.
-     *
-     * \param[in] statement Valid pointer to the statement.
-     *
-     * \note Must be called only once for each term.
-     */
-    void setStatement(const Statement *statement);
-
-    /**
-     * \return Term's access type.
-     */
-    AccessType accessType() const;
-
-    /**
-     * \return True if term is used for reading, false otherwise.
-     */
-    bool isRead() const { return accessType() == READ; }
-
-    /**
-     * \return True if term is used for writing, false otherwise.
-     */
-    bool isWrite() const { return accessType() == WRITE; }
-
-    /**
-     * \return If the term stands in the left hand side of an assignment,
-     *         returns the right hand size of this assignment. Otherwise,
-     *         nullptr is returned.
-     */
-    const Term *source() const;
-
-    /**
-     * \return Clone of the term.
-     */
-    std::unique_ptr<Term> clone() const { return doClone(); }
-
-    /**
-     * Calls a given function on all the children of this term.
-     *
-     * \param fun Valid function.
-     */
-    void callOnChildren(const std::function<void(const Term *)> &fun) const {
-        assert(fun);
-        const_cast<Term *>(this)->doCallOnChildren(fun);
-    }
-
-    /**
-     * Calls a given function on all the children of this term.
-     *
-     * \param fun Valid function.
-     */
-    void callOnChildren(const std::function<void(Term *)> &fun) {
-        assert(fun);
-        doCallOnChildren(fun);
-    }
-
-    /* The following functions are defined in Terms.h. */
-
-    inline const Constant *asConstant() const;
-    inline const Intrinsic *asIntrinsic() const;
-    inline const MemoryLocationAccess *asMemoryLocationAccess() const;
-    inline const Dereference *asDereference() const;
-    inline const UnaryOperator *asUnaryOperator() const;
-    inline const BinaryOperator *asBinaryOperator() const;
-
-protected:
-    /**
-     * \return Valid pointer to the clone of this term.
-     */
-    virtual std::unique_ptr<Term> doClone() const = 0;
-
-    /**
-     * Calls a given function on all the children of this term.
-     *
-     * \param fun Valid function.
-     */
-    virtual void doCallOnChildren(const std::function<void(Term *)> &fun) = 0;
-};
-
-}}} // namespace nc::core::ir
+} // namespace nc::core::ir
 
 /**
  * Defines a compile-time mapping from term class to term kind.

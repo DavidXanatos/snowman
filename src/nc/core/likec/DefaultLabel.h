@@ -27,20 +27,24 @@
 
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Default case label.
- */
-class DefaultLabel: public Statement {
-public:
-    DefaultLabel(): Statement(DEFAULT_LABEL) {}
-};
+            /**
+             * Default case label.
+             */
+            class DefaultLabel: public Statement
+            {
+            public:
+                DefaultLabel(): Statement(DEFAULT_LABEL) {}
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::DefaultLabel, nc::core::likec::Statement::DEFAULT_LABEL)

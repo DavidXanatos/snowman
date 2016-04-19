@@ -31,89 +31,95 @@
 
 #include <QAbstractItemModel>
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    class Context;
+    namespace core
+    {
+        class Context;
 
-    namespace likec {
-        class TreeNode;
+        namespace likec
+        {
+            class TreeNode;
+        }
     }
-}
 
-namespace gui {
+    namespace gui
+    {
 
-class InspectorItem;
+        class InspectorItem;
 
-/**
- * Item model for TreeInspector.
- */
-class InspectorModel: public QAbstractItemModel {
-    Q_OBJECT
+        /**
+         * Item model for TreeInspector.
+         */
+        class InspectorModel: public QAbstractItemModel
+        {
+            Q_OBJECT
 
-    /** Associated immutable context instance. */
-    std::shared_ptr<const core::Context> context_;
+            /** Associated immutable context instance. */
+            std::shared_ptr<const core::Context> context_;
 
-    /** Root tree item. */
-    std::unique_ptr<InspectorItem> root_;
+            /** Root tree item. */
+            std::unique_ptr<InspectorItem> root_;
 
-    /** Mapping from LikeC nodes to their parents. */
-    boost::unordered_map<const core::likec::TreeNode *, const core::likec::TreeNode *> node2parent_;
+            /** Mapping from LikeC nodes to their parents. */
+            boost::unordered_map<const core::likec::TreeNode*, const core::likec::TreeNode*> node2parent_;
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param parent  Pointer to the parent object. Can be nullptr.
-     * \param context Pointer to the context. Can be nullptr.
-     */
-    InspectorModel(QObject *parent = nullptr, std::shared_ptr<const core::Context> context = nullptr);
+        public:
+            /**
+             * Constructor.
+             *
+             * \param parent  Pointer to the parent object. Can be nullptr.
+             * \param context Pointer to the context. Can be nullptr.
+             */
+            InspectorModel(QObject* parent = nullptr, std::shared_ptr<const core::Context> context = nullptr);
 
-    /**
-     * Destructor.
-     */
-    ~InspectorModel();
+            /**
+             * Destructor.
+             */
+            ~InspectorModel();
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    QModelIndex parent(const QModelIndex &index) const override;
-    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+            int rowCount(const QModelIndex & parent = QModelIndex()) const override;
+            int columnCount(const QModelIndex & parent = QModelIndex()) const override;
+            QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const override;
+            QModelIndex parent(const QModelIndex & index) const override;
+            QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const override;
 
-    /**
-     * \return Valid pointer to the root tree item.
-     */
-    InspectorItem *root() const { return root_.get(); }
+            /**
+             * \return Valid pointer to the root tree item.
+             */
+            InspectorItem* root() const { return root_.get(); }
 
-    /**
-     * \param[in] index Index.
-     *
-     * \return Valid pointer to the InspectorItem for the given index.
-     */
-    InspectorItem *getItem(const QModelIndex &index) const;
+            /**
+             * \param[in] index Index.
+             *
+             * \return Valid pointer to the InspectorItem for the given index.
+             */
+            InspectorItem* getItem(const QModelIndex & index) const;
 
-    /**
-     * \param[in] item Valid pointer to an InspectorItem.
-     *
-     * \return Index for the given InspectorItem.
-     */
-    QModelIndex getIndex(const InspectorItem *item) const;
+            /**
+             * \param[in] item Valid pointer to an InspectorItem.
+             *
+             * \return Index for the given InspectorItem.
+             */
+            QModelIndex getIndex(const InspectorItem* item) const;
 
-    /**
-     * \param[in] node Pointer to a LikeC tree node.
-     *
-     * \return Pointer to this node's parent. Can be nullptr.
-     */
-    const core::likec::TreeNode *getParent(const core::likec::TreeNode *node);
+            /**
+             * \param[in] node Pointer to a LikeC tree node.
+             *
+             * \return Pointer to this node's parent. Can be nullptr.
+             */
+            const core::likec::TreeNode* getParent(const core::likec::TreeNode* node);
 
-    /**
-     * Computes children of given tree item.
-     *
-     * \param item Valid pointer to a tree item.
-     */
-    void expand(InspectorItem *item) const;
-};
+            /**
+             * Computes children of given tree item.
+             *
+             * \param item Valid pointer to a tree item.
+             */
+            void expand(InspectorItem* item) const;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

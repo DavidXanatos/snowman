@@ -25,33 +25,38 @@
 
 #include <nc/config.h>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-/**
- * Memory domain id type.
- */
-typedef int Domain;
+            /**
+             * Memory domain id type.
+             */
+            typedef int Domain;
 
-/**
- * Memory domains.
- */
-class MemoryDomain {
-    public:
+            /**
+             * Memory domains.
+             */
+            class MemoryDomain
+            {
+            public:
 
-    enum {
-        UNKNOWN,                ///< Unknown area.
-        MEMORY,                 ///< Global memory area.
-        STACK,                  ///< Stack frame area.
-        FIRST_REGISTER = 1000,  ///< First register's domain.
-        LAST_REGISTER  = 10000, ///< Last register's domain.
-        USER = 65536,           ///< First user-defined domain.
-    };
-};
+                enum
+                {
+                    UNKNOWN,                ///< Unknown area.
+                    MEMORY,                 ///< Global memory area.
+                    STACK,                  ///< Stack frame area.
+                    FIRST_REGISTER = 1000,  ///< First register's domain.
+                    LAST_REGISTER  = 10000, ///< Last register's domain.
+                    USER = 65536,           ///< First user-defined domain.
+                };
+            };
 
-} // namespace core
-} // namespace ir
+        } // namespace core
+    } // namespace ir
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

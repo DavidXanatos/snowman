@@ -30,103 +30,110 @@
 
 #include <nc/core/ir/MemoryLocation.h>
 
-namespace nc {
-namespace core {
-namespace ir {
-
-class Term;
-
-namespace vars {
-
-/**
- * Class containing information about a reconstructed variable.
- */
-class Variable {
-public:
-    /**
-     * Scope of a variable.
-     */
-    enum Scope {
-        GLOBAL, ///< Global variable (declared in a compilation unit).
-        LOCAL ///< Local variable (declared in a function).
-    };
-
-    /**
-     * A pair of term and its location.
-     */
-    struct TermAndLocation {
-        const Term *term;
-        MemoryLocation location;
-
-        TermAndLocation(const Term *term, const MemoryLocation &location): term(term), location(location) {}
-    };
-
-private:
-    /** Scope of the variable. */
-    Scope scope_;
-
-    /** Terms belonging to the variable, together with their memory locations. */
-    std::vector<TermAndLocation> termsAndLocations_;
-
-    /** Memory location of the variable. */
-    MemoryLocation memoryLocation_;
-
-public:
-    /**
-     * Constructor.
-     *
-     * \param[in] scope Scope of the variable.
-     * \param[in] termsAndLocations List of terms and their memory
-     *                              locations belonging to the variable.
-     * \param[in] memoryLocation Valid memory location of the variable.
-     */
-    Variable(Scope scope, std::vector<TermAndLocation> termsAndLocations, const MemoryLocation &memoryLocation):
-        scope_(scope), termsAndLocations_(std::move(termsAndLocations)), memoryLocation_(memoryLocation)
+namespace nc
+{
+    namespace core
     {
-        assert(memoryLocation);
-    }
+        namespace ir
+        {
 
-    /**
-     * Constructor.
-     *
-     * \param[in] scope Scope of the variable.
-     * \param[in] termsAndLocations Non-empty list of terms and their memory
-     *                              locations belonging to the variable.
-     *
-     * This constructor initializes the memory location with the union
-     * of the memory locations of constituent terms.
-     */
-    Variable(Scope scope, std::vector<TermAndLocation> termsAndLocations);
+            class Term;
 
-    /**
-     * \return Scope of the variable.
-     */
-    Scope scope() const { return scope_; }
+            namespace vars
+            {
 
-    /**
-     * \return True if the variable is global, false otherwise.
-     */
-    bool isGlobal() const { return scope_ == GLOBAL; }
+                /**
+                 * Class containing information about a reconstructed variable.
+                 */
+                class Variable
+                {
+                public:
+                    /**
+                     * Scope of a variable.
+                     */
+                    enum Scope
+                    {
+                        GLOBAL, ///< Global variable (declared in a compilation unit).
+                        LOCAL ///< Local variable (declared in a function).
+                    };
 
-    /**
-     * \return True if the variable is local, false otherwise.
-     */
-    bool isLocal() const { return scope_ == LOCAL; }
+                    /**
+                     * A pair of term and its location.
+                     */
+                    struct TermAndLocation
+                    {
+                        const Term* term;
+                        MemoryLocation location;
 
-    /**
-     * \return List of terms belonging to this variable, together with their memory locations.
-     */
-    const std::vector<TermAndLocation> &termsAndLocations() const { return termsAndLocations_; }
+                        TermAndLocation(const Term* term, const MemoryLocation & location): term(term), location(location) {}
+                    };
 
-    /**
-     * \return Memory location of the variable.
-     */
-    const MemoryLocation &memoryLocation() const { return memoryLocation_; }
-};
+                private:
+                    /** Scope of the variable. */
+                    Scope scope_;
 
-} // namespace vars
-} // namespace ir
-} // namespace core
+                    /** Terms belonging to the variable, together with their memory locations. */
+                    std::vector<TermAndLocation> termsAndLocations_;
+
+                    /** Memory location of the variable. */
+                    MemoryLocation memoryLocation_;
+
+                public:
+                    /**
+                     * Constructor.
+                     *
+                     * \param[in] scope Scope of the variable.
+                     * \param[in] termsAndLocations List of terms and their memory
+                     *                              locations belonging to the variable.
+                     * \param[in] memoryLocation Valid memory location of the variable.
+                     */
+                    Variable(Scope scope, std::vector<TermAndLocation> termsAndLocations, const MemoryLocation & memoryLocation):
+                        scope_(scope), termsAndLocations_(std::move(termsAndLocations)), memoryLocation_(memoryLocation)
+                    {
+                        assert(memoryLocation);
+                    }
+
+                    /**
+                     * Constructor.
+                     *
+                     * \param[in] scope Scope of the variable.
+                     * \param[in] termsAndLocations Non-empty list of terms and their memory
+                     *                              locations belonging to the variable.
+                     *
+                     * This constructor initializes the memory location with the union
+                     * of the memory locations of constituent terms.
+                     */
+                    Variable(Scope scope, std::vector<TermAndLocation> termsAndLocations);
+
+                    /**
+                     * \return Scope of the variable.
+                     */
+                    Scope scope() const { return scope_; }
+
+                    /**
+                     * \return True if the variable is global, false otherwise.
+                     */
+                    bool isGlobal() const { return scope_ == GLOBAL; }
+
+                    /**
+                     * \return True if the variable is local, false otherwise.
+                     */
+                    bool isLocal() const { return scope_ == LOCAL; }
+
+                    /**
+                     * \return List of terms belonging to this variable, together with their memory locations.
+                     */
+                    const std::vector<TermAndLocation> & termsAndLocations() const { return termsAndLocations_; }
+
+                    /**
+                     * \return Memory location of the variable.
+                     */
+                    const MemoryLocation & memoryLocation() const { return memoryLocation_; }
+                };
+
+            } // namespace vars
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

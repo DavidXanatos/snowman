@@ -33,53 +33,60 @@
 
 #include "Variable.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class Term;
+            class Term;
 
-namespace vars {
+            namespace vars
+            {
 
-/**
- * Information about reconstructed variables.
- */
-class Variables {
-    /** All variables. */
-    std::vector<std::unique_ptr<Variable>> variables_;
+                /**
+                 * Information about reconstructed variables.
+                 */
+                class Variables
+                {
+                    /** All variables. */
+                    std::vector<std::unique_ptr<Variable>> variables_;
 
-    /** Mapping of terms to variables. */
-    boost::unordered_map<const Term *, Variable *> term2variable_;
+                    /** Mapping of terms to variables. */
+                    boost::unordered_map<const Term*, Variable*> term2variable_;
 
-public:
-    /**
-     * \return List of all reconstructed variables.
-     */
-    const std::vector<const Variable *> &list() const {
-        return reinterpret_cast<const std::vector<const Variable *> &>(variables_);
-    }
+                public:
+                    /**
+                     * \return List of all reconstructed variables.
+                     */
+                    const std::vector<const Variable*> & list() const
+                    {
+                        return reinterpret_cast<const std::vector<const Variable*> &>(variables_);
+                    }
 
-    /**
-     * Adds information about reconstructed variable.
-     *
-     * \param variable Valid pointer to the information about the variable.
-     */
-    void addVariable(std::unique_ptr<Variable> variable);
+                    /**
+                     * Adds information about reconstructed variable.
+                     *
+                     * \param variable Valid pointer to the information about the variable.
+                     */
+                    void addVariable(std::unique_ptr<Variable> variable);
 
-    /**
-     * \param term Valid pointer to a term.
-     *
-     * \return Pointer to the variable corresponding to the term. Can be nullptr.
-     */
-    const Variable *getVariable(const Term *term) const {
-        assert(term != nullptr);
-        return nc::find(term2variable_, term);
-    }
-};
+                    /**
+                     * \param term Valid pointer to a term.
+                     *
+                     * \return Pointer to the variable corresponding to the term. Can be nullptr.
+                     */
+                    const Variable* getVariable(const Term* term) const
+                    {
+                        assert(term != nullptr);
+                        return nc::find(term2variable_, term);
+                    }
+                };
 
-} // namespace vars
-} // namespace ir
-} // namespace core
+            } // namespace vars
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

@@ -47,197 +47,250 @@
 
 #include "Liveness.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace liveness {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace liveness
+            {
 
-LivenessAnalyzer::LivenessAnalyzer(Liveness &liveness, const Function *function,
-    const dflow::Dataflow &dataflow, const arch::Architecture *architecture,
-    const cflow::Graph *regionGraph, const calling::Hooks &hooks,
-    const calling::Signatures *signatures, const LogToken &log
-):
-    liveness_(liveness), function_(function), dataflow_(dataflow),
-    architecture_(architecture), regionGraph_(regionGraph), hooks_(hooks),
-    signatures_(signatures), log_(log)
-{}
+                LivenessAnalyzer::LivenessAnalyzer(Liveness & liveness, const Function* function,
+                                                   const dflow::Dataflow & dataflow, const arch::Architecture* architecture,
+                                                   const cflow::Graph* regionGraph, const calling::Hooks & hooks,
+                                                   const calling::Signatures* signatures, const LogToken & log
+                                                  ):
+                    liveness_(liveness), function_(function), dataflow_(dataflow),
+                    architecture_(architecture), regionGraph_(regionGraph), hooks_(hooks),
+                    signatures_(signatures), log_(log)
+                {}
 
-void LivenessAnalyzer::analyze() {
-    computeInvisibleJumps();
+                void LivenessAnalyzer::analyze()
+                {
+                    computeInvisibleJumps();
 
-    foreach (const BasicBlock *basicBlock, function_->basicBlocks()) {
-        foreach (const Statement *statement, basicBlock->statements()) {
-            computeLiveness(statement);
-        }
-    }
-}
-
-void LivenessAnalyzer::computeInvisibleJumps() {
-    if (!regionGraph_) {
-        return;
-    }
-
-    invisibleJumps_.clear();
-
-    foreach (auto node, regionGraph_->nodes()) {
-        if (auto region = node->as<cflow::Region>()) {
-            if (auto witch = region->as<cflow::Switch>()) {
-                if (witch->boundsCheckNode()) {
-                    invisibleJumps_.push_back(witch->boundsCheckNode()->basicBlock()->getJump());
-                }
-                invisibleJumps_.push_back(witch->switchNode()->basicBlock()->getJump());
-                makeLive(witch->switchTerm());
-            }
-        }
-    }
-
-    std::sort(invisibleJumps_.begin(), invisibleJumps_.end());
-}
-
-void LivenessAnalyzer::computeLiveness(const Statement *statement) {
-    switch (statement->kind()) {
-        case Statement::INLINE_ASSEMBLY:
-            break;
-        case Statement::ASSIGNMENT: {
-            auto assignment = statement->asAssignment();
-            auto memoryLocation = dataflow_.getMemoryLocation(assignment->left());
-
-            if (!memoryLocation || architecture_->isGlobalMemory(memoryLocation)) {
-                makeLive(assignment->left());
-            }
-            break;
-        }
-        case Statement::JUMP: {
-            const Jump *jump = statement->asJump();
-
-            if (!std::binary_search(invisibleJumps_.begin(), invisibleJumps_.end(), jump)) {
-                if (jump->condition()) {
-                    makeLive(jump->condition());
-                }
-                if (jump->thenTarget().address() && !dflow::isReturnAddress(jump->thenTarget(), dataflow_)) {
-                    makeLive(jump->thenTarget().address());
-                }
-                if (jump->elseTarget().address() && !dflow::isReturnAddress(jump->elseTarget(), dataflow_)) {
-                    makeLive(jump->elseTarget().address());
+                    foreach(const BasicBlock * basicBlock, function_->basicBlocks())
+                    {
+                        foreach(const Statement * statement, basicBlock->statements())
+                        {
+                            computeLiveness(statement);
+                        }
+                    }
                 }
 
-                if (signatures_ && dflow::isReturn(jump, dataflow_)) {
-                    if (auto signature = signatures_->getSignature(function_)) {
-                        if (signature->returnValue()) {
-                            if (auto returnHook = hooks_.getReturnHook(jump)) {
-                                makeLive(returnHook->getReturnValueTerm(signature->returnValue().get()));
+                void LivenessAnalyzer::computeInvisibleJumps()
+                {
+                    if(!regionGraph_)
+                    {
+                        return;
+                    }
+
+                    invisibleJumps_.clear();
+
+                    foreach(auto node, regionGraph_->nodes())
+                    {
+                        if(auto region = node->as<cflow::Region>())
+                        {
+                            if(auto witch = region->as<cflow::Switch>())
+                            {
+                                if(witch->boundsCheckNode())
+                                {
+                                    invisibleJumps_.push_back(witch->boundsCheckNode()->basicBlock()->getJump());
+                                }
+                                invisibleJumps_.push_back(witch->switchNode()->basicBlock()->getJump());
+                                makeLive(witch->switchTerm());
                             }
                         }
                     }
+
+                    std::sort(invisibleJumps_.begin(), invisibleJumps_.end());
                 }
-            }
-            break;
-        }
-        case Statement::CALL: {
-            const Call *call = statement->asCall();
 
-            makeLive(call->target());
+                void LivenessAnalyzer::computeLiveness(const Statement* statement)
+                {
+                    switch(statement->kind())
+                    {
+                    case Statement::INLINE_ASSEMBLY:
+                        break;
+                    case Statement::ASSIGNMENT:
+                    {
+                        auto assignment = statement->asAssignment();
+                        auto memoryLocation = dataflow_.getMemoryLocation(assignment->left());
 
-            if (signatures_) {
-                if (auto signature = signatures_->getSignature(call)) {
-                    if (auto callHook = hooks_.getCallHook(call)) {
-                        foreach (const auto &argument, signature->arguments()) {
-                            makeLive(callHook->getArgumentTerm(argument.get()));
+                        if(!memoryLocation || architecture_->isGlobalMemory(memoryLocation))
+                        {
+                            makeLive(assignment->left());
                         }
+                        break;
+                    }
+                    case Statement::JUMP:
+                    {
+                        const Jump* jump = statement->asJump();
+
+                        if(!std::binary_search(invisibleJumps_.begin(), invisibleJumps_.end(), jump))
+                        {
+                            if(jump->condition())
+                            {
+                                makeLive(jump->condition());
+                            }
+                            if(jump->thenTarget().address() && !dflow::isReturnAddress(jump->thenTarget(), dataflow_))
+                            {
+                                makeLive(jump->thenTarget().address());
+                            }
+                            if(jump->elseTarget().address() && !dflow::isReturnAddress(jump->elseTarget(), dataflow_))
+                            {
+                                makeLive(jump->elseTarget().address());
+                            }
+
+                            if(signatures_ && dflow::isReturn(jump, dataflow_))
+                            {
+                                if(auto signature = signatures_->getSignature(function_))
+                                {
+                                    if(signature->returnValue())
+                                    {
+                                        if(auto returnHook = hooks_.getReturnHook(jump))
+                                        {
+                                            makeLive(returnHook->getReturnValueTerm(signature->returnValue().get()));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    case Statement::CALL:
+                    {
+                        const Call* call = statement->asCall();
+
+                        makeLive(call->target());
+
+                        if(signatures_)
+                        {
+                            if(auto signature = signatures_->getSignature(call))
+                            {
+                                if(auto callHook = hooks_.getCallHook(call))
+                                {
+                                    foreach(const auto & argument, signature->arguments())
+                                    {
+                                        makeLive(callHook->getArgumentTerm(argument.get()));
+                                    }
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+                    case Statement::HALT:
+                        break;
+                    case Statement::TOUCH:
+                        break;
+                    case Statement::CALLBACK:
+                        break;
+                    case Statement::REMEMBER_REACHING_DEFINITIONS:
+                        break;
+                    default:
+                        log_.warning(tr("%1: Unknown statement kind: %2.").arg(Q_FUNC_INFO).arg(statement->kind()));
+                        break;
                     }
                 }
-            }
 
-            break;
-        }
-        case Statement::HALT:
-            break;
-        case Statement::TOUCH:
-            break;
-        case Statement::CALLBACK:
-            break;
-        case Statement::REMEMBER_REACHING_DEFINITIONS:
-            break;
-        default:
-            log_.warning(tr("%1: Unknown statement kind: %2.").arg(Q_FUNC_INFO).arg(statement->kind()));
-            break;
-    }
-}
-
-void LivenessAnalyzer::propagateLiveness(const Term *term) {
-    assert(term != nullptr);
+                void LivenessAnalyzer::propagateLiveness(const Term* term)
+                {
+                    assert(term != nullptr);
 
 #ifdef NC_PREFER_CONSTANTS_TO_EXPRESSIONS
-    if (term->isRead() && dataflow_.getValue(term)->abstractValue().isConcrete()) {
-        return;
-    }
+                    if(term->isRead() && dataflow_.getValue(term)->abstractValue().isConcrete())
+                    {
+                        return;
+                    }
 #endif
 
-    switch (term->kind()) {
-        case Term::INT_CONST:
-            break;
-        case Term::INTRINSIC:
-            break;
-        case Term::MEMORY_LOCATION_ACCESS: {
-            if (term->isRead()) {
-                foreach (auto &chunk, dataflow_.getDefinitions(term).chunks()) {
-                    foreach (const Term *definition, chunk.definitions()) {
-                        makeLive(definition);
+                    switch(term->kind())
+                    {
+                    case Term::INT_CONST:
+                        break;
+                    case Term::INTRINSIC:
+                        break;
+                    case Term::MEMORY_LOCATION_ACCESS:
+                    {
+                        if(term->isRead())
+                        {
+                            foreach(auto & chunk, dataflow_.getDefinitions(term).chunks())
+                            {
+                                foreach(const Term * definition, chunk.definitions())
+                                {
+                                    makeLive(definition);
+                                }
+                            }
+                        }
+                        else if(term->isWrite())
+                        {
+                            if(auto source = term->source())
+                            {
+                                makeLive(source);
+                            }
+                        }
+                        break;
+                    }
+                    case Term::DEREFERENCE:
+                    {
+                        if(term->isRead())
+                        {
+                            foreach(auto & chunk, dataflow_.getDefinitions(term).chunks())
+                            {
+                                foreach(const Term * definition, chunk.definitions())
+                                {
+                                    makeLive(definition);
+                                }
+                            }
+                        }
+                        else if(term->isWrite())
+                        {
+                            if(auto source = term->source())
+                            {
+                                makeLive(source);
+                            }
+                        }
+
+                        if(!dataflow_.getMemoryLocation(term))
+                        {
+                            makeLive(term->asDereference()->address());
+                        }
+                        break;
+                    }
+                    case Term::UNARY_OPERATOR:
+                    {
+                        const UnaryOperator* unary = term->asUnaryOperator();
+                        makeLive(unary->operand());
+                        break;
+                    }
+                    case Term::BINARY_OPERATOR:
+                    {
+                        const BinaryOperator* binary = term->asBinaryOperator();
+                        makeLive(binary->left());
+                        makeLive(binary->right());
+                        break;
+                    }
+                    default:
+                        log_.warning(tr("%1: Unknown term kind: %2.").arg(Q_FUNC_INFO).arg(term->kind()));
+                        break;
                     }
                 }
-            } else if (term->isWrite()) {
-                if (auto source = term->source()) {
-                    makeLive(source);
-                }
-            }
-            break;
-        }
-        case Term::DEREFERENCE: {
-            if (term->isRead()) {
-                foreach (auto &chunk, dataflow_.getDefinitions(term).chunks()) {
-                    foreach (const Term *definition, chunk.definitions()) {
-                        makeLive(definition);
+
+                void LivenessAnalyzer::makeLive(const Term* term)
+                {
+                    assert(term != nullptr);
+                    if(!liveness_.isLive(term))
+                    {
+                        liveness_.makeLive(term);
+                        propagateLiveness(term);
                     }
                 }
-            } else if (term->isWrite()) {
-                if (auto source = term->source()) {
-                    makeLive(source);
-                }
-            }
 
-            if (!dataflow_.getMemoryLocation(term)) {
-                makeLive(term->asDereference()->address());
-            }
-            break;
-        }
-        case Term::UNARY_OPERATOR: {
-            const UnaryOperator *unary = term->asUnaryOperator();
-            makeLive(unary->operand());
-            break;
-        }
-        case Term::BINARY_OPERATOR: {
-            const BinaryOperator *binary = term->asBinaryOperator();
-            makeLive(binary->left());
-            makeLive(binary->right());
-            break;
-        }
-        default:
-            log_.warning(tr("%1: Unknown term kind: %2.").arg(Q_FUNC_INFO).arg(term->kind()));
-            break;
-    }
-}
-
-void LivenessAnalyzer::makeLive(const Term *term) {
-    assert(term != nullptr);
-    if (!liveness_.isLive(term)) {
-        liveness_.makeLive(term);
-        propagateLiveness(term);
-    }
-}
-
-} // namespace liveness
-} // namespace ir
-} // namespace core
+            } // namespace liveness
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

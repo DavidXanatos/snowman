@@ -31,59 +31,64 @@
 #include "MemberDeclaration.h"
 #include "Type.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-class StructTypeDeclaration;
+            class StructTypeDeclaration;
 
-/**
- * Structural type.
- */
-class StructType: public Type {
-    std::vector<std::unique_ptr<MemberDeclaration>> members_; ///< Members of struct.
-    const StructTypeDeclaration *typeDeclaration_; ///< Type declaration.
+            /**
+             * Structural type.
+             */
+            class StructType: public Type
+            {
+                std::vector<std::unique_ptr<MemberDeclaration>> members_; ///< Members of struct.
+                const StructTypeDeclaration* typeDeclaration_; ///< Type declaration.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] typeDeclaration Structural type declaration.
-     */
-    StructType(const StructTypeDeclaration *typeDeclaration): Type(0, STRUCT_TYPE), typeDeclaration_(typeDeclaration) {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] typeDeclaration Structural type declaration.
+                 */
+                StructType(const StructTypeDeclaration* typeDeclaration): Type(0, STRUCT_TYPE), typeDeclaration_(typeDeclaration) {}
 
-    /**
-     * \return Members of struct.
-     */
-    const std::vector<const MemberDeclaration *> &members() const {
-        return reinterpret_cast<const std::vector<const MemberDeclaration *> &>(members_);
-    }
+                /**
+                 * \return Members of struct.
+                 */
+                const std::vector<const MemberDeclaration*> & members() const
+                {
+                    return reinterpret_cast<const std::vector<const MemberDeclaration*> &>(members_);
+                }
 
-    /**
-     * \return Type declaration.
-     */
-    const StructTypeDeclaration *typeDeclaration() const { return typeDeclaration_; }
+                /**
+                 * \return Type declaration.
+                 */
+                const StructTypeDeclaration* typeDeclaration() const { return typeDeclaration_; }
 
-    /**
-     * Adds member to the structure.
-     *
-     * \param[in] memberDeclaration Declaration of member.
-     */
-    void addMember(std::unique_ptr<MemberDeclaration> memberDeclaration);
+                /**
+                 * Adds member to the structure.
+                 *
+                 * \param[in] memberDeclaration Declaration of member.
+                 */
+                void addMember(std::unique_ptr<MemberDeclaration> memberDeclaration);
 
-    /**
-     * \return Declaration of member starting at given bit offset in the struct.
-     *
-     * \param[in] offset Bit offset of member.
-     */
-    const MemberDeclaration *getMember(BitSize offset) const;
+                /**
+                 * \return Declaration of member starting at given bit offset in the struct.
+                 *
+                 * \param[in] offset Bit offset of member.
+                 */
+                const MemberDeclaration* getMember(BitSize offset) const;
 
-    bool isStructure() const override { return true; }
-    void print(QTextStream &out) const override;
-};
+                bool isStructure() const override { return true; }
+                void print(QTextStream & out) const override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Type, nc::core::likec::StructType, nc::core::likec::Type::STRUCT_TYPE)

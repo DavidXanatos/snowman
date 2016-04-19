@@ -9,13 +9,16 @@
 
 #include <nc/common/CheckedCast.h>
 
-namespace nc {
-namespace detail {
+namespace nc
+{
+    namespace detail
+    {
 
-template<class Base, class Derived>
-class SubclassId {};
+        template<class Base, class Derived>
+        class SubclassId {};
 
-}} // namespace nc::detail
+    }
+} // namespace nc::detail
 
 #define NC_BASE_CLASS(CLASS, PROPERTY)                                  \
 private:                                                                \
@@ -43,7 +46,7 @@ public:                                                                 \
         }                                                               \
         return nullptr;                                                 \
     }                                                                   \
-private: 
+private:
 
 #define NC_SUBCLASS(BASE, DERIVED, ID)                                  \
     namespace nc { namespace detail {                                   \

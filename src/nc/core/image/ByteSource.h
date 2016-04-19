@@ -27,34 +27,38 @@
 
 #include <nc/common/Types.h>
 
-namespace nc {
-namespace core {
-namespace image {
+namespace nc
+{
+    namespace core
+    {
+        namespace image
+        {
 
-/**
- * Source of bytes of an image or its section.
- */
-class ByteSource {
-public:
-    /**
-     * Virtual destructor.
-     */
-    virtual ~ByteSource() {}
+            /**
+             * Source of bytes of an image or its section.
+             */
+            class ByteSource
+            {
+            public:
+                /**
+                 * Virtual destructor.
+                 */
+                virtual ~ByteSource() {}
 
-    /**
-     * Reads a sequence of bytes.
-     *
-     * \param[in] addr  Linear address of the first byte to read.
-     * \param[out] buf  Valid pointer to the buffer to read into.
-     * \param[in] size  Number of bytes to read.
-     *
-     * \return Number of bytes actually read and copied into the buffer.
-     */
-    virtual ByteSize readBytes(ByteAddr addr, void *buf, ByteSize size) const = 0;
-};
+                /**
+                 * Reads a sequence of bytes.
+                 *
+                 * \param[in] addr  Linear address of the first byte to read.
+                 * \param[out] buf  Valid pointer to the buffer to read into.
+                 * \param[in] size  Number of bytes to read.
+                 *
+                 * \return Number of bytes actually read and copied into the buffer.
+                 */
+                virtual ByteSize readBytes(ByteAddr addr, void* buf, ByteSize size) const = 0;
+            };
 
-} // namespace image
-} // namespace core
+        } // namespace image
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

@@ -32,31 +32,37 @@
 #include "BasicBlock.h"
 #include "Function.h"
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-Functions::Functions() {}
+            Functions::Functions() {}
 
-Functions::~Functions() {}
+            Functions::~Functions() {}
 
-void Functions::addFunction(std::unique_ptr<Function> function) {
-    functions_.push_back(std::move(function));
-}
+            void Functions::addFunction(std::unique_ptr<Function> function)
+            {
+                functions_.push_back(std::move(function));
+            }
 
-void Functions::print(QTextStream &out) const {
-    out << "digraph Functions" << this << " {" << endl;
-    out << "compound = true" << endl;
-    
-    foreach (auto function, list()) {
-        out << *function;
-    }
+            void Functions::print(QTextStream & out) const
+            {
+                out << "digraph Functions" << this << " {" << endl;
+                out << "compound = true" << endl;
 
-    out << "}" << endl;
-}
+                foreach(auto function, list())
+                {
+                    out << *function;
+                }
 
-} // namespace ir
-} // namespace core
+                out << "}" << endl;
+            }
+
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

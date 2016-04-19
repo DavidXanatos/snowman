@@ -34,97 +34,103 @@
 #include <nc/common/Range.h>
 #include <nc/common/ilist.h>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class BasicBlock;
-class JumpTarget;
+            class BasicBlock;
+            class JumpTarget;
 
-/**
- * Control flow graph.
- *
- * Objects of this class can be constructed from a set of basic blocks
- * and contain information about the successors and predecessors of the
- * basic blocks.
- */
-class CFG: public PrintableBase<CFG> {
-public:
-    typedef nc::ilist<BasicBlock> BasicBlocks;
+            /**
+             * Control flow graph.
+             *
+             * Objects of this class can be constructed from a set of basic blocks
+             * and contain information about the successors and predecessors of the
+             * basic blocks.
+             */
+            class CFG: public PrintableBase<CFG>
+            {
+            public:
+                typedef nc::ilist<BasicBlock> BasicBlocks;
 
-private:
-    /** References to the set of basic blocks passed to the constructor. */
-    const BasicBlocks &basicBlocks_;
+            private:
+                /** References to the set of basic blocks passed to the constructor. */
+                const BasicBlocks & basicBlocks_;
 
-    /** Mapping from a basic block to the list of its successors. */
-    boost::unordered_map<const BasicBlock *, std::vector<const BasicBlock *>> successors_;
+                /** Mapping from a basic block to the list of its successors. */
+                boost::unordered_map<const BasicBlock*, std::vector<const BasicBlock*>> successors_;
 
-    /** Mapping from a basic block to the list of its predecessors. */
-    boost::unordered_map<const BasicBlock *, std::vector<const BasicBlock *>> predecessors_;
+                /** Mapping from a basic block to the list of its predecessors. */
+                boost::unordered_map<const BasicBlock*, std::vector<const BasicBlock*>> predecessors_;
 
-public:
-    /**
-     * Constructs control flow graph from a set of basic blocks.
-     *
-     * \param[in] basicBlocks Basic blocks.
-     *
-     * Note that the set of basic blocks is not copied.
-     * Instead, only a reference to it is stored.
-     */
-    CFG(const BasicBlocks &basicBlocks);
+            public:
+                /**
+                 * Constructs control flow graph from a set of basic blocks.
+                 *
+                 * \param[in] basicBlocks Basic blocks.
+                 *
+                 * Note that the set of basic blocks is not copied.
+                 * Instead, only a reference to it is stored.
+                 */
+                CFG(const BasicBlocks & basicBlocks);
 
-    /**
-     * \return The set of basic blocks that was passed to the constructor.
-     */
-    const BasicBlocks &basicBlocks() const { return basicBlocks_; }
+                /**
+                 * \return The set of basic blocks that was passed to the constructor.
+                 */
+                const BasicBlocks & basicBlocks() const { return basicBlocks_; }
 
-    /**
-     * \param[in] basicBlock Valid pointer to a basic block.
-     *
-     * \return List of successors of the basic block.
-     */
-    const std::vector<const BasicBlock *> &getSuccessors(const BasicBlock *basicBlock) const {
-        assert(basicBlock != nullptr);
-        return nc::find(successors_, basicBlock);
-    }
+                /**
+                 * \param[in] basicBlock Valid pointer to a basic block.
+                 *
+                 * \return List of successors of the basic block.
+                 */
+                const std::vector<const BasicBlock*> & getSuccessors(const BasicBlock* basicBlock) const
+                {
+                    assert(basicBlock != nullptr);
+                    return nc::find(successors_, basicBlock);
+                }
 
-    /**
-     * \param[in] basicBlock Valid pointer to a basic block.
-     *
-     * \return List of predecessors of the basic block.
-     */
-    const std::vector<const BasicBlock *> &getPredecessors(const BasicBlock *basicBlock) const {
-        assert(basicBlock != nullptr);
-        return nc::find(predecessors_, basicBlock);
-    }
+                /**
+                 * \param[in] basicBlock Valid pointer to a basic block.
+                 *
+                 * \return List of predecessors of the basic block.
+                 */
+                const std::vector<const BasicBlock*> & getPredecessors(const BasicBlock* basicBlock) const
+                {
+                    assert(basicBlock != nullptr);
+                    return nc::find(predecessors_, basicBlock);
+                }
 
-    /**
-     * Prints the CFG in DOT format into a stream.
-     *
-     * \param[in] out Output stream.
-     */
-    void print(QTextStream &out) const;
+                /**
+                 * Prints the CFG in DOT format into a stream.
+                 *
+                 * \param[in] out Output stream.
+                 */
+                void print(QTextStream & out) const;
 
-private:
-    /**
-     * Adds an edge from a predecessor to a successor.
-     *
-     * \param[in] predecessor Valid pointer to a predecessor basic block.
-     * \param[in] successor   Valid pointer to a successor basic block.
-     */
-    void addConnection(const BasicBlock *predecessor, const BasicBlock *successor);
+            private:
+                /**
+                 * Adds an edge from a predecessor to a successor.
+                 *
+                 * \param[in] predecessor Valid pointer to a predecessor basic block.
+                 * \param[in] successor   Valid pointer to a successor basic block.
+                 */
+                void addConnection(const BasicBlock* predecessor, const BasicBlock* successor);
 
-    /**
-     * Adds edges from a predecessor to all jump targets.
-     *
-     * \param[in] predecessor   Valid pointer to a basic block.
-     * \param[in] jumpTarget    Jump target of the predecessor's terminating jump.
-     */
-    void addConnections(const BasicBlock *predecessor, const JumpTarget &jumpTarget);
-};
+                /**
+                 * Adds edges from a predecessor to all jump targets.
+                 *
+                 * \param[in] predecessor   Valid pointer to a basic block.
+                 * \param[in] jumpTarget    Jump target of the predecessor's terminating jump.
+                 */
+                void addConnections(const BasicBlock* predecessor, const JumpTarget & jumpTarget);
+            };
 
-} // namespace ir
-} // namespace core
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

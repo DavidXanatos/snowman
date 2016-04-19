@@ -27,52 +27,58 @@
 
 #include "Command.h"
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    namespace image {
-        class ByteSource;
+    namespace core
+    {
+        namespace image
+        {
+            class ByteSource;
+        }
     }
-}
 
-namespace gui {
+    namespace gui
+    {
 
-class Project;
+        class Project;
 
-/**
- * 'Disassemble an address range' command.
- */
-class Disassemble: public Command {
-    Q_OBJECT
+        /**
+         * 'Disassemble an address range' command.
+         */
+        class Disassemble: public Command
+        {
+            Q_OBJECT
 
-    /** Project. */
-    Project *project_;
+            /** Project. */
+            Project* project_;
 
-    /** What to disassemble. */
-    const core::image::ByteSource *source_;
+            /** What to disassemble. */
+            const core::image::ByteSource* source_;
 
-    /** First address in the range to be disassembled. */
-    ByteAddr begin_;
+            /** First address in the range to be disassembled. */
+            ByteAddr begin_;
 
-    /** Last address in the range to be disassembled. */
-    ByteAddr end_;
+            /** Last address in the range to be disassembled. */
+            ByteAddr end_;
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param project Valid pointer to a project.
-     * \param source Valid pointer to a byte source.
-     * \param begin First address in the range.
-     * \param end First address past the range.
-     */
-    Disassemble(Project *project, const core::image::ByteSource *source, ByteAddr begin, ByteAddr end);
+            /**
+             * Constructor.
+             *
+             * \param project Valid pointer to a project.
+             * \param source Valid pointer to a byte source.
+             * \param begin First address in the range.
+             * \param end First address past the range.
+             */
+            Disassemble(Project* project, const core::image::ByteSource* source, ByteAddr begin, ByteAddr end);
 
-    void work() override;
-};
+            void work() override;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */
 

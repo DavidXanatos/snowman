@@ -31,110 +31,129 @@
 
 #include <nc/core/arch/Instruction.h>
 
-namespace nc {
-namespace core {
-namespace ir {
-
-std::unique_ptr<Statement> InlineAssembly::doClone() const {
-    return std::make_unique<InlineAssembly>();
-}
-
-void InlineAssembly::print(QTextStream &out) const {
-    out << "asm { ";
-    if (instruction()) {
-        out << *instruction();
-    }
-    out << " }" << endl;
-}
-
-Assignment::Assignment(std::unique_ptr<Term> left, std::unique_ptr<Term> right):
-    Statement(ASSIGNMENT), left_(std::move(left)), right_(std::move(right))
+namespace nc
 {
-    assert(left_);
-    assert(right_);
-    assert(left_->size() == right_->size());
+    namespace core
+    {
+        namespace ir
+        {
 
-    left_->setStatement(this);
-    right_->setStatement(this);
-}
+            std::unique_ptr<Statement> InlineAssembly::doClone() const
+            {
+                return std::make_unique<InlineAssembly>();
+            }
 
-std::unique_ptr<Statement> Assignment::doClone() const {
-    return std::make_unique<Assignment>(left()->clone(), right()->clone());
-}
+            void InlineAssembly::print(QTextStream & out) const
+            {
+                out << "asm { ";
+                if(instruction())
+                {
+                    out << *instruction();
+                }
+                out << " }" << endl;
+            }
 
-void Assignment::print(QTextStream &out) const {
-    out << *left_ << " = " << *right_ << endl;
-}
+            Assignment::Assignment(std::unique_ptr<Term> left, std::unique_ptr<Term> right):
+                Statement(ASSIGNMENT), left_(std::move(left)), right_(std::move(right))
+            {
+                assert(left_);
+                assert(right_);
+                assert(left_->size() == right_->size());
 
-Touch::Touch(std::unique_ptr<Term> term, Term::AccessType accessType):
-    Statement(TOUCH), term_(std::move(term)), accessType_(accessType)
-{
-    assert(term_);
+                left_->setStatement(this);
+                right_->setStatement(this);
+            }
 
-    term_->setStatement(this);
-}
+            std::unique_ptr<Statement> Assignment::doClone() const
+            {
+                return std::make_unique<Assignment>(left()->clone(), right()->clone());
+            }
 
-std::unique_ptr<Statement> Touch::doClone() const {
-    return std::make_unique<Touch>(term()->clone(), term()->accessType());
-}
+            void Assignment::print(QTextStream & out) const
+            {
+                out << *left_ << " = " << *right_ << endl;
+            }
 
-void Touch::print(QTextStream &out) const {
-    switch (term()->accessType()) {
-        case Term::READ:
-            out << "read";
-            break;
-        case Term::WRITE:
-            out << "write";
-            break;
-        default:
-            unreachable();
-    }
-    out << "(" << *term_ << ")" << endl;
-}
+            Touch::Touch(std::unique_ptr<Term> term, Term::AccessType accessType):
+                Statement(TOUCH), term_(std::move(term)), accessType_(accessType)
+            {
+                assert(term_);
 
-Call::Call(std::unique_ptr<Term> target):
-    Statement(CALL), 
-    target_(std::move(target))
-{
-    assert(target_ != nullptr);
+                term_->setStatement(this);
+            }
 
-    target_->setStatement(this);
-}
+            std::unique_ptr<Statement> Touch::doClone() const
+            {
+                return std::make_unique<Touch>(term()->clone(), term()->accessType());
+            }
 
-std::unique_ptr<Statement> Call::doClone() const {
-    return std::make_unique<Call>(target()->clone());
-}
+            void Touch::print(QTextStream & out) const
+            {
+                switch(term()->accessType())
+                {
+                case Term::READ:
+                    out << "read";
+                    break;
+                case Term::WRITE:
+                    out << "write";
+                    break;
+                default:
+                    unreachable();
+                }
+                out << "(" << *term_ << ")" << endl;
+            }
 
-void Call::print(QTextStream &out) const {
-    out << "call " << *target_ << endl;
-}
+            Call::Call(std::unique_ptr<Term> target):
+                Statement(CALL),
+                target_(std::move(target))
+            {
+                assert(target_ != nullptr);
 
-std::unique_ptr<Statement> Halt::doClone() const {
-    return std::make_unique<Halt>();
-}
+                target_->setStatement(this);
+            }
 
-void Halt::print(QTextStream &out) const {
-    out << "halt" << endl;
-}
+            std::unique_ptr<Statement> Call::doClone() const
+            {
+                return std::make_unique<Call>(target()->clone());
+            }
 
-std::unique_ptr<Statement> Callback::doClone() const {
-    return std::make_unique<Callback>(function());
-}
+            void Call::print(QTextStream & out) const
+            {
+                out << "call " << *target_ << endl;
+            }
 
-void Callback::print(QTextStream &out) const {
-    out << "callback" << endl;
-}
+            std::unique_ptr<Statement> Halt::doClone() const
+            {
+                return std::make_unique<Halt>();
+            }
 
-std::unique_ptr<Statement> RememberReachingDefinitions::doClone() const {
-    return std::make_unique<RememberReachingDefinitions>();
-}
+            void Halt::print(QTextStream & out) const
+            {
+                out << "halt" << endl;
+            }
 
-void RememberReachingDefinitions::print(QTextStream &out) const {
-    out << "remember_reaching_definitions" << endl;
-}
+            std::unique_ptr<Statement> Callback::doClone() const
+            {
+                return std::make_unique<Callback>(function());
+            }
 
-} // namespace ir
-} // namespace core
+            void Callback::print(QTextStream & out) const
+            {
+                out << "callback" << endl;
+            }
+
+            std::unique_ptr<Statement> RememberReachingDefinitions::doClone() const
+            {
+                return std::make_unique<RememberReachingDefinitions>();
+            }
+
+            void RememberReachingDefinitions::print(QTextStream & out) const
+            {
+                out << "remember_reaching_definitions" << endl;
+            }
+
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

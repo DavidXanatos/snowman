@@ -29,66 +29,71 @@
 
 #include "Expression.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-class Type;
+            class Type;
 
-/**
- * Typecast.
- */
-class Typecast: public Expression {
-public:
-    enum CastKind {
-        C_STYLE_CAST,
-        STATIC_CAST,
-        REINTERPRET_CAST
-    };
+            /**
+             * Typecast.
+             */
+            class Typecast: public Expression
+            {
+            public:
+                enum CastKind
+                {
+                    C_STYLE_CAST,
+                    STATIC_CAST,
+                    REINTERPRET_CAST
+                };
 
-private:
-    CastKind castKind_; ///< Kind of cast.
-    const Type *type_; ///< Type to cast to.
-    std::unique_ptr<Expression> operand_; ///< Operand.
+            private:
+                CastKind castKind_; ///< Kind of cast.
+                const Type* type_; ///< Type to cast to.
+                std::unique_ptr<Expression> operand_; ///< Operand.
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param[in] castKind Kind of cast.
-     * \param[in] type Type to cast to.
-     * \param[in] operand Expression to be casted.
-     */
-    Typecast(CastKind castKind, const Type *type, std::unique_ptr<Expression> operand):
-        Expression(TYPECAST), castKind_(castKind), type_(type), operand_(std::move(operand))
-    {}
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param[in] castKind Kind of cast.
+                 * \param[in] type Type to cast to.
+                 * \param[in] operand Expression to be casted.
+                 */
+                Typecast(CastKind castKind, const Type* type, std::unique_ptr<Expression> operand):
+                    Expression(TYPECAST), castKind_(castKind), type_(type), operand_(std::move(operand))
+                {}
 
-    /**
-     * \return Kind of the cast.
-     */
-    CastKind castKind() const { return castKind_; }
+                /**
+                 * \return Kind of the cast.
+                 */
+                CastKind castKind() const { return castKind_; }
 
-    /**
-     * \return Type to cast to.
-     */
-    const Type *type() const { return type_; }
+                /**
+                 * \return Type to cast to.
+                 */
+                const Type* type() const { return type_; }
 
-    /**
-     * \return Operand.
-     */
-    std::unique_ptr<Expression> &operand() { return operand_; }
+                /**
+                 * \return Operand.
+                 */
+                std::unique_ptr<Expression> & operand() { return operand_; }
 
-    /**
-     * \return Operand.
-     */
-    const Expression *operand() const { return operand_.get(); }
+                /**
+                 * \return Operand.
+                 */
+                const Expression* operand() const { return operand_.get(); }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Expression, nc::core::likec::Typecast, nc::core::likec::Expression::TYPECAST)

@@ -29,7 +29,8 @@
 #include <nc/common/Branding.h>
 #include <nc/gui/MainWindow.h>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
     QApplication app(argc, argv);
 
     auto branding = nc::branding();

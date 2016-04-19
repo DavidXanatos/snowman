@@ -26,21 +26,27 @@
 
 #include <nc/common/Foreach.h>
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-void Block::doCallOnChildren(const std::function<void(TreeNode *)> &fun) {
-    foreach (const auto &declaration, declarations_) {
-        fun(declaration.get());
-    }
-    foreach (const auto &statement, statements_) {
-        fun(statement.get());
-    }
-}
+            void Block::doCallOnChildren(const std::function<void(TreeNode*)> & fun)
+            {
+                foreach(const auto & declaration, declarations_)
+                {
+                    fun(declaration.get());
+                }
+                foreach(const auto & statement, statements_)
+                {
+                    fun(statement.get());
+                }
+            }
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

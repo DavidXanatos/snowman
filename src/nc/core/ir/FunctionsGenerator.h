@@ -30,63 +30,67 @@
 
 #include <boost/unordered_map.hpp>
 
-namespace nc {
-namespace core {
-namespace ir {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
 
-class BasicBlock;
-class Function;
-class Functions;
-class Program;
+            class BasicBlock;
+            class Function;
+            class Functions;
+            class Program;
 
-/**
- * Generator of functions from control flow graph.
- */
-class FunctionsGenerator {
-public:
-    /**
-     * Virtual destructor.
-     */
-    virtual ~FunctionsGenerator() {}
+            /**
+             * Generator of functions from control flow graph.
+             */
+            class FunctionsGenerator
+            {
+            public:
+                /**
+                 * Virtual destructor.
+                 */
+                virtual ~FunctionsGenerator() {}
 
-    /**
-     * Discovers functions in the control flow graph and creates corresponding
-     * Function objects.
-     *
-     * \param[in] program Intermediate representation of a program.
-     * \param[out] functions Where to add newly created functions.
-     */
-    virtual void makeFunctions(const Program &program, Functions &functions) const;
+                /**
+                 * Discovers functions in the control flow graph and creates corresponding
+                 * Function objects.
+                 *
+                 * \param[in] program Intermediate representation of a program.
+                 * \param[out] functions Where to add newly created functions.
+                 */
+                virtual void makeFunctions(const Program & program, Functions & functions) const;
 
-    /**
-     * Creates a function out of a set of nodes and, optionally, entry basic block.
-     *
-     * \param[in] basicBlocks Basic blocks belonging to the function.
-     * \param[in] entry Entry basic block of a function, if known.
-     *
-     * \return Valid pointer to the created function.
-     */
-    virtual std::unique_ptr<Function> makeFunction(const std::vector<const BasicBlock *> &basicBlocks, const BasicBlock *entry = nullptr) const;
+                /**
+                 * Creates a function out of a set of nodes and, optionally, entry basic block.
+                 *
+                 * \param[in] basicBlocks Basic blocks belonging to the function.
+                 * \param[in] entry Entry basic block of a function, if known.
+                 *
+                 * \return Valid pointer to the created function.
+                 */
+                virtual std::unique_ptr<Function> makeFunction(const std::vector<const BasicBlock*> & basicBlocks, const BasicBlock* entry = nullptr) const;
 
-    /**
-     * Mapping from basic blocks to basic blocks.
-     */
-    typedef boost::unordered_map<const BasicBlock *, BasicBlock *> BasicBlockMap;
+                /**
+                 * Mapping from basic blocks to basic blocks.
+                 */
+                typedef boost::unordered_map<const BasicBlock*, BasicBlock*> BasicBlockMap;
 
-    /**
-     * Clones basic blocks and arcs between them.
-     * Pointers to basic blocks in Jump statements are patched accordingly too.
-     *
-     * \param basicBlocks   Vector of valid pointers to basic blocks being cloned.
-     * \param function      Function to add basic blocks to.
-     *
-     * \return Mapping of basic blocks to their clones.
-     */
-    static BasicBlockMap cloneIntoFunction(const std::vector<const BasicBlock *> &basicBlocks, Function *function);
-};
+                /**
+                 * Clones basic blocks and arcs between them.
+                 * Pointers to basic blocks in Jump statements are patched accordingly too.
+                 *
+                 * \param basicBlocks   Vector of valid pointers to basic blocks being cloned.
+                 * \param function      Function to add basic blocks to.
+                 *
+                 * \return Mapping of basic blocks to their clones.
+                 */
+                static BasicBlockMap cloneIntoFunction(const std::vector<const BasicBlock*> & basicBlocks, Function* function);
+            };
 
-} // namespace ir
-} // namespace core
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

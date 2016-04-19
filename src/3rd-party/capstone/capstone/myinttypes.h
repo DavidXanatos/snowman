@@ -42,7 +42,7 @@ typedef unsigned long long uint64_t;
 #define PRIu32        "lu"
 #define PRIx32        "lx"
 #define PRIX32        "lX"
-#else	// OSX
+#else   // OSX
 #define PRId32        "d"
 #define PRIi32        "i"
 #define PRIo32        "o"
@@ -58,7 +58,7 @@ typedef unsigned long long uint64_t;
 #define PRIx64        __PRI_64_LENGTH_MODIFIER__ "x"
 #define PRIX64        __PRI_64_LENGTH_MODIFIER__ "X"
 
-#else	// this system has inttypes.h by default
+#else   // this system has inttypes.h by default
 #include <inttypes.h>
 #endif
 

@@ -31,54 +31,59 @@ QT_BEGIN_NAMESPACE
 class QSortFilterProxyModel;
 QT_END_NAMESPACE
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    namespace image {
-        class Section;
+    namespace core
+    {
+        namespace image
+        {
+            class Section;
+        }
     }
-}
 
-namespace gui {
+    namespace gui
+    {
 
-class SectionsModel;
+        class SectionsModel;
 
-class SectionsView: public TreeView {
-    Q_OBJECT
+        class SectionsView: public TreeView
+        {
+            Q_OBJECT
 
-    /** The model being the source of the data. */
-    SectionsModel *model_;
+            /** The model being the source of the data. */
+            SectionsModel* model_;
 
-    /** The model being given to QTreeView. */
-    QSortFilterProxyModel *proxyModel_;
+            /** The model being given to QTreeView. */
+            QSortFilterProxyModel* proxyModel_;
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param parent Pointer to the parent widget. Can be nullptr.
-     */
-    SectionsView(QWidget *parent = 0);
+        public:
+            /**
+             * Constructor.
+             *
+             * \param parent Pointer to the parent widget. Can be nullptr.
+             */
+            SectionsView(QWidget* parent = 0);
 
-    /**
-     * \return Pointer to the model being viewed. Can be nullptr.
-     */
-    SectionsModel *model() const { return model_; }
+            /**
+             * \return Pointer to the model being viewed. Can be nullptr.
+             */
+            SectionsModel* model() const { return model_; }
 
-    /**
-     * Sets the model being viewed.
-     *
-     * \param model Pointer to the new model. Can be nullptr.
-     */
-    void setModel(SectionsModel *model);
+            /**
+             * Sets the model being viewed.
+             *
+             * \param model Pointer to the new model. Can be nullptr.
+             */
+            void setModel(SectionsModel* model);
 
-    /**
-     * \returns Pointer to the currently selected section. Can be nullptr.
-     */
-    const core::image::Section *selectedSection() const;
-};
+            /**
+             * \returns Pointer to the currently selected section. Can be nullptr.
+             */
+            const core::image::Section* selectedSection() const;
+        };
 
-} // namespace gui
+    } // namespace gui
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

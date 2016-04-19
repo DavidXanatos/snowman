@@ -30,72 +30,87 @@
 #include "Edge.h"
 #include "Node.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace cflow {
-
-LoopExplorer::LoopExplorer(Node *entry, const Dfs &dfs):
-    entry_(entry)
+namespace nc
 {
-    assert(entry != nullptr);
+    namespace core
+    {
+        namespace ir
+        {
+            namespace cflow
+            {
 
-    /*
-     * Find all nodes that can be reached from the back-edge
-     * predecessors by reversed edges and paint them gray.
-     */
-    foreach (Edge *edge, entry_->inEdges()) {
-        if (dfs.getEdgeType(edge) == Dfs::BACK) {
-            if (find(node2color_, edge->tail()) == WHITE) {
-                backwardVisit(edge->tail());
-            }
-        }
-    }
+                LoopExplorer::LoopExplorer(Node* entry, const Dfs & dfs):
+                    entry_(entry)
+                {
+                    assert(entry != nullptr);
 
-    /*
-     * Find all gray nodes that can be visited from the suspected
-     * loop entry and paint them black. All the black nodes belong
-     * to the loop.
-     */
-    if (find(node2color_, entry_) == GRAY) {
-        forwardVisit(entry_);
-    }
-}
+                    /*
+                     * Find all nodes that can be reached from the back-edge
+                     * predecessors by reversed edges and paint them gray.
+                     */
+                    foreach(Edge * edge, entry_->inEdges())
+                    {
+                        if(dfs.getEdgeType(edge) == Dfs::BACK)
+                        {
+                            if(find(node2color_, edge->tail()) == WHITE)
+                            {
+                                backwardVisit(edge->tail());
+                            }
+                        }
+                    }
 
-void LoopExplorer::backwardVisit(Node *node) {
-    assert(node != nullptr);
-    assert(find(node2color_, node) == WHITE);
+                    /*
+                     * Find all gray nodes that can be visited from the suspected
+                     * loop entry and paint them black. All the black nodes belong
+                     * to the loop.
+                     */
+                    if(find(node2color_, entry_) == GRAY)
+                    {
+                        forwardVisit(entry_);
+                    }
+                }
 
-    node2color_[node] = GRAY;
+                void LoopExplorer::backwardVisit(Node* node)
+                {
+                    assert(node != nullptr);
+                    assert(find(node2color_, node) == WHITE);
 
-    if (node == entry_) {
-        return;
-    }
+                    node2color_[node] = GRAY;
 
-    foreach (Edge *edge, node->inEdges()) {
-        if (find(node2color_, edge->tail()) == WHITE) {
-            backwardVisit(edge->tail());
-        }
-    }
-}
+                    if(node == entry_)
+                    {
+                        return;
+                    }
 
-void LoopExplorer::forwardVisit(Node *node) {
-    assert(node != nullptr);
-    assert(find(node2color_, node) == GRAY);
+                    foreach(Edge * edge, node->inEdges())
+                    {
+                        if(find(node2color_, edge->tail()) == WHITE)
+                        {
+                            backwardVisit(edge->tail());
+                        }
+                    }
+                }
 
-    node2color_[node] = BLACK;
-    loopNodes_.push_back(node);
+                void LoopExplorer::forwardVisit(Node* node)
+                {
+                    assert(node != nullptr);
+                    assert(find(node2color_, node) == GRAY);
 
-    foreach (Edge *edge, node->outEdges()) {
-        if (find(node2color_, edge->head()) == GRAY) {
-            forwardVisit(edge->head());
-        }
-    }
-}
+                    node2color_[node] = BLACK;
+                    loopNodes_.push_back(node);
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+                    foreach(Edge * edge, node->outEdges())
+                    {
+                        if(find(node2color_, edge->head()) == GRAY)
+                        {
+                            forwardVisit(edge->head());
+                        }
+                    }
+                }
+
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

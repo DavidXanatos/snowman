@@ -30,67 +30,72 @@ class QAction;
 class QMenu;
 QT_END_NAMESPACE
 
-namespace nc {
+namespace nc
+{
 
-namespace gui {
-    class MainWindow;
-}
+    namespace gui
+    {
+        class MainWindow;
+    }
 
-namespace ida {
+    namespace ida
+    {
 
-/**
- * This class adds possibility of jumping from instructions and C++ views to IDA views.
- */
-class NavigationHelper: public QObject {
-    Q_OBJECT
+        /**
+         * This class adds possibility of jumping from instructions and C++ views to IDA views.
+         */
+        class NavigationHelper: public QObject
+        {
+            Q_OBJECT
 
-    /** Main window being cared about. */
-    gui::MainWindow *mainWindow_;
+            /** Main window being cared about. */
+            gui::MainWindow* mainWindow_;
 
-    /** Action to jump from instructions view to IDA. */
-    QAction *jumpFromInstructionsViewAction_;
+            /** Action to jump from instructions view to IDA. */
+            QAction* jumpFromInstructionsViewAction_;
 
-    /** Action to jump from C++ view to IDA. */
-    QAction *jumpFromCxxViewAction_;
+            /** Action to jump from C++ view to IDA. */
+            QAction* jumpFromCxxViewAction_;
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param mainWindow Main window to add navigation to.
-     */
-    NavigationHelper(gui::MainWindow *mainWindow);
+            /**
+             * Constructor.
+             *
+             * \param mainWindow Main window to add navigation to.
+             */
+            NavigationHelper(gui::MainWindow* mainWindow);
 
-    public Q_SLOTS:
+        public Q_SLOTS:
 
-    /**
-     * Populates context menu of instructions view with the action
-     * of jumping to IDA.
-     *
-     * \param menu Valid pointer to the context menu.
-     */
-    void populateInstructionsContextMenu(QMenu *menu);
+            /**
+             * Populates context menu of instructions view with the action
+             * of jumping to IDA.
+             *
+             * \param menu Valid pointer to the context menu.
+             */
+            void populateInstructionsContextMenu(QMenu* menu);
 
-    /**
-     * Populates context menu of C++ view with the action
-     * of jumping to IDA.
-     *
-     * \param menu Valid pointer to the context menu.
-     */
-    void populateCxxContextMenu(QMenu *menu);
+            /**
+             * Populates context menu of C++ view with the action
+             * of jumping to IDA.
+             *
+             * \param menu Valid pointer to the context menu.
+             */
+            void populateCxxContextMenu(QMenu* menu);
 
-    /**
-     * This slot is called when the user asks to jump from instructions view to IDA.
-     */
-    void jumpFromInstructionsView();
+            /**
+             * This slot is called when the user asks to jump from instructions view to IDA.
+             */
+            void jumpFromInstructionsView();
 
-    /**
-     * This slot is called when the user asks to jump from C++ view to IDA.
-     */
-    void jumpFromCxxView();
-};
+            /**
+             * This slot is called when the user asks to jump from C++ view to IDA.
+             */
+            void jumpFromCxxView();
+        };
 
-}} // namespace nc::ida
+    }
+} // namespace nc::ida
 
 /* vim:set et sts=4 sw=4: */

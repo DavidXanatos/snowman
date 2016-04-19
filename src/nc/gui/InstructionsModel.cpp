@@ -38,98 +38,129 @@
 
 #include "Colors.h"
 
-namespace nc { namespace gui {
-
-enum InstructionsModelColumns {
-    IMC_INSTRUCTION,
-    IMC_COUNT
-};
-
-InstructionsModel::InstructionsModel(QObject *parent, std::shared_ptr<const core::arch::Instructions> instructions):
-    QAbstractItemModel(parent),
-    instructions_(std::move(instructions))
+namespace nc
 {
-    std::vector<const core::arch::Instruction *> vector;
+    namespace gui
+    {
 
-    if (instructions_) {
-        instructionsVector_.reserve(instructions_->size());
+        enum InstructionsModelColumns
+        {
+            IMC_INSTRUCTION,
+            IMC_COUNT
+        };
 
-        foreach (const auto &instruction, instructions_->all()) {
-            instructionsVector_.push_back(instruction.get());
+        InstructionsModel::InstructionsModel(QObject* parent, std::shared_ptr<const core::arch::Instructions> instructions):
+            QAbstractItemModel(parent),
+            instructions_(std::move(instructions))
+        {
+            std::vector<const core::arch::Instruction*> vector;
+
+            if(instructions_)
+            {
+                instructionsVector_.reserve(instructions_->size());
+
+                foreach(const auto & instruction, instructions_->all())
+                {
+                    instructionsVector_.push_back(instruction.get());
+                }
+            }
         }
-    }
-}
 
-void InstructionsModel::setHighlightedInstructions(std::vector<const core::arch::Instruction *> instructions) {
-    beginResetModel();
+        void InstructionsModel::setHighlightedInstructions(std::vector<const core::arch::Instruction*> instructions)
+        {
+            beginResetModel();
 
-    std::sort(instructions.begin(), instructions.end());
-    highlightedInstructions_ = std::move(instructions);
+            std::sort(instructions.begin(), instructions.end());
+            highlightedInstructions_ = std::move(instructions);
 
-    endResetModel();
-}
-
-const core::arch::Instruction *InstructionsModel::getInstruction(const QModelIndex &index) const {
-    return static_cast<const core::arch::Instruction *>(index.internalPointer());
-}
-
-QModelIndex InstructionsModel::getIndex(const core::arch::Instruction *instruction) const {
-    assert(instruction);
-
-    auto i = std::lower_bound(instructionsVector_.begin(), instructionsVector_.end(), instruction,
-        [](const core::arch::Instruction *a, const core::arch::Instruction *b) { return a->addr() < b->addr(); });
-
-    if (i != instructionsVector_.end() && *i == instruction) {
-        return index(i - instructionsVector_.begin(), 0, QModelIndex());
-    } else {
-        return QModelIndex();
-    }
-}
-
-int InstructionsModel::rowCount(const QModelIndex &parent) const {
-    if (parent == QModelIndex()) {
-        return checked_cast<int>(instructionsVector_.size());
-    } else {
-        return 0;
-    }
-}
-
-int InstructionsModel::columnCount(const QModelIndex & /*parent*/) const {
-    return IMC_COUNT;
-}
-
-QModelIndex InstructionsModel::index(int row, int column, const QModelIndex &parent) const {
-    if (row < rowCount(parent)) {
-        return createIndex(row, column, const_cast<core::arch::Instruction *>(instructionsVector_[row]));
-    } else {
-        return QModelIndex();
-    }
-}
-
-QModelIndex InstructionsModel::parent(const QModelIndex & /*index*/) const {
-    return QModelIndex();
-}
-
-QVariant InstructionsModel::data(const QModelIndex &index, int role) const {
-    if (role == Qt::DisplayRole) {
-        auto instruction = getInstruction(index);
-        assert(instruction);
-
-        switch (index.column()) {
-            case IMC_INSTRUCTION: return tr("%1:\t%2").arg(instruction->addr(), 0, 16).arg(instruction->toString());
-            default: unreachable();
+            endResetModel();
         }
-    } else if (role == Qt::BackgroundRole) {
-        auto instruction = getInstruction(index);
-        assert(instruction);
 
-        if (std::binary_search(highlightedInstructions_.begin(), highlightedInstructions_.end(), instruction)) {
-            return QColor(highlightColor);
+        const core::arch::Instruction* InstructionsModel::getInstruction(const QModelIndex & index) const
+        {
+            return static_cast<const core::arch::Instruction*>(index.internalPointer());
         }
-    }
-    return QVariant();
-}
 
-}} // namespace nc::gui
+        QModelIndex InstructionsModel::getIndex(const core::arch::Instruction* instruction) const
+        {
+            assert(instruction);
+
+            auto i = std::lower_bound(instructionsVector_.begin(), instructionsVector_.end(), instruction,
+            [](const core::arch::Instruction * a, const core::arch::Instruction * b) { return a->addr() < b->addr(); });
+
+            if(i != instructionsVector_.end() && *i == instruction)
+            {
+                return index(i - instructionsVector_.begin(), 0, QModelIndex());
+            }
+            else
+            {
+                return QModelIndex();
+            }
+        }
+
+        int InstructionsModel::rowCount(const QModelIndex & parent) const
+        {
+            if(parent == QModelIndex())
+            {
+                return checked_cast<int>(instructionsVector_.size());
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        int InstructionsModel::columnCount(const QModelIndex & /*parent*/) const
+        {
+            return IMC_COUNT;
+        }
+
+        QModelIndex InstructionsModel::index(int row, int column, const QModelIndex & parent) const
+        {
+            if(row < rowCount(parent))
+            {
+                return createIndex(row, column, const_cast<core::arch::Instruction*>(instructionsVector_[row]));
+            }
+            else
+            {
+                return QModelIndex();
+            }
+        }
+
+        QModelIndex InstructionsModel::parent(const QModelIndex & /*index*/) const
+        {
+            return QModelIndex();
+        }
+
+        QVariant InstructionsModel::data(const QModelIndex & index, int role) const
+        {
+            if(role == Qt::DisplayRole)
+            {
+                auto instruction = getInstruction(index);
+                assert(instruction);
+
+                switch(index.column())
+                {
+                case IMC_INSTRUCTION:
+                    return tr("%1:\t%2").arg(instruction->addr(), 0, 16).arg(instruction->toString());
+                default:
+                    unreachable();
+                }
+            }
+            else if(role == Qt::BackgroundRole)
+            {
+                auto instruction = getInstruction(index);
+                assert(instruction);
+
+                if(std::binary_search(highlightedInstructions_.begin(), highlightedInstructions_.end(), instruction))
+                {
+                    return QColor(highlightColor);
+                }
+            }
+            return QVariant();
+        }
+
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

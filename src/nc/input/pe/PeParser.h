@@ -27,30 +27,34 @@
 
 #include <nc/core/input/Parser.h>
 
-namespace nc {
-namespace input {
-namespace pe {
+namespace nc
+{
+    namespace input
+    {
+        namespace pe
+        {
 
-/**
- * Parser for PE format.
- *
- * A good description of the PE file format is given here:
- * http://en.wikibooks.org/wiki/X86_Disassembly/Windows_Executable_Files
- */
-class PeParser: public core::input::Parser {
-public:
-    /**
-     * Constructor.
-     */
-    PeParser();
+            /**
+             * Parser for PE format.
+             *
+             * A good description of the PE file format is given here:
+             * http://en.wikibooks.org/wiki/X86_Disassembly/Windows_Executable_Files
+             */
+            class PeParser: public core::input::Parser
+            {
+            public:
+                /**
+                 * Constructor.
+                 */
+                PeParser();
 
-protected:
-    virtual bool doCanParse(QIODevice *source) const override;
-    virtual void doParse(QIODevice *source, core::image::Image *image, const LogToken &log) const override;
-};
+            protected:
+                virtual bool doCanParse(QIODevice* source) const override;
+                virtual void doParse(QIODevice* source, core::image::Image* image, const LogToken & log) const override;
+            };
 
-} // namespace pe
-} // namespace input
+        } // namespace pe
+    } // namespace input
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

@@ -34,113 +34,121 @@
 #include <nc/common/LogToken.h>
 #include <nc/common/Types.h>
 
-namespace nc {
-namespace core {
+namespace nc
+{
+    namespace core
+    {
 
-namespace image {
-    class Image;
-}
+        namespace image
+        {
+            class Image;
+        }
 
-namespace ir {
-    class BasicBlock;
-    class JumpTarget;
-    class Program;
-    class Term;
+        namespace ir
+        {
+            class BasicBlock;
+            class JumpTarget;
+            class Program;
+            class Term;
 
-    namespace dflow {
-        class Dataflow;
-    }
-}
+            namespace dflow
+            {
+                class Dataflow;
+            }
+        }
 
-namespace arch {
-    class Disassembler;
-    class Instructions;
-}
+        namespace arch
+        {
+            class Disassembler;
+            class Instructions;
+        }
 
-namespace irgen {
+        namespace irgen
+        {
 
-/**
- * Class for translating assembler programs into intermediate representation.
- */
-class IRGenerator {
-    Q_DECLARE_TR_FUNCTIONS(IRGenerator)
+            /**
+             * Class for translating assembler programs into intermediate representation.
+             */
+            class IRGenerator
+            {
+                Q_DECLARE_TR_FUNCTIONS(IRGenerator)
 
-    const image::Image *image_; ///< Executable image.
-    const arch::Instructions *instructions_; ///< Instructions.
-    ir::Program *program_; ///< Program.
-    const CancellationToken &canceled_; ///< Cancellation token.
-    const LogToken &log_; ///< Log token.
-    std::unique_ptr<arch::Disassembler> disassembler_; ///< Disassembler.
+                const image::Image* image_; ///< Executable image.
+                const arch::Instructions* instructions_; ///< Instructions.
+                ir::Program* program_; ///< Program.
+                const CancellationToken & canceled_; ///< Cancellation token.
+                const LogToken & log_; ///< Log token.
+                std::unique_ptr<arch::Disassembler> disassembler_; ///< Disassembler.
 
-public:
-    /**
-     * Constructor.
-     *
-     * \param[in] image Valid pointer to the executable image.
-     * \param[in] instructions Valid pointer to the set of instructions.
-     * \param[out] program Valid pointer to the program.
-     * \param[in] canceled Cancellation token.
-     * \param[in] log Log token.
-     */
-    IRGenerator(const image::Image *image, const arch::Instructions *instructions, ir::Program *program,
-        const CancellationToken &canceled, const LogToken &log);
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param[in] image Valid pointer to the executable image.
+                 * \param[in] instructions Valid pointer to the set of instructions.
+                 * \param[out] program Valid pointer to the program.
+                 * \param[in] canceled Cancellation token.
+                 * \param[in] log Log token.
+                 */
+                IRGenerator(const image::Image* image, const arch::Instructions* instructions, ir::Program* program,
+                            const CancellationToken & canceled, const LogToken & log);
 
-    /**
-     * Destructor.
-     */
-    ~IRGenerator();
+                /**
+                 * Destructor.
+                 */
+                ~IRGenerator();
 
-    /**
-     * Builds a program control flow graph from the instructions
-     * given to the constructor.
-     */
-    void generate();
+                /**
+                 * Builds a program control flow graph from the instructions
+                 * given to the constructor.
+                 */
+                void generate();
 
-private:
-    /**
-     * Computes jump targets in the basic block.
-     *
-     * \param basicBlock Valid pointer to a basic block.
-     */
-    void computeJumpTargets(ir::BasicBlock *basicBlock);
+            private:
+                /**
+                 * Computes jump targets in the basic block.
+                 *
+                 * \param basicBlock Valid pointer to a basic block.
+                 */
+                void computeJumpTargets(ir::BasicBlock* basicBlock);
 
-    /**
-     * Sets the basic block or jump table fields in the jump target,
-     * based on the address expression and some guessing.
-     *
-     * \param[in,out] target   Jump target.
-     * \param[in]     dataflow Dataflow information collected up to the point where jump has been met.
-     */
-    void computeJumpTarget(ir::JumpTarget &target, const ir::dflow::Dataflow &dataflow);
+                /**
+                 * Sets the basic block or jump table fields in the jump target,
+                 * based on the address expression and some guessing.
+                 *
+                 * \param[in,out] target   Jump target.
+                 * \param[in]     dataflow Dataflow information collected up to the point where jump has been met.
+                 */
+                void computeJumpTarget(ir::JumpTarget & target, const ir::dflow::Dataflow & dataflow);
 
-    /**
-     * Determines jump table address and recovers its entries in a form of a vector of addresses.
-     *
-     * \param[in] target Valid pointer to a term representing the jump target.
-     * \param[in] dataflow Dataflow information collected up to the point where jump has been met.
-     *
-     * \returns The entries of the jump table.
-     */
-    std::vector<ByteAddr> getJumpTableEntries(const ir::Term *target, const ir::dflow::Dataflow &dataflow);
+                /**
+                 * Determines jump table address and recovers its entries in a form of a vector of addresses.
+                 *
+                 * \param[in] target Valid pointer to a term representing the jump target.
+                 * \param[in] dataflow Dataflow information collected up to the point where jump has been met.
+                 *
+                 * \returns The entries of the jump table.
+                 */
+                std::vector<ByteAddr> getJumpTableEntries(const ir::Term* target, const ir::dflow::Dataflow & dataflow);
 
-    /**
-     * \param address A virtual address.
-     *
-     * \return True if the address seems to be an instruction address, false otherwise.
-     */
-    bool isInstructionAddress(ByteAddr address);
+                /**
+                 * \param address A virtual address.
+                 *
+                 * \return True if the address seems to be an instruction address, false otherwise.
+                 */
+                bool isInstructionAddress(ByteAddr address);
 
-    /**
-     * Adds a jump to direct successor to given basic block if the latter
-     * does not have a terminator yet.
-     *
-     * \param basicBlock Valid pointer to a basic block.
-     */
-    void addJumpToDirectSuccessor(ir::BasicBlock *basicBlock);
-};
+                /**
+                 * Adds a jump to direct successor to given basic block if the latter
+                 * does not have a terminator yet.
+                 *
+                 * \param basicBlock Valid pointer to a basic block.
+                 */
+                void addJumpToDirectSuccessor(ir::BasicBlock* basicBlock);
+            };
 
-} // namespace irgen
-} // namespace core
+        } // namespace irgen
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

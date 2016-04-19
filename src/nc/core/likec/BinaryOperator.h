@@ -29,92 +29,97 @@
 
 #include "Expression.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Base class for binary operators.
- */
-class BinaryOperator: public Expression {
-    NC_BASE_CLASS(BinaryOperator, operatorKind)
+            /**
+             * Base class for binary operators.
+             */
+            class BinaryOperator: public Expression
+            {
+                NC_BASE_CLASS(BinaryOperator, operatorKind)
 
-    std::unique_ptr<Expression> left_; ///< Left operand.
-    std::unique_ptr<Expression> right_; ///< Right operand.
-    
-    public:
+                std::unique_ptr<Expression> left_; ///< Left operand.
+                std::unique_ptr<Expression> right_; ///< Right operand.
 
-    /**
-     * Operator id.
-     */
-    enum {
-        ASSIGN,
-        ADD,
-        SUB,
-        MUL,
-        DIV,
-        REM,
-        BITWISE_AND,
-        LOGICAL_AND,
-        BITWISE_OR,
-        LOGICAL_OR,
-        BITWISE_XOR,
-        SHL,
-        SHR,
-        EQ,
-        NEQ,
-        LT,
-        LEQ,
-        GT,
-        GEQ,
-        COMMA,
-        ARRAY_SUBSCRIPT
-    };
+            public:
 
-    /**
-     * Class constructor.
-     *
-     * \param[in] operatorKind Operator's kind.
-     * \param[in] left Left operand.
-     * \param[in] right Right operand.
-     */
-    BinaryOperator(int operatorKind, std::unique_ptr<Expression> left, std::unique_ptr<Expression> right):
-        Expression(BINARY_OPERATOR), operatorKind_(operatorKind), left_(std::move(left)), right_(std::move(right))
-    {}
+                /**
+                 * Operator id.
+                 */
+                enum
+                {
+                    ASSIGN,
+                    ADD,
+                    SUB,
+                    MUL,
+                    DIV,
+                    REM,
+                    BITWISE_AND,
+                    LOGICAL_AND,
+                    BITWISE_OR,
+                    LOGICAL_OR,
+                    BITWISE_XOR,
+                    SHL,
+                    SHR,
+                    EQ,
+                    NEQ,
+                    LT,
+                    LEQ,
+                    GT,
+                    GEQ,
+                    COMMA,
+                    ARRAY_SUBSCRIPT
+                };
 
-    /**
-     * Sets operator's kind.
-     *
-     * \param operatorKind New kind.
-     */
-    void setOperatorKind(int operatorKind) { operatorKind_ = operatorKind; }
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] operatorKind Operator's kind.
+                 * \param[in] left Left operand.
+                 * \param[in] right Right operand.
+                 */
+                BinaryOperator(int operatorKind, std::unique_ptr<Expression> left, std::unique_ptr<Expression> right):
+                    Expression(BINARY_OPERATOR), operatorKind_(operatorKind), left_(std::move(left)), right_(std::move(right))
+                {}
 
-    /**
-     * \return Left operand.
-     */
-    std::unique_ptr<Expression> &left() { return left_; }
+                /**
+                 * Sets operator's kind.
+                 *
+                 * \param operatorKind New kind.
+                 */
+                void setOperatorKind(int operatorKind) { operatorKind_ = operatorKind; }
 
-    /**
-     * \return Left operand.
-     */
-    const Expression *left() const { return left_.get(); }
+                /**
+                 * \return Left operand.
+                 */
+                std::unique_ptr<Expression> & left() { return left_; }
 
-    /**
-     * \return Right operand.
-     */
-    std::unique_ptr<Expression> &right() { return right_; }
+                /**
+                 * \return Left operand.
+                 */
+                const Expression* left() const { return left_.get(); }
 
-    /**
-     * \return Right operand.
-     */
-    const Expression *right() const { return right_.get(); }
+                /**
+                 * \return Right operand.
+                 */
+                std::unique_ptr<Expression> & right() { return right_; }
 
-protected:
-    void doCallOnChildren(const std::function<void(TreeNode *)> &fun) override;
-};
+                /**
+                 * \return Right operand.
+                 */
+                const Expression* right() const { return right_.get(); }
 
-} // namespace likec
-} // namespace core
+            protected:
+                void doCallOnChildren(const std::function<void(TreeNode*)> & fun) override;
+            };
+
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Expression, nc::core::likec::BinaryOperator, nc::core::likec::Expression::BINARY_OPERATOR)

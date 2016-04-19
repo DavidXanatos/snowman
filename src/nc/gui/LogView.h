@@ -27,33 +27,38 @@
 
 #include "TextView.h"
 
-namespace nc { namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-/**
- * Log window.
- */
-class LogView: public TextView {
-    Q_OBJECT
+        /**
+         * Log window.
+         */
+        class LogView: public TextView
+        {
+            Q_OBJECT
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param[in] parent Pointer to the parent widget. Can be nullptr.
-     */
-    LogView(QWidget *parent = 0);
+            /**
+             * Constructor.
+             *
+             * \param[in] parent Pointer to the parent widget. Can be nullptr.
+             */
+            LogView(QWidget* parent = 0);
 
-    public Q_SLOTS:
+        public Q_SLOTS:
 
-    /**
-     * Shows given log message.
-     *
-     * \param text Message text.
-     */
-    void log(const QString &text);
-};
+            /**
+             * Shows given log message.
+             *
+             * \param text Message text.
+             */
+            void log(const QString & text);
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

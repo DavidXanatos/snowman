@@ -35,45 +35,60 @@
 
 #include "Parser.h"
 
-namespace nc { namespace core { namespace input {
+namespace nc
+{
+    namespace core
+    {
+        namespace input
+        {
 
-namespace {
+            namespace
+            {
 
-ParserRepository *createInstance() {
-    static ParserRepository result;
-    result.registerParser(std::make_unique<nc::input::elf::ElfParser>());
-    result.registerParser(std::make_unique<nc::input::mach_o::MachOParser>());
-    result.registerParser(std::make_unique<nc::input::pe::PeParser>());
-    return &result;
-}
+                ParserRepository* createInstance()
+                {
+                    static ParserRepository result;
+                    result.registerParser(std::make_unique<nc::input::elf::ElfParser>());
+                    result.registerParser(std::make_unique<nc::input::mach_o::MachOParser>());
+                    result.registerParser(std::make_unique<nc::input::pe::PeParser>());
+                    return &result;
+                }
 
-} // anonymous namespace
+            } // anonymous namespace
 
-ParserRepository *ParserRepository::instance() {
-    static auto repository = createInstance();
-    return repository;
-}
+            ParserRepository* ParserRepository::instance()
+            {
+                static auto repository = createInstance();
+                return repository;
+            }
 
-void ParserRepository::registerParser(std::unique_ptr<Parser> parser) {
-    assert(parser != nullptr);
-    assert(!getParser(parser->name()) && "Cannot register two parsers with the same name.");
+            void ParserRepository::registerParser(std::unique_ptr<Parser> parser)
+            {
+                assert(parser != nullptr);
+                assert(!getParser(parser->name()) && "Cannot register two parsers with the same name.");
 
-    parsers_.push_back(std::move(parser));
-}
+                parsers_.push_back(std::move(parser));
+            }
 
-const Parser *ParserRepository::getParser(const QString &name) const {
-    foreach (auto parser, parsers()) {
-        if (parser->name() == name) {
-            return parser;
+            const Parser* ParserRepository::getParser(const QString & name) const
+            {
+                foreach(auto parser, parsers())
+                {
+                    if(parser->name() == name)
+                    {
+                        return parser;
+                    }
+                }
+                return nullptr;
+            }
+
+            const std::vector<const Parser*> & ParserRepository::parsers() const
+            {
+                return reinterpret_cast<const std::vector<const Parser*> &>(parsers_);
+            }
+
         }
     }
-    return nullptr;
-}
-
-const std::vector<const Parser *> &ParserRepository::parsers() const {
-    return reinterpret_cast<const std::vector<const Parser *> &>(parsers_);
-}
-
-}}} // namespace nc::core::input
+} // namespace nc::core::input
 
 /* vim:set et sts=4 sw=4: */

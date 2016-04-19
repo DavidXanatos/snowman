@@ -33,43 +33,54 @@
 #include "Convention.h"
 #include "FunctionSignature.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace calling {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace calling
+            {
 
-ReturnHook::ReturnHook(const Convention *convention, const FunctionSignature *signature) {
-    assert(convention != nullptr);
+                ReturnHook::ReturnHook(const Convention* convention, const FunctionSignature* signature)
+                {
+                    assert(convention != nullptr);
 
-    auto &statements = patch_.statements();
+                    auto & statements = patch_.statements();
 
-    auto addReturnValueRead = [&](std::unique_ptr<Term> term) {
-        statements.push_back(std::make_unique<Touch>(
-            std::move(term),
-            Term::READ
-        ));
-    };
+                    auto addReturnValueRead = [&](std::unique_ptr<Term> term)
+                    {
+                        statements.push_back(std::make_unique<Touch>(
+                                                 std::move(term),
+                                                 Term::READ
+                                             ));
+                    };
 
-    if (signature) {
-        if (signature->returnValue()) {
-            auto clone = signature->returnValue()->clone();
-            returnValueTerms_[signature->returnValue().get()] = clone.get();
-            addReturnValueRead(std::move(clone));
-        }
-    } else {
-        foreach (const auto &memoryLocation, convention->returnValueLocations()) {
-            auto term = std::make_unique<MemoryLocationAccess>(memoryLocation);
-            speculativeReturnValueTerms_.push_back(std::make_pair(memoryLocation, term.get()));
-            addReturnValueRead(std::move(term));
-        }
-    }
-}
+                    if(signature)
+                    {
+                        if(signature->returnValue())
+                        {
+                            auto clone = signature->returnValue()->clone();
+                            returnValueTerms_[signature->returnValue().get()] = clone.get();
+                            addReturnValueRead(std::move(clone));
+                        }
+                    }
+                    else
+                    {
+                        foreach(const auto & memoryLocation, convention->returnValueLocations())
+                        {
+                            auto term = std::make_unique<MemoryLocationAccess>(memoryLocation);
+                            speculativeReturnValueTerms_.push_back(std::make_pair(memoryLocation, term.get()));
+                            addReturnValueRead(std::move(term));
+                        }
+                    }
+                }
 
-ReturnHook::~ReturnHook() {}
+                ReturnHook::~ReturnHook() {}
 
-} // namespace calling
-} // namespace ir
-} // namespace core
+            } // namespace calling
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et ts=4 sw=4: */

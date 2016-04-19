@@ -41,37 +41,39 @@ typedef uint64_t ULONGLONG;
 #define IMAGE_DOS_SIGNATURE 0x5A4D
 #define IMAGE_NT_SIGNATURE 0x00004550
 
-typedef struct _IMAGE_DOS_HEADER {
-  WORD e_magic;
-  WORD e_cblp;
-  WORD e_cp;
-  WORD e_crlc;
-  WORD e_cparhdr;
-  WORD e_minalloc;
-  WORD e_maxalloc;
-  WORD e_ss;
-  WORD e_sp;
-  WORD e_csum;
-  WORD e_ip;
-  WORD e_cs;
-  WORD e_lfarlc;
-  WORD e_ovno;
-  WORD e_res[4];
-  WORD e_oemid;
-  WORD e_oeminfo;
-  WORD e_res2[10];
-  LONG e_lfanew;
-} IMAGE_DOS_HEADER,*PIMAGE_DOS_HEADER;
+typedef struct _IMAGE_DOS_HEADER
+{
+    WORD e_magic;
+    WORD e_cblp;
+    WORD e_cp;
+    WORD e_crlc;
+    WORD e_cparhdr;
+    WORD e_minalloc;
+    WORD e_maxalloc;
+    WORD e_ss;
+    WORD e_sp;
+    WORD e_csum;
+    WORD e_ip;
+    WORD e_cs;
+    WORD e_lfarlc;
+    WORD e_ovno;
+    WORD e_res[4];
+    WORD e_oemid;
+    WORD e_oeminfo;
+    WORD e_res2[10];
+    LONG e_lfanew;
+} IMAGE_DOS_HEADER, *PIMAGE_DOS_HEADER;
 
-typedef struct _IMAGE_FILE_HEADER {
-  WORD Machine;
-  WORD NumberOfSections;
-  DWORD TimeDateStamp;
-  DWORD PointerToSymbolTable;
-  DWORD NumberOfSymbols;
-  WORD SizeOfOptionalHeader;
-  WORD Characteristics;
-} IMAGE_FILE_HEADER,*PIMAGE_FILE_HEADER;
+typedef struct _IMAGE_FILE_HEADER
+{
+    WORD Machine;
+    WORD NumberOfSections;
+    DWORD TimeDateStamp;
+    DWORD PointerToSymbolTable;
+    DWORD NumberOfSymbols;
+    WORD SizeOfOptionalHeader;
+    WORD Characteristics;
+} IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;
 
 #define IMAGE_SIZEOF_FILE_HEADER 20
 
@@ -98,81 +100,84 @@ static_assert(sizeof(IMAGE_FILE_HEADER) == IMAGE_SIZEOF_FILE_HEADER, "");
 #define IMAGE_FILE_MACHINE_ARM 0x01c0
 #define IMAGE_FILE_MACHINE_THUMB 0x01c2
 
-typedef struct _IMAGE_DATA_DIRECTORY {
-  DWORD VirtualAddress;
-  DWORD Size;
-} IMAGE_DATA_DIRECTORY,*PIMAGE_DATA_DIRECTORY;
+typedef struct _IMAGE_DATA_DIRECTORY
+{
+    DWORD VirtualAddress;
+    DWORD Size;
+} IMAGE_DATA_DIRECTORY, *PIMAGE_DATA_DIRECTORY;
 
 #define IMAGE_NUMBEROF_DIRECTORY_ENTRIES 16
 
-typedef struct _IMAGE_OPTIONAL_HEADER {
-  WORD Magic;
-  BYTE MajorLinkerVersion;
-  BYTE MinorLinkerVersion;
-  DWORD SizeOfCode;
-  DWORD SizeOfInitializedData;
-  DWORD SizeOfUninitializedData;
-  DWORD AddressOfEntryPoint;
-  DWORD BaseOfCode;
-  DWORD BaseOfData;
-  DWORD ImageBase;
-  DWORD SectionAlignment;
-  DWORD FileAlignment;
-  WORD MajorOperatingSystemVersion;
-  WORD MinorOperatingSystemVersion;
-  WORD MajorImageVersion;
-  WORD MinorImageVersion;
-  WORD MajorSubsystemVersion;
-  WORD MinorSubsystemVersion;
-  DWORD Win32VersionValue;
-  DWORD SizeOfImage;
-  DWORD SizeOfHeaders;
-  DWORD CheckSum;
-  WORD Subsystem;
-  WORD DllCharacteristics;
-  DWORD SizeOfStackReserve;
-  DWORD SizeOfStackCommit;
-  DWORD SizeOfHeapReserve;
-  DWORD SizeOfHeapCommit;
-  DWORD LoaderFlags;
-  DWORD NumberOfRvaAndSizes;
-  IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-} IMAGE_OPTIONAL_HEADER32,*PIMAGE_OPTIONAL_HEADER32;
+typedef struct _IMAGE_OPTIONAL_HEADER
+{
+    WORD Magic;
+    BYTE MajorLinkerVersion;
+    BYTE MinorLinkerVersion;
+    DWORD SizeOfCode;
+    DWORD SizeOfInitializedData;
+    DWORD SizeOfUninitializedData;
+    DWORD AddressOfEntryPoint;
+    DWORD BaseOfCode;
+    DWORD BaseOfData;
+    DWORD ImageBase;
+    DWORD SectionAlignment;
+    DWORD FileAlignment;
+    WORD MajorOperatingSystemVersion;
+    WORD MinorOperatingSystemVersion;
+    WORD MajorImageVersion;
+    WORD MinorImageVersion;
+    WORD MajorSubsystemVersion;
+    WORD MinorSubsystemVersion;
+    DWORD Win32VersionValue;
+    DWORD SizeOfImage;
+    DWORD SizeOfHeaders;
+    DWORD CheckSum;
+    WORD Subsystem;
+    WORD DllCharacteristics;
+    DWORD SizeOfStackReserve;
+    DWORD SizeOfStackCommit;
+    DWORD SizeOfHeapReserve;
+    DWORD SizeOfHeapCommit;
+    DWORD LoaderFlags;
+    DWORD NumberOfRvaAndSizes;
+    IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+} IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;
 
 #define IMAGE_SIZEOF_STD_OPTIONAL_HEADER 28
 
-typedef struct _IMAGE_OPTIONAL_HEADER64 {
-  WORD Magic;
-  BYTE MajorLinkerVersion;
-  BYTE MinorLinkerVersion;
-  DWORD SizeOfCode;
-  DWORD SizeOfInitializedData;
-  DWORD SizeOfUninitializedData;
-  DWORD AddressOfEntryPoint;
-  DWORD BaseOfCode;
-  ULONGLONG ImageBase;
-  DWORD SectionAlignment;
-  DWORD FileAlignment;
-  WORD MajorOperatingSystemVersion;
-  WORD MinorOperatingSystemVersion;
-  WORD MajorImageVersion;
-  WORD MinorImageVersion;
-  WORD MajorSubsystemVersion;
-  WORD MinorSubsystemVersion;
-  DWORD Win32VersionValue;
-  DWORD SizeOfImage;
-  DWORD SizeOfHeaders;
-  DWORD CheckSum;
-  WORD Subsystem;
-  WORD DllCharacteristics;
-  ULONGLONG SizeOfStackReserve;
-  ULONGLONG SizeOfStackCommit;
-  ULONGLONG SizeOfHeapReserve;
-  ULONGLONG SizeOfHeapCommit;
-  DWORD LoaderFlags;
-  DWORD NumberOfRvaAndSizes;
-  IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-} IMAGE_OPTIONAL_HEADER64,*PIMAGE_OPTIONAL_HEADER64;
+typedef struct _IMAGE_OPTIONAL_HEADER64
+{
+    WORD Magic;
+    BYTE MajorLinkerVersion;
+    BYTE MinorLinkerVersion;
+    DWORD SizeOfCode;
+    DWORD SizeOfInitializedData;
+    DWORD SizeOfUninitializedData;
+    DWORD AddressOfEntryPoint;
+    DWORD BaseOfCode;
+    ULONGLONG ImageBase;
+    DWORD SectionAlignment;
+    DWORD FileAlignment;
+    WORD MajorOperatingSystemVersion;
+    WORD MinorOperatingSystemVersion;
+    WORD MajorImageVersion;
+    WORD MinorImageVersion;
+    WORD MajorSubsystemVersion;
+    WORD MinorSubsystemVersion;
+    DWORD Win32VersionValue;
+    DWORD SizeOfImage;
+    DWORD SizeOfHeaders;
+    DWORD CheckSum;
+    WORD Subsystem;
+    WORD DllCharacteristics;
+    ULONGLONG SizeOfStackReserve;
+    ULONGLONG SizeOfStackCommit;
+    ULONGLONG SizeOfHeapReserve;
+    ULONGLONG SizeOfHeapCommit;
+    DWORD LoaderFlags;
+    DWORD NumberOfRvaAndSizes;
+    IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+} IMAGE_OPTIONAL_HEADER64, *PIMAGE_OPTIONAL_HEADER64;
 
 #define IMAGE_SIZEOF_NT_OPTIONAL32_HEADER 224
 #define IMAGE_SIZEOF_NT_OPTIONAL64_HEADER 240
@@ -185,21 +190,23 @@ BOOST_STATIC_ASSERT(sizeof(IMAGE_OPTIONAL_HEADER64) == IMAGE_SIZEOF_NT_OPTIONAL6
 
 #define IMAGE_SIZEOF_SHORT_NAME 8
 
-typedef struct _IMAGE_SECTION_HEADER {
-  char Name[IMAGE_SIZEOF_SHORT_NAME];
-  union {
-    DWORD PhysicalAddress;
-    DWORD VirtualSize;
-  } Misc;
-  DWORD VirtualAddress;
-  DWORD SizeOfRawData;
-  DWORD PointerToRawData;
-  DWORD PointerToRelocations;
-  DWORD PointerToLinenumbers;
-  WORD NumberOfRelocations;
-  WORD NumberOfLinenumbers;
-  DWORD Characteristics;
-} IMAGE_SECTION_HEADER,*PIMAGE_SECTION_HEADER;
+typedef struct _IMAGE_SECTION_HEADER
+{
+    char Name[IMAGE_SIZEOF_SHORT_NAME];
+    union
+    {
+        DWORD PhysicalAddress;
+        DWORD VirtualSize;
+    } Misc;
+    DWORD VirtualAddress;
+    DWORD SizeOfRawData;
+    DWORD PointerToRawData;
+    DWORD PointerToRelocations;
+    DWORD PointerToLinenumbers;
+    WORD NumberOfRelocations;
+    WORD NumberOfLinenumbers;
+    DWORD Characteristics;
+} IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;
 
 #define IMAGE_DIRECTORY_ENTRY_EXPORT 0
 #define IMAGE_DIRECTORY_ENTRY_IMPORT 1
@@ -269,20 +276,23 @@ BOOST_STATIC_ASSERT(sizeof(IMAGE_SECTION_HEADER) == IMAGE_SIZEOF_SECTION_HEADER)
 
 #pragma pack(push,2)
 
-typedef struct _IMAGE_SYMBOL {
-  union {
-    char ShortName[8];
-    struct {
-      DWORD Short;
-      DWORD Long;
-    } Name;
-    DWORD LongName[2];
-  } N;
-  DWORD Value;
-  SHORT SectionNumber;
-  WORD Type;
-  BYTE StorageClass;
-  BYTE NumberOfAuxSymbols;
+typedef struct _IMAGE_SYMBOL
+{
+    union
+    {
+        char ShortName[8];
+        struct
+        {
+            DWORD Short;
+            DWORD Long;
+        } Name;
+        DWORD LongName[2];
+    } N;
+    DWORD Value;
+    SHORT SectionNumber;
+    WORD Type;
+    BYTE StorageClass;
+    BYTE NumberOfAuxSymbols;
 } IMAGE_SYMBOL;
 
 #pragma pack(pop)
@@ -349,38 +359,42 @@ BOOST_STATIC_ASSERT(sizeof(IMAGE_SYMBOL) == IMAGE_SIZEOF_SYMBOL);
 #define IMAGE_SYM_CLASS_WEAK_EXTERNAL 0x0069
 #define IMAGE_SYM_CLASS_CLR_TOKEN 0x006B
 
-typedef struct _IMAGE_IMPORT_DESCRIPTOR {
-  union {
-    DWORD Characteristics;
-    DWORD OriginalFirstThunk;
-  };
-  DWORD TimeDateStamp;
+typedef struct _IMAGE_IMPORT_DESCRIPTOR
+{
+    union
+    {
+        DWORD Characteristics;
+        DWORD OriginalFirstThunk;
+    };
+    DWORD TimeDateStamp;
 
-  DWORD ForwarderChain;
-  DWORD Name;
-  DWORD FirstThunk;
+    DWORD ForwarderChain;
+    DWORD Name;
+    DWORD FirstThunk;
 } IMAGE_IMPORT_DESCRIPTOR;
 
-typedef IMAGE_IMPORT_DESCRIPTOR *PIMAGE_IMPORT_DESCRIPTOR;
+typedef IMAGE_IMPORT_DESCRIPTOR* PIMAGE_IMPORT_DESCRIPTOR;
 
-typedef struct _IMAGE_IMPORT_BY_NAME {
-  WORD Hint;
-  BYTE Name[1];
-} IMAGE_IMPORT_BY_NAME,*PIMAGE_IMPORT_BY_NAME;
+typedef struct _IMAGE_IMPORT_BY_NAME
+{
+    WORD Hint;
+    BYTE Name[1];
+} IMAGE_IMPORT_BY_NAME, *PIMAGE_IMPORT_BY_NAME;
 
-typedef struct _IMAGE_EXPORT_DIRECTORY {
-  DWORD   Characteristics;
-  DWORD   TimeDataStamp;
-  WORD    MajorVersion;
-  WORD    MinorVersion;
-  DWORD   Name;
-  DWORD   Base;
-  DWORD   NumberOfFunctions;
-  DWORD   NumberOfNames;
-  DWORD   AddressOfFunctions;
-  DWORD   AddressOfNames;
-  DWORD   AddressOfNameOrdinal;
+typedef struct _IMAGE_EXPORT_DIRECTORY
+{
+    DWORD   Characteristics;
+    DWORD   TimeDataStamp;
+    WORD    MajorVersion;
+    WORD    MinorVersion;
+    DWORD   Name;
+    DWORD   Base;
+    DWORD   NumberOfFunctions;
+    DWORD   NumberOfNames;
+    DWORD   AddressOfFunctions;
+    DWORD   AddressOfNames;
+    DWORD   AddressOfNameOrdinal;
 } IMAGE_EXPORT_DIRECTORY;
-typedef IMAGE_EXPORT_DIRECTORY *PIMAGE_EXPORT_DIRECTORY;
+typedef IMAGE_EXPORT_DIRECTORY* PIMAGE_EXPORT_DIRECTORY;
 
 /* vim:set et sts=4 sw=4: */

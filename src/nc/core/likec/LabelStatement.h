@@ -32,39 +32,43 @@
 #include "LabelIdentifier.h"
 #include "Statement.h"
 
-namespace nc {
-namespace core {
-namespace likec {
-
-/**
- * Label in place of a statement.
- */
-class LabelStatement: public Statement {
-    std::unique_ptr<LabelIdentifier> identifier_;
-
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] identifier Valid pointer to the label identifier.
-     */
-    LabelStatement(std::unique_ptr<LabelIdentifier> identifier):
-        Statement(LABEL_STATEMENT), identifier_(std::move(identifier))
+namespace nc
+{
+    namespace core
     {
-        assert(identifier_);
+        namespace likec
+        {
 
-        /* Do not count our identifier as a real reference. */
-        identifier_->declaration()->incReferenceCount(-1);
-    }
+            /**
+             * Label in place of a statement.
+             */
+            class LabelStatement: public Statement
+            {
+                std::unique_ptr<LabelIdentifier> identifier_;
 
-    /**
-     * \return Valid pointer to the label identifier.
-     */
-    LabelIdentifier *identifier() const { return identifier_.get(); }
-};
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] identifier Valid pointer to the label identifier.
+                 */
+                LabelStatement(std::unique_ptr<LabelIdentifier> identifier):
+                    Statement(LABEL_STATEMENT), identifier_(std::move(identifier))
+                {
+                    assert(identifier_);
 
-} // namespace likec
-} // namespace core
+                    /* Do not count our identifier as a real reference. */
+                    identifier_->declaration()->incReferenceCount(-1);
+                }
+
+                /**
+                 * \return Valid pointer to the label identifier.
+                 */
+                LabelIdentifier* identifier() const { return identifier_.get(); }
+            };
+
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Statement, nc::core::likec::LabelStatement, nc::core::likec::Statement::LABEL_STATEMENT)

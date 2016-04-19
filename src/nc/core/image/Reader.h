@@ -40,85 +40,92 @@ QT_BEGIN_NAMESPACE
 class QString;
 QT_END_NAMESPACE
 
-namespace nc {
-namespace core {
-namespace image {
-
-class Reader: public ByteSource {
-    const ByteSource *externalByteSource_; ///< External byte source.
-
-public:
-    /**
-     * Constructor.
-     *
-     * \param externalByteSource Valid pointer to the byte source to take bytes from.
-     */
-    explicit
-    Reader(const ByteSource *externalByteSource):
-        externalByteSource_(externalByteSource)
+namespace nc
+{
+    namespace core
     {
-        assert(externalByteSource_ != nullptr);
-    }
+        namespace image
+        {
 
-    /**
-     * Reads a sequence of bytes from the external byte source.
-     *
-     * \param[in] addr  Linear address of the first byte to read.
-     * \param[out] buf  Valid pointer to the buffer to read into.
-     * \param[in] size  Number of bytes to read.
-     *
-     * \return Number of bytes actually read and copied into the buffer.
-     */
-    ByteSize readBytes(ByteAddr addr, void *buf, ByteSize size) const override;
+            class Reader: public ByteSource
+            {
+                const ByteSource* externalByteSource_; ///< External byte source.
 
-    /**
-     * Reads an integer value.
-     *
-     * \param[in] addr      Address to read from.
-     * \param[in] size      Size of the integer value.
-     * \param[in] byteOrder Byte order used for storing the integer value.
-     *
-     * \tparam T Result type.
-     *
-     * \return The integer value on success, boost::none on failure.
-     *         If sizeof(T) < size, the lower bytes are returned.
-     *         If sizeof(T) > size, the value is zero-extended.
-     */
-    template<class T>
-    boost::optional<T> readInt(ByteAddr addr, ByteSize size, ByteOrder byteOrder) const {
-        assert(size >= 0);
-        assert(byteOrder != ByteOrder::Unknown);
+            public:
+                /**
+                 * Constructor.
+                 *
+                 * \param externalByteSource Valid pointer to the byte source to take bytes from.
+                 */
+                explicit
+                Reader(const ByteSource* externalByteSource):
+                    externalByteSource_(externalByteSource)
+                {
+                    assert(externalByteSource_ != nullptr);
+                }
 
-        std::unique_ptr<char[]> buf(new char[std::max<std::size_t>(size, sizeof(T))]);
+                /**
+                 * Reads a sequence of bytes from the external byte source.
+                 *
+                 * \param[in] addr  Linear address of the first byte to read.
+                 * \param[out] buf  Valid pointer to the buffer to read into.
+                 * \param[in] size  Number of bytes to read.
+                 *
+                 * \return Number of bytes actually read and copied into the buffer.
+                 */
+                ByteSize readBytes(ByteAddr addr, void* buf, ByteSize size) const override;
 
-        if (readBytes(addr, buf.get(), size) != size) {
-            return boost::none;
-        }
+                /**
+                 * Reads an integer value.
+                 *
+                 * \param[in] addr      Address to read from.
+                 * \param[in] size      Size of the integer value.
+                 * \param[in] byteOrder Byte order used for storing the integer value.
+                 *
+                 * \tparam T Result type.
+                 *
+                 * \return The integer value on success, boost::none on failure.
+                 *         If sizeof(T) < size, the lower bytes are returned.
+                 *         If sizeof(T) > size, the value is zero-extended.
+                 */
+                template<class T>
+                boost::optional<T> readInt(ByteAddr addr, ByteSize size, ByteOrder byteOrder) const
+                {
+                    assert(size >= 0);
+                    assert(byteOrder != ByteOrder::Unknown);
 
-        ByteOrder::convert(buf.get(), size, byteOrder, ByteOrder::LittleEndian);
+                    std::unique_ptr<char[]> buf(new char[std::max<std::size_t>(size, sizeof(T))]);
 
-        if (static_cast<std::size_t>(size) < sizeof(T)) {
-            memset(buf.get() + size, 0, sizeof(T) - size);
-        }
+                    if(readBytes(addr, buf.get(), size) != size)
+                    {
+                        return boost::none;
+                    }
 
-        ByteOrder::convert(buf.get(), sizeof(T), ByteOrder::LittleEndian, ByteOrder::Current);
+                    ByteOrder::convert(buf.get(), size, byteOrder, ByteOrder::LittleEndian);
 
-        return *reinterpret_cast<T *>(buf.get());
-    }
+                    if(static_cast<std::size_t>(size) < sizeof(T))
+                    {
+                        memset(buf.get() + size, 0, sizeof(T) - size);
+                    }
 
-    /**
-     * Reads an ASCIIZ string.
-     *
-     * \param[in] addr      Linear address of the first byte to read.
-     * \param[in] maxSize   Max number of bytes to read.
-     *
-     * \return ASCIIZ string without zero char terminator on success, nullptr string on failure.
-     */
-    QString readAsciizString(ByteAddr addr, ByteSize maxSize) const;
-};
+                    ByteOrder::convert(buf.get(), sizeof(T), ByteOrder::LittleEndian, ByteOrder::Current);
 
-} // namespace image
-} // namespace core
+                    return *reinterpret_cast<T*>(buf.get());
+                }
+
+                /**
+                 * Reads an ASCIIZ string.
+                 *
+                 * \param[in] addr      Linear address of the first byte to read.
+                 * \param[in] maxSize   Max number of bytes to read.
+                 *
+                 * \return ASCIIZ string without zero char terminator on success, nullptr string on failure.
+                 */
+                QString readAsciizString(ByteAddr addr, ByteSize maxSize) const;
+            };
+
+        } // namespace image
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

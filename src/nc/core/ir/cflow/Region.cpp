@@ -31,73 +31,83 @@
 
 #include "Edge.h"
 
-namespace nc {
-namespace core {
-namespace ir {
-namespace cflow {
+namespace nc
+{
+    namespace core
+    {
+        namespace ir
+        {
+            namespace cflow
+            {
 
-const BasicBlock *Region::getEntryBasicBlock() const {
-    return entry()->getEntryBasicBlock();
-}
+                const BasicBlock* Region::getEntryBasicBlock() const
+                {
+                    return entry()->getEntryBasicBlock();
+                }
 
-bool Region::isCondition() const {
-    return regionKind_ == COMPOUND_CONDITION;
-}
+                bool Region::isCondition() const
+                {
+                    return regionKind_ == COMPOUND_CONDITION;
+                }
 
-void Region::print(QTextStream &out) const {
-    out << "node" << this << " [shape=box,label=\"";
+                void Region::print(QTextStream & out) const
+                {
+                    out << "node" << this << " [shape=box,label=\"";
 
-    switch (regionKind_) {
-        case UNKNOWN:
-            out << "UNKNOWN";
-            break;
-        case BLOCK:
-            out << "BLOCK";
-            break;
-        case COMPOUND_CONDITION:
-            out << "COMPOUND_CONDITION";
-            break;
-        case IF_THEN:
-            out << "IF_THEN";
-            break;
-        case IF_THEN_ELSE:
-            out << "IF_THEN_ELSE";
-            break;
-        case LOOP:
-            out << "LOOP";
-            break;
-        case DO_WHILE:
-            out << "DO_WHILE";
-            break;
-        case WHILE:
-            out << "WHILE";
-            break;
-        case SWITCH:
-            out << "SWITCH";
-            break;
-        default:
-            unreachable();
-    }
+                    switch(regionKind_)
+                    {
+                    case UNKNOWN:
+                        out << "UNKNOWN";
+                        break;
+                    case BLOCK:
+                        out << "BLOCK";
+                        break;
+                    case COMPOUND_CONDITION:
+                        out << "COMPOUND_CONDITION";
+                        break;
+                    case IF_THEN:
+                        out << "IF_THEN";
+                        break;
+                    case IF_THEN_ELSE:
+                        out << "IF_THEN_ELSE";
+                        break;
+                    case LOOP:
+                        out << "LOOP";
+                        break;
+                    case DO_WHILE:
+                        out << "DO_WHILE";
+                        break;
+                    case WHILE:
+                        out << "WHILE";
+                        break;
+                    case SWITCH:
+                        out << "SWITCH";
+                        break;
+                    default:
+                        unreachable();
+                    }
 
-    out << "\"]" << endl;
+                    out << "\"]" << endl;
 
-    out << "subgraph cluster" << this << " {" << endl;
-    foreach (const Node *node, nodes()) {
-        out << *node;
+                    out << "subgraph cluster" << this << " {" << endl;
+                    foreach(const Node * node, nodes())
+                    {
+                        out << *node;
 
-        foreach (const Edge *edge, node->outEdges()) {
-            out << "node" << edge->tail() << " -> node" << edge->head() << endl;
-        }
-    }
-    out << '}' << endl;
+                        foreach(const Edge * edge, node->outEdges())
+                        {
+                            out << "node" << edge->tail() << " -> node" << edge->head() << endl;
+                        }
+                    }
+                    out << '}' << endl;
 
-    out << "node" << this << " -> node" << (entry() ? entry() : nodes()[0])
-        << " [color=\"blue\" lhead=\"cluster" << this << "\"]" << endl;
-}
+                    out << "node" << this << " -> node" << (entry() ? entry() : nodes()[0])
+                        << " [color=\"blue\" lhead=\"cluster" << this << "\"]" << endl;
+                }
 
-} // namespace cflow
-} // namespace ir
-} // namespace core
+            } // namespace cflow
+        } // namespace ir
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

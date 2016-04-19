@@ -31,54 +31,58 @@
 #include "Expression.h"
 #include "Types.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Integer constant.
- */
-class IntegerConstant: public Expression {
-    SizedValue value_; ///< Value of the constant.
-    const IntegerType *type_; ///< Type of the constant.
+            /**
+             * Integer constant.
+             */
+            class IntegerConstant: public Expression
+            {
+                SizedValue value_; ///< Value of the constant.
+                const IntegerType* type_; ///< Type of the constant.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] value Value of the constant.
-     * \param[in] type Type of the constant. The type size must be equal to the value size.
-     */
-    IntegerConstant(const SizedValue &value, const IntegerType *type);
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] value Value of the constant.
+                 * \param[in] type Type of the constant. The type size must be equal to the value size.
+                 */
+                IntegerConstant(const SizedValue & value, const IntegerType* type);
 
-    /**
-     * Class constructor.
-     *
-     * \param[in] value Value.
-     * \param[in] type Type of the constant.
-     */
-    IntegerConstant(ConstantValue value, const IntegerType *type);
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] value Value.
+                 * \param[in] type Type of the constant.
+                 */
+                IntegerConstant(ConstantValue value, const IntegerType* type);
 
-    /**
-     * \return The value of the constant.
-     */
-    const SizedValue &value() const { return value_; }
+                /**
+                 * \return The value of the constant.
+                 */
+                const SizedValue & value() const { return value_; }
 
-    /**
-     * Sets the value of the constant.
-     *
-     * \param[in] value The new value.
-     */
-    void setValue(const SizedValue &value);
+                /**
+                 * Sets the value of the constant.
+                 *
+                 * \param[in] value The new value.
+                 */
+                void setValue(const SizedValue & value);
 
-    /**
-     * \return Type of the constant.
-     */
-    const IntegerType *type() const { return type_; }
-};
+                /**
+                 * \return Type of the constant.
+                 */
+                const IntegerType* type() const { return type_; }
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Expression, nc::core::likec::IntegerConstant, nc::core::likec::Expression::INTEGER_CONSTANT)

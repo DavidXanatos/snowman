@@ -24,28 +24,36 @@
 
 #include "Exception.h"
 
-namespace nc {
+namespace nc
+{
 
-Exception::Exception(const QString &message) {
-    *this << ExceptionMessage(message);
-}
-
-Exception::~Exception() noexcept {}
-
-QString Exception::unicodeWhat() const noexcept {
-    if (const QString *result = boost::get_error_info<ExceptionMessage>(*this)) {
-        return *result;
-    } else {
-        return QString();
+    Exception::Exception(const QString & message)
+    {
+        *this << ExceptionMessage(message);
     }
-}
 
-const char *Exception::what() const noexcept {
-    if (mCachedWhat.isNull()) {
-        mCachedWhat = unicodeWhat().toLocal8Bit();
+    Exception::~Exception() noexcept {}
+
+    QString Exception::unicodeWhat() const noexcept
+    {
+        if(const QString* result = boost::get_error_info<ExceptionMessage>(*this))
+        {
+            return *result;
+        }
+        else
+        {
+            return QString();
+        }
     }
-    return mCachedWhat.data();
-}
+
+    const char* Exception::what() const noexcept
+    {
+        if(mCachedWhat.isNull())
+        {
+            mCachedWhat = unicodeWhat().toLocal8Bit();
+        }
+        return mCachedWhat.data();
+    }
 
 } // namespace nc
 

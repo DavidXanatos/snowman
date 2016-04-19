@@ -27,74 +27,80 @@
 
 #include <QString>
 
-namespace nc { namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-/**
- * This is a base class for classes knowing how to perform
- * text search in various kinds of widgets. Instances of
- * its subclasses are given to SearchWidget constructors.
- */
-class Searcher {
-    public:
+        /**
+         * This is a base class for classes knowing how to perform
+         * text search in various kinds of widgets. Instances of
+         * its subclasses are given to SearchWidget constructors.
+         */
+        class Searcher
+        {
+        public:
 
-    /**
-     * Find flags.
-     */
-    enum FindFlag {
-        FindBackward        = 0x1,
-        FindCaseSensitive   = 0x2,
-        FindWholeWords      = 0x4,
-        FindRegexp          = 0x8
-    };
+            /**
+             * Find flags.
+             */
+            enum FindFlag
+            {
+                FindBackward        = 0x1,
+                FindCaseSensitive   = 0x2,
+                FindWholeWords      = 0x4,
+                FindRegexp          = 0x8
+            };
 
-    /**
-     * Bitmask of find flags.
-     */
-    typedef int FindFlags;
+            /**
+             * Bitmask of find flags.
+             */
+            typedef int FindFlags;
 
-    /**
-     * Virtual destructor.
-     */
-    virtual ~Searcher() {}
+            /**
+             * Virtual destructor.
+             */
+            virtual ~Searcher() {}
 
-    /**
-     * Remembers current viewport of the widget being searched in.
-     */
-    virtual void rememberViewport() = 0;
+            /**
+             * Remembers current viewport of the widget being searched in.
+             */
+            virtual void rememberViewport() = 0;
 
-    /**
-     * Restores the remembered viewport of the widget being searched in.
-     */
-    virtual void restoreViewport() = 0;
+            /**
+             * Restores the remembered viewport of the widget being searched in.
+             */
+            virtual void restoreViewport() = 0;
 
-    /**
-     * Start automatically remembering viewport when it is changed.
-     */
-    virtual void startTrackingViewport() = 0;
+            /**
+             * Start automatically remembering viewport when it is changed.
+             */
+            virtual void startTrackingViewport() = 0;
 
-    /**
-     * Stop automatically remembering viewport when it is changed.
-     */
-    virtual void stopTrackingViewport() = 0;
+            /**
+             * Stop automatically remembering viewport when it is changed.
+             */
+            virtual void stopTrackingViewport() = 0;
 
-    /**
-     * \return Bitmask of supported flags.
-     */
-    virtual FindFlags supportedFlags() const = 0;
+            /**
+             * \return Bitmask of supported flags.
+             */
+            virtual FindFlags supportedFlags() const = 0;
 
-    /**
-     * Finds and highlights the next occurrence of given string.
-     * Even if the string is not found, this function is not guaranteed
-     * to preserve the viewport of the widget being search in.
-     *
-     * \param expression    Search expression.
-     * \param flags         Search flags.
-     *
-     * \return True if the string was found, false otherwise.
-     */
-    virtual bool find(const QString &expression, FindFlags flags) = 0;
-};
+            /**
+             * Finds and highlights the next occurrence of given string.
+             * Even if the string is not found, this function is not guaranteed
+             * to preserve the viewport of the widget being search in.
+             *
+             * \param expression    Search expression.
+             * \param flags         Search flags.
+             *
+             * \return True if the string was found, false otherwise.
+             */
+            virtual bool find(const QString & expression, FindFlags flags) = 0;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

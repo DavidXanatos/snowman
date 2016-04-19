@@ -31,58 +31,64 @@
 
 #include "Activity.h"
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    class Context;
+    namespace core
+    {
+        class Context;
 
-    namespace image {
-        class ByteSource;
+        namespace image
+        {
+            class ByteSource;
+        }
     }
-}
 
-namespace gui {
+    namespace gui
+    {
 
-/**
- * Activity doing the actual decompilation.
- */
-class Disassembly: public Activity {
-    Q_OBJECT
+        /**
+         * Activity doing the actual decompilation.
+         */
+        class Disassembly: public Activity
+        {
+            Q_OBJECT
 
-    /** Context. */
-    std::shared_ptr<core::Context> context_;
+            /** Context. */
+            std::shared_ptr<core::Context> context_;
 
-    /** What to disassemble. */
-    const core::image::ByteSource *source_;
+            /** What to disassemble. */
+            const core::image::ByteSource* source_;
 
-    /** First address in the range to be disassembled. */
-    ByteAddr begin_;
+            /** First address in the range to be disassembled. */
+            ByteAddr begin_;
 
-    /** Last address in the range to be disassembled. */
-    ByteAddr end_;
+            /** Last address in the range to be disassembled. */
+            ByteAddr end_;
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param context Valid pointer to the context.
-     * \param source Valid pointer to a byte source.
-     * \param begin First address in the range.
-     * \param end First address past the range.
-     */
-    Disassembly(const std::shared_ptr<core::Context> &context, const core::image::ByteSource *source, ByteAddr begin, ByteAddr end);
+            /**
+             * Constructor.
+             *
+             * \param context Valid pointer to the context.
+             * \param source Valid pointer to a byte source.
+             * \param begin First address in the range.
+             * \param end First address past the range.
+             */
+            Disassembly(const std::shared_ptr<core::Context> & context, const core::image::ByteSource* source, ByteAddr begin, ByteAddr end);
 
-    /**
-     * Destructor.
-     */
-    ~Disassembly();
+            /**
+             * Destructor.
+             */
+            ~Disassembly();
 
-    protected:
+        protected:
 
-    void work() override;
-};
+            void work() override;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

@@ -46,144 +46,172 @@
 
 #include "udis86.h"
 
-namespace nc {
-namespace arch {
-namespace x86 {
+namespace nc
+{
+    namespace arch
+    {
+        namespace x86
+        {
 
-void X86MasterAnalyzer::createProgram(core::Context &context) const {
-    MasterAnalyzer::createProgram(context);
+            void X86MasterAnalyzer::createProgram(core::Context & context) const
+            {
+                MasterAnalyzer::createProgram(context);
 
-    /*
-     * Patch the IR to implement x86-64 implicit zero extend.
-     */
-    if (context.image()->platform().architecture()->bitness() == 64) {
-        auto minDomain = X86Registers::rax()->memoryLocation().domain();
-        auto maxDomain = X86Registers::r15()->memoryLocation().domain();
+                /*
+                 * Patch the IR to implement x86-64 implicit zero extend.
+                 */
+                if(context.image()->platform().architecture()->bitness() == 64)
+                {
+                    auto minDomain = X86Registers::rax()->memoryLocation().domain();
+                    auto maxDomain = X86Registers::r15()->memoryLocation().domain();
 
-        auto program = const_cast<core::ir::Program *>(context.program());
+                    auto program = const_cast<core::ir::Program*>(context.program());
 
-        foreach (auto *basicBlock, program->basicBlocks()) {
-            context.cancellationToken().poll();
+                    foreach(auto * basicBlock, program->basicBlocks())
+                    {
+                        context.cancellationToken().poll();
 
-            foreach (auto statement, basicBlock->statements()) {
-                if (auto assignment = statement->asAssignment()) {
-                    if (auto access = assignment->left()->asMemoryLocationAccess()) {
-                        if (minDomain <= access->memoryLocation().domain() &&
-                            access->memoryLocation().domain() <= maxDomain &&
-                            access->memoryLocation().addr() == 0 &&
-                            access->memoryLocation().size() == 32)
+                        foreach(auto statement, basicBlock->statements())
                         {
-                            auto patch = std::make_unique<core::ir::Assignment>(
-                                    std::make_unique<core::ir::MemoryLocationAccess>(access->memoryLocation().shifted(32)),
-                                    std::make_unique<core::ir::Constant>(SizedValue(32, 0)));
-                            patch->setInstruction(statement->instruction());
+                            if(auto assignment = statement->asAssignment())
+                            {
+                                if(auto access = assignment->left()->asMemoryLocationAccess())
+                                {
+                                    if(minDomain <= access->memoryLocation().domain() &&
+                                            access->memoryLocation().domain() <= maxDomain &&
+                                            access->memoryLocation().addr() == 0 &&
+                                            access->memoryLocation().size() == 32)
+                                    {
+                                        auto patch = std::make_unique<core::ir::Assignment>(
+                                                         std::make_unique<core::ir::MemoryLocationAccess>(access->memoryLocation().shifted(32)),
+                                                         std::make_unique<core::ir::Constant>(SizedValue(32, 0)));
+                                        patch->setInstruction(statement->instruction());
 
-                            basicBlock->insertAfter(statement, std::move(patch));
+                                        basicBlock->insertAfter(statement, std::move(patch));
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-    }
-}
 
-void X86MasterAnalyzer::detectCallingConventions(core::Context &context) const {
-    context.logToken().info(tr("Detecting calling conventions."));
+            void X86MasterAnalyzer::detectCallingConventions(core::Context & context) const
+            {
+                context.logToken().info(tr("Detecting calling conventions."));
 
-    auto architecture = context.image()->platform().architecture();
+                auto architecture = context.image()->platform().architecture();
 
-    if (architecture->bitness() == 32) {
-        using core::ir::calling::CalleeId;
-        using core::ir::calling::EntryAddress;
+                if(architecture->bitness() == 32)
+                {
+                    using core::ir::calling::CalleeId;
+                    using core::ir::calling::EntryAddress;
 
-        auto stdcall32 = architecture->getCallingConvention(QLatin1String("stdcall32"));
+                    auto stdcall32 = architecture->getCallingConvention(QLatin1String("stdcall32"));
 
-        foreach (auto symbol, context.image()->symbols()) {
-            if (!symbol->value()) {
-                continue;
-            }
-            auto index = symbol->name().lastIndexOf(QChar('@'));
-            if (index == -1) {
-                continue;
-            }
-            auto argumentsSize = stringToInt<ByteSize>(symbol->name().mid(index + 1));
-            if (!argumentsSize) {
-                continue;
-            }
-            CalleeId calleeId(EntryAddress(*symbol->value()));
-            context.conventions()->setConvention(calleeId, stdcall32);
-            context.conventions()->setStackArgumentsSize(calleeId, *argumentsSize);
-        }
+                    foreach(auto symbol, context.image()->symbols())
+                    {
+                        if(!symbol->value())
+                        {
+                            continue;
+                        }
+                        auto index = symbol->name().lastIndexOf(QChar('@'));
+                        if(index == -1)
+                        {
+                            continue;
+                        }
+                        auto argumentsSize = stringToInt<ByteSize>(symbol->name().mid(index + 1));
+                        if(!argumentsSize)
+                        {
+                            continue;
+                        }
+                        CalleeId calleeId(EntryAddress(*symbol->value()));
+                        context.conventions()->setConvention(calleeId, stdcall32);
+                        context.conventions()->setStackArgumentsSize(calleeId, *argumentsSize);
+                    }
 
-        ud_t ud_obj_;
-        ud_init(&ud_obj_);
-        ud_set_mode(&ud_obj_, context.image()->platform().architecture()->bitness());
+                    ud_t ud_obj_;
+                    ud_init(&ud_obj_);
+                    ud_set_mode(&ud_obj_, context.image()->platform().architecture()->bitness());
 
-        foreach (auto function, context.functions()->list()) {
-            if (!function->entry()->address()) {
-                continue;
-            }
-            foreach (auto basicBlock, function->basicBlocks()) {
-                auto terminator = basicBlock->getTerminator();
-                if (!terminator) {
-                    continue;
+                    foreach(auto function, context.functions()->list())
+                    {
+                        if(!function->entry()->address())
+                        {
+                            continue;
+                        }
+                        foreach(auto basicBlock, function->basicBlocks())
+                        {
+                            auto terminator = basicBlock->getTerminator();
+                            if(!terminator)
+                            {
+                                continue;
+                            }
+                            auto instruction = checked_cast<const X86Instruction*>(terminator->instruction());
+                            if(!instruction)
+                            {
+                                continue;
+                            }
+
+                            ud_set_pc(&ud_obj_, instruction->addr());
+                            ud_set_input_buffer(&ud_obj_, const_cast<uint8_t*>(instruction->bytes()),
+                                                checked_cast<std::size_t>(instruction->size()));
+                            ud_disassemble(&ud_obj_);
+
+                            assert(ud_obj_.mnemonic != UD_Iinvalid);
+
+                            if(ud_obj_.mnemonic != UD_Iret)
+                            {
+                                continue;
+                            }
+
+                            if(ud_obj_.operand[0].type == UD_NONE)
+                            {
+                                continue;
+                            }
+                            assert(ud_obj_.operand[0].type == UD_OP_IMM && ud_obj_.operand[0].size == 16);
+
+                            CalleeId calleeId(EntryAddress(*function->entry()->address()));
+                            context.conventions()->setConvention(calleeId, stdcall32);
+                            context.conventions()->setStackArgumentsSize(calleeId, ud_obj_.operand[0].lval.uword);
+                        }
+                    }
                 }
-                auto instruction = checked_cast<const X86Instruction *>(terminator->instruction());
-                if (!instruction) {
-                    continue;
-                }
-
-                ud_set_pc(&ud_obj_, instruction->addr());
-                ud_set_input_buffer(&ud_obj_, const_cast<uint8_t *>(instruction->bytes()),
-                                    checked_cast<std::size_t>(instruction->size()));
-                ud_disassemble(&ud_obj_);
-
-                assert(ud_obj_.mnemonic != UD_Iinvalid);
-
-                if (ud_obj_.mnemonic != UD_Iret) {
-                    continue;
-                }
-
-                if (ud_obj_.operand[0].type == UD_NONE) {
-                    continue;
-                }
-                assert(ud_obj_.operand[0].type == UD_OP_IMM && ud_obj_.operand[0].size == 16);
-
-                CalleeId calleeId(EntryAddress(*function->entry()->address()));
-                context.conventions()->setConvention(calleeId, stdcall32);
-                context.conventions()->setStackArgumentsSize(calleeId, ud_obj_.operand[0].lval.uword);
             }
-        }
-    }
-}
 
-void X86MasterAnalyzer::detectCallingConvention(core::Context &context, const core::ir::calling::CalleeId &calleeId) const {
-    const auto &platform = context.image()->platform();
-    auto architecture = platform.architecture();
+            void X86MasterAnalyzer::detectCallingConvention(core::Context & context, const core::ir::calling::CalleeId & calleeId) const
+            {
+                const auto & platform = context.image()->platform();
+                auto architecture = platform.architecture();
 
-    auto setConvention = [&](const char *name) {
-        context.conventions()->setConvention(calleeId, architecture->getCallingConvention(QLatin1String(name)));
-    };
+                auto setConvention = [&](const char* name)
+                {
+                    context.conventions()->setConvention(calleeId, architecture->getCallingConvention(QLatin1String(name)));
+                };
 
-    switch (architecture->bitness()) {
-        case 16:
-            setConvention("cdecl16");
-            break;
-        case 32:
-            setConvention("cdecl32");
-            break;
-        case 64:
-            if (platform.operatingSystem() == core::image::Platform::Windows) {
-                setConvention("microsoft64");
-            } else {
-                setConvention("amd64");
+                switch(architecture->bitness())
+                {
+                case 16:
+                    setConvention("cdecl16");
+                    break;
+                case 32:
+                    setConvention("cdecl32");
+                    break;
+                case 64:
+                    if(platform.operatingSystem() == core::image::Platform::Windows)
+                    {
+                        setConvention("microsoft64");
+                    }
+                    else
+                    {
+                        setConvention("amd64");
+                    }
+                    break;
+                }
             }
-            break;
-    }
-}
 
-} // namespace x86
-} // namespace arch
+        } // namespace x86
+    } // namespace arch
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

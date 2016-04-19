@@ -7,7 +7,8 @@
 
 #include <QString>
 
-namespace nc {
+namespace nc
+{
 
 } // namespace nc
 

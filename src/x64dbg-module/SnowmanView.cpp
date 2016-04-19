@@ -45,16 +45,17 @@ extern "C" __declspec(dllexport) void CloseSnowman(SnowmanView* snowman)
 
 class DbgByteSource : public nc::core::image::ByteSource
 {
-    nc::ByteSize readBytes(nc::ByteAddr addr, void *buf, nc::ByteSize size) const override
+    nc::ByteSize readBytes(nc::ByteAddr addr, void* buf, nc::ByteSize size) const override
     {
         return Memory::Read(addr, buf, size, nullptr) ? size : 0;
     }
 };
 
-class DbgDemangler: public nc::core::mangling::Demangler {
-    public:
+class DbgDemangler: public nc::core::mangling::Demangler
+{
+public:
 
-    QString demangle(const QString &symbol) const override
+    QString demangle(const QString & symbol) const override
     {
         //TODO: properly demangle names
         return symbol;
@@ -75,7 +76,7 @@ static std::unique_ptr<nc::gui::Project> MakeProject(duint base, duint size)
 #else //x86
     image->platform().setArchitecture(QLatin1String("i386"));
 #endif //_WIN64
-    
+
     //set OS
     image->platform().setOperatingSystem(nc::core::image::Platform::Windows);
 
@@ -85,13 +86,13 @@ static std::unique_ptr<nc::gui::Project> MakeProject(duint base, duint size)
     //create sections
     auto success = false;
     auto moduleBase = Module::BaseFromAddr(base);
-    if (moduleBase)
+    if(moduleBase)
     {
-        List<Module::ModuleSectionInfo> sections;
-        if (Module::SectionListFromAddr(moduleBase, &sections))
+        BridgeList<Module::ModuleSectionInfo> sections;
+        if(Module::SectionListFromAddr(moduleBase, &sections))
         {
             success = true;
-            for (auto i = 0; i < sections.Count(); i++)
+            for(auto i = 0; i < sections.Count(); i++)
             {
                 auto section = std::make_unique<nc::core::image::Section>(sections[i].name, sections[i].addr, sections[i].size);
                 section->setReadable(true);
@@ -107,7 +108,7 @@ static std::unique_ptr<nc::gui::Project> MakeProject(duint base, duint size)
     }
 
     //add a made-up section in case there was an error with the module sections.
-    if (!success)
+    if(!success)
     {
         auto section = std::make_unique<nc::core::image::Section>(".text", base, size);
         section->setReadable(true);
@@ -121,23 +122,23 @@ static std::unique_ptr<nc::gui::Project> MakeProject(duint base, duint size)
     }
 
     //add symbols
-    List<Symbol::SymbolInfo> symbols;
+    BridgeList<Symbol::SymbolInfo> symbols;
     if(Symbol::GetList(&symbols))
     {
-        for (auto i = 0; i < symbols.Count(); i++)
+        for(auto i = 0; i < symbols.Count(); i++)
         {
             const auto & symbol = symbols[i];
             auto modBase = Module::BaseFromName(symbol.mod);
-            if (!modBase)
+            if(!modBase)
                 continue;
             auto va = modBase + symbol.rva;
             auto name = QString::fromUtf8(symbol.name);
-            if (symbol.type != Symbol::Import)
+            if(symbol.type != Symbol::Import)
                 image->addSymbol(std::make_unique<image::Symbol>(image::SymbolType::FUNCTION, name, va));
             else
                 image->addRelocation(std::make_unique<image::Relocation>(
-                    va,
-                    image->addSymbol(std::make_unique<image::Symbol>(image::SymbolType::FUNCTION, name, boost::none))));
+                                         va,
+                                         image->addSymbol(std::make_unique<image::Symbol>(image::SymbolType::FUNCTION, name, boost::none))));
         }
     }
 
@@ -151,7 +152,7 @@ void SnowmanView::decompileAt(duint start, duint end) const
     duint pagebase = DbgMemFindBaseAddr(start, &pagesize);
     mainWindow->open(MakeProject(pagebase, pagesize));
     mainWindow->project()->setName("Snowman");
-    mainWindow->project()->disassemble(mainWindow->project()->image().get(), start, end+1);
+    mainWindow->project()->disassemble(mainWindow->project()->image().get(), start, end + 1);
     mainWindow->project()->decompile();
 }
 
@@ -201,9 +202,9 @@ void SnowmanView::closeEvent(QCloseEvent* event)
 
 void SnowmanView::populateInstructionsContextMenu(QMenu* menu) const
 {
-    for (QAction* action : menu->actions())
+    for(QAction* action : menu->actions())
     {
-        if (action->shortcut() == QKeySequence(QKeySequence::FindNext))
+        if(action->shortcut() == QKeySequence(QKeySequence::FindNext))
             action->setShortcut(QKeySequence("Ctrl+F3"));
     }
     nc::gui::MainWindow* mainWindow = (nc::gui::MainWindow*)mSnowmanMainWindow;
@@ -216,9 +217,9 @@ void SnowmanView::populateInstructionsContextMenu(QMenu* menu) const
 
 void SnowmanView::populateCxxContextMenu(QMenu* menu) const
 {
-    for (QAction* action : menu->actions())
+    for(QAction* action : menu->actions())
     {
-        if (action->shortcut() == QKeySequence(QKeySequence::FindNext))
+        if(action->shortcut() == QKeySequence(QKeySequence::FindNext))
             action->setShortcut(QKeySequence("Ctrl+F3"));
     }
     nc::gui::MainWindow* mainWindow = (nc::gui::MainWindow*)mSnowmanMainWindow;

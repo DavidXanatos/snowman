@@ -26,18 +26,21 @@
 
 #include "LabelDeclaration.h"
 
-namespace nc {
-namespace core {
-namespace likec {
-
-LabelIdentifier::LabelIdentifier(LabelDeclaration *declaration):
-    Expression(LABEL_IDENTIFIER), declaration_(declaration)
+namespace nc
 {
-    declaration_->incReferenceCount();
-}
+    namespace core
+    {
+        namespace likec
+        {
 
-} // namespace likec
-} // namespace core
+            LabelIdentifier::LabelIdentifier(LabelDeclaration* declaration):
+                Expression(LABEL_IDENTIFIER), declaration_(declaration)
+            {
+                declaration_->incReferenceCount();
+            }
+
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 /* vim:set et sts=4 sw=4: */

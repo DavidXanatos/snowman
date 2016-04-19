@@ -35,110 +35,117 @@ class QModelIndex;
 class QTreeView;
 QT_END_NAMESPACE
 
-namespace nc {
+namespace nc
+{
 
-namespace core {
-    namespace arch {
-        class Instruction;
+    namespace core
+    {
+        namespace arch
+        {
+            class Instruction;
+        }
+        namespace likec
+        {
+            class TreeNode;
+        }
     }
-    namespace likec {
-        class TreeNode;
+
+    namespace gui
+    {
+
+        class InspectorModel;
+
+        /**
+         * Dock widget for showing decompiler's internal data structures in a tree form.
+         */
+        class InspectorView: public QDockWidget
+        {
+            Q_OBJECT
+
+        public:
+
+            /**
+             * Constructor.
+             *
+             * \param[in] parent Pointer to the parent widget. Can be nullptr.
+             */
+            InspectorView(QWidget* parent = nullptr);
+
+            /**
+             * Destructor.
+             */
+            ~InspectorView();
+
+            /**
+             * \return Pointer to the tree model being viewed. Can be nullptr.
+             */
+            InspectorModel* model() const { return model_; }
+
+            /**
+             * \return LikeC tree nodes currently selected in the tree.
+             */
+            const std::vector<const core::likec::TreeNode*> & selectedNodes() const { return selectedNodes_; }
+
+            /**
+             * \return Instructions currently selected in the tree.
+             */
+            const std::vector<const core::arch::Instruction*> & selectedInstructions() const { return selectedInstructions_; }
+
+        public Q_SLOTS:
+
+            /**
+             * Sets the model being viewed.
+             *
+             * \param model Pointer to the new model. Can be nullptr.
+             */
+            void setModel(InspectorModel* model);
+
+            /**
+             * Highlights given LikeC tree nodes.
+             *
+             * \param nodes         Nodes to be highlighted.
+             */
+            void highlightNodes(const std::vector<const core::likec::TreeNode*> & nodes);
+
+        private Q_SLOTS:
+
+            /**
+             * Updates information about current selections.
+             */
+            void updateSelection();
+
+        Q_SIGNALS:
+
+            /**
+             * Signal emitted when the set of currently selected LikeC tree nodes is changed.
+             */
+            void nodeSelectionChanged();
+
+            /**
+             * Signal emitted when the set of currently selected instructions is changed.
+             */
+            void instructionSelectionChanged();
+
+        protected:
+
+            virtual bool eventFilter(QObject* watched, QEvent* event) override;
+
+        private:
+
+            /** QTreeView instance used for showing the tree. */
+            QTreeView* treeView_;
+
+            /** The model being shown. */
+            InspectorModel* model_;
+
+            /** LikeC tree nodes currently selected in the tree. */
+            std::vector<const core::likec::TreeNode*> selectedNodes_;
+
+            /** Instructions currently selected in the tree. */
+            std::vector<const core::arch::Instruction*> selectedInstructions_;
+        };
+
     }
-}
-
-namespace gui {
-
-class InspectorModel;
-
-/**
- * Dock widget for showing decompiler's internal data structures in a tree form.
- */
-class InspectorView: public QDockWidget {
-    Q_OBJECT
-
-    public:
-
-    /**
-     * Constructor.
-     *
-     * \param[in] parent Pointer to the parent widget. Can be nullptr.
-     */
-    InspectorView(QWidget *parent = nullptr);
-
-    /**
-     * Destructor.
-     */
-    ~InspectorView();
-
-    /**
-     * \return Pointer to the tree model being viewed. Can be nullptr.
-     */
-    InspectorModel *model() const { return model_; }
-
-    /**
-     * \return LikeC tree nodes currently selected in the tree.
-     */
-    const std::vector<const core::likec::TreeNode *> &selectedNodes() const { return selectedNodes_; }
-
-    /**
-     * \return Instructions currently selected in the tree.
-     */
-    const std::vector<const core::arch::Instruction *> &selectedInstructions() const { return selectedInstructions_; }
-
-    public Q_SLOTS:
-
-    /**
-     * Sets the model being viewed.
-     *
-     * \param model Pointer to the new model. Can be nullptr.
-     */
-    void setModel(InspectorModel *model);
-
-    /**
-     * Highlights given LikeC tree nodes.
-     *
-     * \param nodes         Nodes to be highlighted.
-     */
-    void highlightNodes(const std::vector<const core::likec::TreeNode *> &nodes);
-
-    private Q_SLOTS:
-
-    /**
-     * Updates information about current selections.
-     */
-    void updateSelection();
-
-    Q_SIGNALS:
-
-    /**
-     * Signal emitted when the set of currently selected LikeC tree nodes is changed.
-     */
-    void nodeSelectionChanged();
-
-    /**
-     * Signal emitted when the set of currently selected instructions is changed.
-     */
-    void instructionSelectionChanged();
-
-    protected:
-
-    virtual bool eventFilter(QObject *watched, QEvent *event) override;
-
-    private:
-
-    /** QTreeView instance used for showing the tree. */
-    QTreeView *treeView_;
-
-    /** The model being shown. */
-    InspectorModel *model_;
-
-    /** LikeC tree nodes currently selected in the tree. */
-    std::vector<const core::likec::TreeNode *> selectedNodes_;
-
-    /** Instructions currently selected in the tree. */
-    std::vector<const core::arch::Instruction *> selectedInstructions_;
-};
-
-}} // namespace nc::gui
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */

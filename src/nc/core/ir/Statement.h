@@ -36,131 +36,141 @@
 #include <nc/common/Subclass.h>
 #include <nc/common/ilist.h>
 
-namespace nc {
-namespace core {
+namespace nc
+{
+    namespace core
+    {
 
-namespace arch {
-    class Instruction;
-}
+        namespace arch
+        {
+            class Instruction;
+        }
 
-namespace ir {
+        namespace ir
+        {
 
-class Assignment;
-class BasicBlock;
-class Call;
-class Callback;
-class Halt;
-class InlineAssembly;
-class Jump;
-class Term;
-class Touch;
+            class Assignment;
+            class BasicBlock;
+            class Call;
+            class Callback;
+            class Halt;
+            class InlineAssembly;
+            class Jump;
+            class Term;
+            class Touch;
 
-/**
- * Base class for different kinds of statements of intermediate representation.
- */
-class Statement: public Printable, public nc::ilist_item, boost::noncopyable {
-    NC_BASE_CLASS(Statement, kind)
+            /**
+             * Base class for different kinds of statements of intermediate representation.
+             */
+            class Statement: public Printable, public nc::ilist_item, boost::noncopyable
+            {
+                NC_BASE_CLASS(Statement, kind)
 
-public:
-    /**
-     * Statement kind.
-     */
-    enum {
-        INLINE_ASSEMBLY,///< Inline assembly.
-        ASSIGNMENT,     ///< Assignment.
-        JUMP,           ///< Jump.
-        CALL,           ///< Function call.
-        HALT,           ///< Return from a program.
-        TOUCH,          ///< Reads, writes, or kills a term.
-        CALLBACK,       ///< Custom operation.
-        REMEMBER_REACHING_DEFINITIONS, ///< Remembers reaching definition.
-        USER = 1000     ///< Base for user-defined statements.
-    };
+            public:
+                /**
+                 * Statement kind.
+                 */
+                enum
+                {
+                    INLINE_ASSEMBLY,///< Inline assembly.
+                    ASSIGNMENT,     ///< Assignment.
+                    JUMP,           ///< Jump.
+                    CALL,           ///< Function call.
+                    HALT,           ///< Return from a program.
+                    TOUCH,          ///< Reads, writes, or kills a term.
+                    CALLBACK,       ///< Custom operation.
+                    REMEMBER_REACHING_DEFINITIONS, ///< Remembers reaching definition.
+                    USER = 1000     ///< Base for user-defined statements.
+                };
 
-private:
-    BasicBlock *basicBlock_; ///< Basic block to which this statement belongs.
-    const arch::Instruction *instruction_; ///< Instruction from which this statement was generated.
+            private:
+                BasicBlock* basicBlock_; ///< Basic block to which this statement belongs.
+                const arch::Instruction* instruction_; ///< Instruction from which this statement was generated.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] kind Kind of the statement.
-     */
-    Statement(int kind): kind_(kind), basicBlock_(nullptr), instruction_(nullptr) {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] kind Kind of the statement.
+                 */
+                Statement(int kind): kind_(kind), basicBlock_(nullptr), instruction_(nullptr) {}
 
-    /**
-     * \return Pointer to the basic block to which this statement belongs.
-     *         Can be nullptr.
-     */
-    BasicBlock *basicBlock() { return basicBlock_; }
+                /**
+                 * \return Pointer to the basic block to which this statement belongs.
+                 *         Can be nullptr.
+                 */
+                BasicBlock* basicBlock() { return basicBlock_; }
 
-    /**
-     * \return Pointer to the basic block to which this statement belongs.
-     *         Can be nullptr.
-     */
-    const BasicBlock *basicBlock() const { return basicBlock_; }
+                /**
+                 * \return Pointer to the basic block to which this statement belongs.
+                 *         Can be nullptr.
+                 */
+                const BasicBlock* basicBlock() const { return basicBlock_; }
 
-    /**
-     * Sets the pointer to the basic block to which this statement belongs.
-     *
-     * \param[in] basicBlock Pointer to the basic block. Can be nullptr.
-     */
-    void setBasicBlock(BasicBlock *basicBlock) { basicBlock_ = basicBlock; }
+                /**
+                 * Sets the pointer to the basic block to which this statement belongs.
+                 *
+                 * \param[in] basicBlock Pointer to the basic block. Can be nullptr.
+                 */
+                void setBasicBlock(BasicBlock* basicBlock) { basicBlock_ = basicBlock; }
 
-    /**
-     * \param[in] instruction Instruction from which this statement was generated.
-     */
-    void setInstruction(const arch::Instruction *instruction) {
-        assert(!instruction_ && "Instruction must be set only once.");
-        instruction_ = instruction;
+                /**
+                 * \param[in] instruction Instruction from which this statement was generated.
+                 */
+                void setInstruction(const arch::Instruction* instruction)
+                {
+                    assert(!instruction_ && "Instruction must be set only once.");
+                    instruction_ = instruction;
+                }
+
+                /**
+                 * \return Instruction that this statement was generated from. Can be nullptr.
+                 */
+                const arch::Instruction* instruction() const { return instruction_; }
+
+                /**
+                 * \return True iff this a terminator statement, i.e. a statement
+                 *         which can be only the last statement of a basic block.
+                 */
+                bool isTerminator() const
+                {
+                    return is<Jump>() || is<Halt>();
+                }
+
+                /**
+                 * Clones the statement and sets the instruction of the clone
+                 * to the instruction of this statement.
+                 *
+                 * \returns Valid pointer to the clone.
+                 */
+                std::unique_ptr<Statement> clone() const;
+
+                /* The following functions are defined in Statements.h. */
+
+                inline const Assignment* asAssignment() const;
+                inline const Jump* asJump() const;
+                inline const Call* asCall() const;
+                inline const Touch* asTouch() const;
+                inline const Callback* asCallback() const;
+
+            protected:
+                /**
+                 * \return Valid pointer to the clone of the statement.
+                 */
+                virtual std::unique_ptr<Statement> doClone() const = 0;
+            };
+
+        }
     }
-
-    /**
-     * \return Instruction that this statement was generated from. Can be nullptr.
-     */
-    const arch::Instruction *instruction() const { return instruction_; }
-
-    /**
-     * \return True iff this a terminator statement, i.e. a statement
-     *         which can be only the last statement of a basic block.
-     */
-    bool isTerminator() const {
-        return is<Jump>() || is<Halt>();
-    }
-
-    /**
-     * Clones the statement and sets the instruction of the clone
-     * to the instruction of this statement.
-     *
-     * \returns Valid pointer to the clone.
-     */
-    std::unique_ptr<Statement> clone() const;
-
-    /* The following functions are defined in Statements.h. */
-
-    inline const Assignment *asAssignment() const;
-    inline const Jump *asJump() const;
-    inline const Call *asCall() const;
-    inline const Touch *asTouch() const;
-    inline const Callback *asCallback() const;
-    
-protected:
-    /**
-     * \return Valid pointer to the clone of the statement.
-     */
-    virtual std::unique_ptr<Statement> doClone() const = 0;
-};
-
-}}} // namespace nc::core::ir
+} // namespace nc::core::ir
 
 /**
  * Defines a compile-time mapping from statement class to statement kind.
  * Makes it possible to use the given class as an argument to <tt>Statement::as</tt>
  * and <tt>Statement::is</tt> template functions.
- * 
+ *
  * Must be used at global namespace.
- * 
+ *
  * \param CLASS                        Statement class.
  * \param KIND                         Statement kind.
  */

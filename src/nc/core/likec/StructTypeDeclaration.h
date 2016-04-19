@@ -31,39 +31,43 @@
 #include "MemberDeclaration.h"
 #include "StructType.h"
 
-namespace nc {
-namespace core {
-namespace likec {
+namespace nc
+{
+    namespace core
+    {
+        namespace likec
+        {
 
-/**
- * Declaration of structural type.
- */
-class StructTypeDeclaration: public Declaration {
-    StructType type_; ///< Declared structural type.
+            /**
+             * Declaration of structural type.
+             */
+            class StructTypeDeclaration: public Declaration
+            {
+                StructType type_; ///< Declared structural type.
 
-public:
-    /**
-     * Class constructor.
-     *
-     * \param[in] identifier Struct tag/id.
-     */
-    explicit StructTypeDeclaration(QString identifier):
-        Declaration(STRUCT_TYPE_DECLARATION, std::move(identifier)), type_(this)
-    {}
+            public:
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] identifier Struct tag/id.
+                 */
+                explicit StructTypeDeclaration(QString identifier):
+                    Declaration(STRUCT_TYPE_DECLARATION, std::move(identifier)), type_(this)
+                {}
 
-    /**
-     * \return Declared structural type.
-     */
-    StructType *type() { return &type_; }
+                /**
+                 * \return Declared structural type.
+                 */
+                StructType* type() { return &type_; }
 
-    /**
-     * \return Declared structural type.
-     */
-    const StructType *type() const { return &type_; }
-};
+                /**
+                 * \return Declared structural type.
+                 */
+                const StructType* type() const { return &type_; }
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::Declaration, nc::core::likec::StructTypeDeclaration, nc::core::likec::Declaration::STRUCT_TYPE_DECLARATION)

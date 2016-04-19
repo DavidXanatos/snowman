@@ -31,68 +31,75 @@
 
 #include "TreeNode.h"
 
-namespace nc {
-namespace core {
+namespace nc
+{
+    namespace core
+    {
 
-namespace ir {
-    class Statement;
-}
+        namespace ir
+        {
+            class Statement;
+        }
 
-namespace likec {
+        namespace likec
+        {
 
-/**
- * Base class for statement node.
- */
-class Statement: public TreeNode {
-    NC_BASE_CLASS(Statement, statementKind)
+            /**
+             * Base class for statement node.
+             */
+            class Statement: public TreeNode
+            {
+                NC_BASE_CLASS(Statement, statementKind)
 
-    const ir::Statement *statement_; ///< IR statement from which this statement was created.
+                const ir::Statement* statement_; ///< IR statement from which this statement was created.
 
-public:
-    enum {
-        BLOCK,                          ///< Block.
-        BREAK,                          ///< Break.
-        CONTINUE,                       ///< Continue.
-        DO_WHILE,                       ///< Do-While loop.
-        EXPRESSION_STATEMENT,           ///< Expression statement.
-        GOTO,                           ///< Goto.
-        IF,                             ///< Conditional statement.
-        LABEL_STATEMENT,                ///< Label.
-        RETURN,                         ///< Return.
-        WHILE,                          ///< While loop.
-        INLINE_ASSEMBLY,                ///< Inline assembly.
-        SWITCH,                         ///< Switch.
-        CASE_LABEL,                     ///< Case label.
-        DEFAULT_LABEL,                  ///< Default case label.
-    };
+            public:
+                enum
+                {
+                    BLOCK,                          ///< Block.
+                    BREAK,                          ///< Break.
+                    CONTINUE,                       ///< Continue.
+                    DO_WHILE,                       ///< Do-While loop.
+                    EXPRESSION_STATEMENT,           ///< Expression statement.
+                    GOTO,                           ///< Goto.
+                    IF,                             ///< Conditional statement.
+                    LABEL_STATEMENT,                ///< Label.
+                    RETURN,                         ///< Return.
+                    WHILE,                          ///< While loop.
+                    INLINE_ASSEMBLY,                ///< Inline assembly.
+                    SWITCH,                         ///< Switch.
+                    CASE_LABEL,                     ///< Case label.
+                    DEFAULT_LABEL,                  ///< Default case label.
+                };
 
-    /**
-     * Class constructor.
-     *
-     * \param[in] statementKind Statement kind.
-     */
-    explicit Statement(int statementKind):
-        TreeNode(STATEMENT), statementKind_(statementKind), statement_(nullptr)
-    {}
+                /**
+                 * Class constructor.
+                 *
+                 * \param[in] statementKind Statement kind.
+                 */
+                explicit Statement(int statementKind):
+                    TreeNode(STATEMENT), statementKind_(statementKind), statement_(nullptr)
+                {}
 
-    /**
-     * \return Pointer to the IR statement from which this statement was created. Can be nullptr.
-     */
-    const ir::Statement *statement() const { return statement_; }
+                /**
+                 * \return Pointer to the IR statement from which this statement was created. Can be nullptr.
+                 */
+                const ir::Statement* statement() const { return statement_; }
 
-    /**
-     * \param[in] statement Valid pointer to a statement.
-     */
-    void setStatement(const ir::Statement *statement) {
-        assert(statement != nullptr);
-        assert(statement_ == nullptr); /* Must be used for initialization only. */
+                /**
+                 * \param[in] statement Valid pointer to a statement.
+                 */
+                void setStatement(const ir::Statement* statement)
+                {
+                    assert(statement != nullptr);
+                    assert(statement_ == nullptr); /* Must be used for initialization only. */
 
-        statement_ = statement;
-    }
-};
+                    statement_ = statement;
+                }
+            };
 
-} // namespace likec
-} // namespace core
+        } // namespace likec
+    } // namespace core
 } // namespace nc
 
 NC_SUBCLASS(nc::core::likec::TreeNode, nc::core::likec::Statement, nc::core::likec::TreeNode::STATEMENT)

@@ -34,49 +34,54 @@ QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
 QT_END_NAMESPACE
 
-namespace nc { namespace gui {
+namespace nc
+{
+    namespace gui
+    {
 
-/**
- * Search controller for QPlainTextEdit.
- */
-class TextEditSearcher: public QObject, public Searcher {
-    Q_OBJECT
+        /**
+         * Search controller for QPlainTextEdit.
+         */
+        class TextEditSearcher: public QObject, public Searcher
+        {
+            Q_OBJECT
 
-    /** Controlled widget. */
-    QPlainTextEdit *textEdit_;
+            /** Controlled widget. */
+            QPlainTextEdit* textEdit_;
 
-    /** Remembered text cursor position. */
-    QTextCursor cursor_;
+            /** Remembered text cursor position. */
+            QTextCursor cursor_;
 
-    /** Remembered horizontal scrollbar position. */
-    int hvalue_;
+            /** Remembered horizontal scrollbar position. */
+            int hvalue_;
 
-    /** Remembered vertical scrollbar position. */
-    int vvalue_;
+            /** Remembered vertical scrollbar position. */
+            int vvalue_;
 
-    public:
+        public:
 
-    /**
-     * Constructor.
-     *
-     * \param textEdit Valid pointer to the controlled widget.
-     */
-    TextEditSearcher(QPlainTextEdit *textEdit);
+            /**
+             * Constructor.
+             *
+             * \param textEdit Valid pointer to the controlled widget.
+             */
+            TextEditSearcher(QPlainTextEdit* textEdit);
 
-    public Q_SLOTS:
+        public Q_SLOTS:
 
-    virtual void rememberViewport() override;
-    virtual void restoreViewport() override;
+            virtual void rememberViewport() override;
+            virtual void restoreViewport() override;
 
-    public:
+        public:
 
-    virtual void startTrackingViewport() override;
-    virtual void stopTrackingViewport() override;
+            virtual void startTrackingViewport() override;
+            virtual void stopTrackingViewport() override;
 
-    virtual FindFlags supportedFlags() const override;
-    virtual bool find(const QString &expression, FindFlags flags) override;
-};
+            virtual FindFlags supportedFlags() const override;
+            virtual bool find(const QString & expression, FindFlags flags) override;
+        };
 
-}} // namespace nc::gui
+    }
+} // namespace nc::gui
 
 /* vim:set et sts=4 sw=4: */
