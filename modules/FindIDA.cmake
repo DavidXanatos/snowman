@@ -61,7 +61,6 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT NC_M32)
 else()
     set(library_dir "lib/x86_${platform}_${compiler}_${suffix}")
 endif()
-MESSAGE(${library_dir})
 
 #
 # Find IDA SDK.

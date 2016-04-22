@@ -1,3 +1,5 @@
+@echo off
+
 set BOOST_ROOT=d:\workspace\project\local\Boost\include\boost-1_55
 set Qt5_DIR=d:\Qt\Qt5.5.1_x86\5.5\msvc2013
 set Qt5Core_DIR=d:\Qt\Qt5.5.1_x86\5.5\msvc2013\lib\cmake
@@ -10,5 +12,7 @@ mkdir build32
 cd build32
 
 cmake -G "Visual Studio 12 2013" ../src && cmake-gui ../src
+
+cd ..
 
 pause
