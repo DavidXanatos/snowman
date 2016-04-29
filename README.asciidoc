@@ -18,6 +18,7 @@ Feel free to link:doc/todo.asciidoc[pick a problem], solve it, and send a link:h
 Write to our link:http://lists.derevenets.com/mailman/listinfo/snowman[mailing list] if you have questions.
 
 userenv.bat like this:
+```
 @echo off
 
 if /i "%1"=="x32" (
@@ -48,4 +49,4 @@ set BOOST_ROOT=d:\workspace\project\local\Boost\include\boost-1_55
 set IDA_DIR=d:\tools\IDA6.8
 set IDA_SDK_DIR=d:\tools\IDA6.8\sdk\idasdk68
 set X64DBG_SDK_DIR=d:\workspace\research\Debugger\x64dbg\release\pluginsdk
-
+```
