@@ -16,3 +16,36 @@ We are not done yet.
 We want better generated code, even more convenient GUI, support for other architectures.
 Feel free to link:doc/todo.asciidoc[pick a problem], solve it, and send a link:https://github.com/yegord/snowman/pulls[pull request].
 Write to our link:http://lists.derevenets.com/mailman/listinfo/snowman[mailing list] if you have questions.
+
+userenv.bat like this:
+@echo off
+
+if /i "%1"=="x32" (
+    if /i "%2"=="qt5" (
+        set Qt5_DIR=d:\Qt\Qt5.5.1\5.5\msvc2013
+        set Qt5Core_DIR=d:\Qt\Qt5.5.1\5.5\msvc2013\lib\cmake
+        set Qt5Widgets_DIR=d:\Qt\Qt5.5.1\5.5\msvc2013\lib\cmake
+    ) else (
+        set Qt4_DIR=c:\Qt\qt-4.8.6-x86-msvc2013\qt-4.8.6-x86-msvc2013
+        set Qt4Core_DIR=c:\Qt\qt-4.8.6-x86-msvc2013\qt-4.8.6-x86-msvc2013\lib\cmake
+        set Qt4Widgets_DIR=c:\Qt\qt-4.8.6-x86-msvc2013\qt-4.8.6-x86-msvc2013\lib\cmake
+    )
+)
+
+if /i "%1"=="x64" (
+    if /i "%2"=="qt5" (
+        set Qt5_DIR=d:\Qt\Qt5.5.1\5.5\msvc2013_64
+        set Qt5Core_DIR=d:\Qt\Qt5.5.1\5.5\msvc2013_64\lib\cmake
+        set Qt5Widgets_DIR=d:\Qt\Qt5.5.1\5.5\msvc2013_64\lib\cmake
+    ) else (
+        set Qt4_DIR=c:\Qt\qt-4.8.6-x64-msvc2013\qt-4.8.6-x86-msvc2013
+        set Qt4Core_DIR=c:\Qt\qt-4.8.6-x64-msvc2013\qt-4.8.6-x64-msvc2013\lib\cmake
+        set Qt4Widgets_DIR=c:\Qt\qt-4.8.6-x64-msvc2013\qt-4.8.6-x64-msvc2013\lib\cmake
+    )
+)
+
+set BOOST_ROOT=d:\workspace\project\local\Boost\include\boost-1_55
+set IDA_DIR=d:\tools\IDA6.8
+set IDA_SDK_DIR=d:\tools\IDA6.8\sdk\idasdk68
+set X64DBG_SDK_DIR=d:\workspace\research\Debugger\x64dbg\release\pluginsdk
+

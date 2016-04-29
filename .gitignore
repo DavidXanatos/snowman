@@ -27,3 +27,4 @@ gmon.out
 *.pyc
 /build32
 /build64
+/usrenv.bat
