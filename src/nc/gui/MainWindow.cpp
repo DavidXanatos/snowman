@@ -164,6 +164,7 @@ namespace nc
             connect(disassemblyDialog_, SIGNAL(accepted()), this, SLOT(disassembleSelectedSectionRange()));
 
             progressDialog_ = new QProgressDialog(this);
+			progressDialog_->reset();
             QProgressBar* progressBar = new QProgressBar(progressDialog_);
             progressBar->setTextVisible(false);
             progressDialog_->setBar(progressBar);
